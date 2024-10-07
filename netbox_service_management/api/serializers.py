@@ -16,30 +16,30 @@ class ServiceTemplateSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'solution', 'tags', 'created', 'last_updated']
 
 class ServiceTemplateGroupSerializer(serializers.ModelSerializer):
-    service_template = serializers.PrimaryKeyRelatedField(queryset=ServiceTemplate.objects.all())
-    depends_on = serializers.PrimaryKeyRelatedField(queryset=ServiceTemplateGroup.objects.all(), allow_null=True)
+    service_template = serializers.PrimaryKeyRelatedField(queryset=models.ServiceTemplate.objects.all())
+    depends_on = serializers.PrimaryKeyRelatedField(queryset=models.ServiceTemplateGroup.objects.all(), allow_null=True)
 
     class Meta:
         model = models.ServiceTemplateGroup
         fields = ['id', 'name', 'service_template', 'depends_on', 'created', 'last_updated']
 
 class ServiceTemplateGroupComponentSerializer(serializers.ModelSerializer):
-    service_template_group = serializers.PrimaryKeyRelatedField(queryset=ServiceTemplateGroup.objects.all())
+    service_template_group = serializers.PrimaryKeyRelatedField(queryset=models.ServiceTemplateGroup.objects.all())
 
     class Meta:
         model = models.ServiceTemplateGroupComponent
         fields = ['id', 'name', 'service_template_group', 'created', 'last_updated']
 
 class ServiceSerializer(serializers.ModelSerializer):
-    service_template = serializers.PrimaryKeyRelatedField(queryset=ServiceTemplate.objects.all())
+    service_template = serializers.PrimaryKeyRelatedField(queryset=models.ServiceTemplate.objects.all())
 
     class Meta:
         model = models.Service
         fields = ['id', 'name', 'service_template', 'deployment', 'tags', 'created', 'last_updated']
 
 class ComponentSerializer(serializers.ModelSerializer):
-    service = serializers.PrimaryKeyRelatedField(queryset=Service.objects.all())
-    template_component = serializers.PrimaryKeyRelatedField(queryset=ServiceTemplateGroupComponent.objects.all())
+    service = serializers.PrimaryKeyRelatedField(queryset=models.Service.objects.all())
+    template_component = serializers.PrimaryKeyRelatedField(queryset=models.ServiceTemplateGroupComponent.objects.all())
     content_type = serializers.PrimaryKeyRelatedField(queryset=ContentType.objects.all())
     object_id = serializers.IntegerField()
     content_object = serializers.SerializerMethodField()
