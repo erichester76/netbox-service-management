@@ -16,7 +16,7 @@ class Solution(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:solution_detail", args=[self.pk])
+        return reverse("plugins:netbox_service_management:solution", args=[self.pk])
 
 class ServiceTemplate(NetBoxModel):
     name = models.CharField(max_length=100)
@@ -33,7 +33,7 @@ class ServiceTemplate(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:service_template_detail", args=[self.pk])
+        return reverse("plugins:netbox_service_management:servicetemplate", args=[self.pk])
     
 class ServiceTemplateGroup(NetBoxModel):
     name = models.CharField(max_length=100)
@@ -47,7 +47,7 @@ class ServiceTemplateGroup(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:service_template_componen_detail", args=[self.pk])
+        return reverse("plugins:netbox_service_management:servicetemplatecomponent", args=[self.pk])
     
 class ServiceTemplateGroupComponent(NetBoxModel):
     name = models.CharField(max_length=100)
@@ -60,7 +60,7 @@ class ServiceTemplateGroupComponent(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:application_detail", args=[self.pk])
+        return reverse("plugins:netbox_service_management:application", args=[self.pk])
     
 class Service(NetBoxModel):
     DEPLOY_CHOICES = [
@@ -96,7 +96,7 @@ class Service(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:service_detail", args=[self.pk])
+        return reverse("plugins:netbox_service_management:service", args=[self.pk])
 
 class Component(NetBoxModel):
     name = models.CharField(max_length=100)
@@ -117,5 +117,5 @@ class Component(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:application_detail", args=[self.pk])
+        return reverse("plugins:netbox_service_management:component", args=[self.pk])
     
