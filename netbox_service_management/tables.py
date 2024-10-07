@@ -53,9 +53,9 @@ class ServiceTable(NetBoxTable):
 class ComponentTable(NetBoxTable):
     name = tables.Column(linkify=True)
     content_object = tables.Column(linkify=True)
-    service = tables.Column(linkify=True
+    service = tables.Column(linkify=True)
     tenant = tables.Column(linkify=True)
-                         )
+                         
     class Meta(NetBoxTable.Meta):
         model = models.Component
         fields = ("pk", "id", "name", "service", "template_component", "content_object", "tenant", "actions")
