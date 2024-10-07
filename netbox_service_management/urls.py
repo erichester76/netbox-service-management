@@ -43,7 +43,7 @@ urlpatterns = (
     
     path("service_template_group_components/", views.ServiceTemplateGroupComponentListView.as_view(), name="service_template_group_component_list"),
     path("service_template_group_components/add/", views.ServiceTemplateGroupComponentEditView.as_view(), name="service_template_group_component_add"),
-    path("service_template_group_components/<int:pk>/", views.ServiceTemplateGroupComponentDetailView.as_view(), name="service_template_groupd_component_etail"),
+    path("service_template_group_components/<int:pk>/", views.ServiceTemplateGroupComponentDetailView.as_view(), name="service_template_group_component_etail"),
     path("service_template_groups/<int:pk>/edit/", views.ServiceTemplateGroupComponentEditView.as_view(), name="service_template_group_component_edit"),
     path("service_template_groups/<int:pk>/delete/", views.ServiceTemplateGroupComponentDeleteView.as_view(), name="service_template_group_component_delete"),
     path(

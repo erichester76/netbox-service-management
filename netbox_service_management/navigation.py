@@ -3,11 +3,11 @@ from netbox.plugins import PluginMenuButton, PluginMenuItem, PluginMenu
 
 items = (
     PluginMenuItem(
-        link="plugins:netbox_service_management:solutions_list",
+        link="plugins:netbox_service_management:solution_list",
         link_text="Solutions",
         buttons=[
             PluginMenuButton(
-                link="plugins:netbox_service_management:solutions_add",
+                link="plugins:netbox_service_management:solution_add",
                 title="Add",
                 icon_class="mdi mdi-plus-thick",
             )
