@@ -8,7 +8,7 @@ from . import models
 class SolutionForm(NetBoxModelForm):
     class Meta:
         model = models.Solution
-        fields = ("name", "tags")
+        fields = ("name", "tenant", "tags")
 
 class ServiceTemplateForm(NetBoxModelForm):
     class Meta:
