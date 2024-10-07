@@ -7,7 +7,7 @@ from tenancy.models import Tenant
 
 class Solution(NetBoxModel):
     name = models.CharField(max_length=100)
-    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name="solutions")
+    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name='netbox_service_management_solution_tenant')
 
     class Meta:
         ordering = ("name",)
@@ -24,6 +24,7 @@ class ServiceTemplate(NetBoxModel):
     tags = models.ManyToManyField(
     to='extras.Tag',
     related_name='netbox_service_management_service_templates'
+    
 
     # Custom related_name to avoid conflict with ipam->services
     )
@@ -83,7 +84,7 @@ class Service(NetBoxModel):
     service_template = models.ForeignKey(ServiceTemplate, on_delete=models.CASCADE, related_name='services')
     deployment = models.CharField(max_length=100, choices=DEPLOY_CHOICES, default='development')
     capability_category = models.CharField(max_length=100, choices=DEPLOY_CHOICES, default='deferrable')
-    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name="services")
+    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name='netbox_service_management_service_tenant')
  
     tags = models.ManyToManyField(
         to='extras.Tag',
@@ -104,7 +105,7 @@ class Component(NetBoxModel):
     name = models.CharField(max_length=100)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='components')
     template_component = models.ForeignKey(ServiceTemplateGroupComponent, on_delete=models.CASCADE, related_name='components')
-    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name="services")
+    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name='netbox_service_management_component_tenant')
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
