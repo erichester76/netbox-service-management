@@ -5,7 +5,7 @@ from utilities.forms.fields import CommentField, DynamicModelChoiceField
 
 from . import models
 
-class Solution(NetBoxModelForm):
+class SolutionForm(NetBoxModelForm):
     class Meta:
         model = models.Solution
         fields = ("name", "tags")
