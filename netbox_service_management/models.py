@@ -21,7 +21,11 @@ class Solution(NetBoxModel):
 class ServiceTemplate(NetBoxModel):
     name = models.CharField(max_length=100)
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE, related_name='service_templates')
-    
+    tags = models.ManyToManyField(
+    to='extras.Tag',
+    related_name='netbox_service_management_service_templates'  
+    # Custom related_name to avoid conflict with ipam->services
+    )
     class Meta:
         ordering = ("name",)
 
@@ -81,7 +85,7 @@ class Component(NetBoxModel):
     name = models.CharField(max_length=100)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='components')
     template_component = models.ForeignKey(ServiceTemplateGroupComponent, on_delete=models.CASCADE, related_name='components')
-    component_type = models.ForeignKey(
+    content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
         limit_choices_to=models.Q(app_label='dcim') | models.Q(app_label='ipam')  # Optional: Limit to specific apps
