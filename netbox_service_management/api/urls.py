@@ -2,7 +2,7 @@ from rest_framework import routers
 from . import views
 
 router = routers.DefaultRouter()
-router.register(r'solutions', views.SolutionsViewSet)
+router.register(r'solutions', views.SolutionViewSet)
 router.register(r'services', views.ServiceViewSet)
 router.register(r'service_templates', views.ServiceTemplateViewSet)
 router.register(r'service_template_groups', views.ServiceTemplateGroupViewSet)
