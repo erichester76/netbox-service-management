@@ -47,7 +47,7 @@ class ServiceTemplateGroup(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:servicetemplatecomponent", args=[self.pk])
+        return reverse("plugins:netbox_service_management:servicetemplategroup", args=[self.pk])
     
 class ServiceTemplateGroupComponent(NetBoxModel):
     name = models.CharField(max_length=100)
@@ -60,7 +60,7 @@ class ServiceTemplateGroupComponent(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:application", args=[self.pk])
+        return reverse("plugins:netbox_service_management:servicetemplategroupcomponent", args=[self.pk])
     
 class Service(NetBoxModel):
     DEPLOY_CHOICES = [
