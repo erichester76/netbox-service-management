@@ -63,9 +63,26 @@ class ServiceTemplateGroupComponent(NetBoxModel):
         return reverse("plugins:netbox_service_management:application", args=[self.pk])
     
 class Service(NetBoxModel):
+    DEPLOY_CHOICES = [
+        ('development', 'Development'),
+        ('testing', 'Testing'),
+        ('functional', 'Functional'),
+        ('qa', 'Functional'),
+        ('production', 'Production'),
+    ]
+    CAPABILITY_CHOICES = [
+        ('primary_mission_essential', 'Primary Mission Critical'),
+        ('essential_support', 'Essential Support'),
+        ('mission_resumption', 'Mission Resumption'),
+        ('business_critical', 'Business Critical'),
+        ('deferrable', 'Deferrable')    
+    ]
+    
     name = models.CharField(max_length=100)
     service_template = models.ForeignKey(ServiceTemplate, on_delete=models.CASCADE, related_name='services')
-    deployment = models.CharField(max_length=100)
+    deployment = models.CharField(max_length=100, choices=DEPLOY_CHOICES)
+    capability_category = models.CharField(max_length=100, choices=DEPLOY_CHOICES)
+    
     tags = models.ManyToManyField(
         to='extras.Tag',
         related_name='netbox_service_management_services'  

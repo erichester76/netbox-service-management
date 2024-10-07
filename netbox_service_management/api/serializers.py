@@ -9,7 +9,7 @@ class SolutionSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'tenant', 'created', 'last_updated']
 
 class ServiceTemplateSerializer(serializers.ModelSerializer):
-    solution = serializers.PrimaryKeyRelatedField(queryset=Solution.objects.all())
+    solution = serializers.PrimaryKeyRelatedField(queryset=models.Solution.objects.all())
 
     class Meta:
         model = models.ServiceTemplate
