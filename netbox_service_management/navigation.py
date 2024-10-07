@@ -14,11 +14,11 @@ items = (
         ] 
     ),
     PluginMenuItem(
-        link="plugins:netbox_service_management:service_list",
+        link="plugins:netbox_service_management:service_template_list",
         link_text="Service Templates",
         buttons=[
             PluginMenuButton(
-                link="plugins:netbox_service_management:service_add",
+                link="plugins:netbox_service_management:service_template_add",
                 title="Add",
                 icon_class="mdi mdi-plus-thick",
             )
