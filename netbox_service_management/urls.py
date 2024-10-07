@@ -55,7 +55,7 @@ urlpatterns = (
     
     path("components/", views.ComponentListView.as_view(), name="component_list"),
     path("components/add/", views.ComponentEditView.as_view(), name="component_add"),
-    path("components/<int:pk>/", views.ComponentDetailView.as_view(), name="component_detail"),
+    path("components/<int:pk>/", views.ComponentDetailView.as_view(), name="component"),
     path("components/<int:pk>/edit/", views.ComponentEditView.as_view(), name="component_edit"),
     path("components/<int:pk>/delete/", views.ComponentDeleteView.as_view(), name="component_delete"),
     path(
@@ -67,7 +67,7 @@ urlpatterns = (
     
     path("services/", views.ServiceListView.as_view(), name="service_list"),
     path("services/add/", views.ServiceEditView.as_view(), name="service_add"),
-    path("services/<int:pk>/", views.ServiceDetailView.as_view(), name="service_detail"),
+    path("services/<int:pk>/", views.ServiceDetailView.as_view(), name="service"),
     path("services/<int:pk>/edit/", views.ServiceEditView.as_view(), name="service_edit"),
     path("services/<int:pk>/delete/", views.ServiceDeleteView.as_view(), name="service_delete"),
     path(
