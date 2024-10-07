@@ -17,7 +17,7 @@ urlpatterns = (
         kwargs={"model": models.Solution},
     ),
     
-    path("service_templatess/", views.ServiceTemplateListView.as_view(), name="servicetemplate_list"),
+    path("service_templates/", views.ServiceTemplateListView.as_view(), name="servicetemplate_list"),
     path("service_templates/add/", views.ServiceTemplateEditView.as_view(), name="servicetemplate_add"),
     path("service_templates/<int:pk>/", views.ServiceTemplateDetailView.as_view(), name="servicetemplate"),
     path("service_templates/<int:pk>/edit/", views.ServiceTemplateEditView.as_view(), name="servicetemplate_edit"),
