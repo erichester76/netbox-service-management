@@ -23,7 +23,7 @@ class ServiceTemplateGroupForm(NetBoxModelForm):
 class ServiceTemplateGroupComponentForm(NetBoxModelForm):
     class Meta:
         model = models.ServiceTemplateGroupComponent
-        fields = ("name", "service_template_group" "tags")
+        fields = ("name", "service_template_group", "tags")
         
 class ComponentForm(NetBoxModelForm):
     class Meta:
