@@ -5,46 +5,46 @@ items = (
     PluginMenuItem(
         link="plugins:netbox_service_management:solutions_list",
         link_text="Solutions",
-        buttons=(
+        buttons=[
             PluginMenuButton(
                 link="plugins:netbox_service_management:solutions_add",
                 title="Add",
                 icon_class="mdi mdi-plus-thick",
             )
-        )   
+        ] 
     ),
     PluginMenuItem(
         link="plugins:netbox_service_management:service_list",
         link_text="Service Templates",
-        buttons=( 
+        buttons=[
             PluginMenuButton(
                 link="plugins:netbox_service_management:service_add",
                 title="Add",
                 icon_class="mdi mdi-plus-thick",
             )
-        )
+        ]
     ),  
     PluginMenuItem(
         link="plugins:netbox_service_management:service_list",
         link_text="Services",
-        buttons=(
+        buttons=[
             PluginMenuButton(
                 link="plugins:netbox_service_management:service_add",
                 title="Add",
                 icon_class="mdi mdi-plus-thick",
             )
-        )   
+        ]   
     ),  
     PluginMenuItem(
         link="plugins:netbox_service_management:component_list",
         link_text="Components",
-        buttons=(
+        buttons=[
             PluginMenuButton(
                 link="plugins:netbox_service_management:component_add",
                 title="Add",
                 icon_class="mdi mdi-plus-thick",
             )
-        )   
+        ]  
     ),
     
 )
