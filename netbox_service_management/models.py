@@ -80,8 +80,8 @@ class Service(NetBoxModel):
     
     name = models.CharField(max_length=100)
     service_template = models.ForeignKey(ServiceTemplate, on_delete=models.CASCADE, related_name='services')
-    deployment = models.CharField(max_length=100, choices=DEPLOY_CHOICES)
-    capability_category = models.CharField(max_length=100, choices=DEPLOY_CHOICES)
+    deployment = models.CharField(max_length=100, choices=DEPLOY_CHOICES, default='development')
+    capability_category = models.CharField(max_length=100, choices=DEPLOY_CHOICES, default='deferrable')
     
     tags = models.ManyToManyField(
         to='extras.Tag',
