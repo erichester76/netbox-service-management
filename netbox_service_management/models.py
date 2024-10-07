@@ -74,7 +74,7 @@ class Service(NetBoxModel):
     def get_absolute_url(self):
         return reverse("plugins:netbox_service_management:service", args=[self.pk])
 
-class Components(NetBoxModel):
+class Component(NetBoxModel):
     name = models.CharField(max_length=100)
     template_component = models.ForeignKey(ServiceTemplateGroupComponent, on_delete=models.CASCADE, related_name='components')
     component_type = models.ForeignKey(

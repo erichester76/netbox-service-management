@@ -27,4 +27,28 @@ class ServiceTemplateGroupTable(NetBoxTable):
         model = models.ServiceTemplateGroup
         fields = ("pk", "id", "name", "actions")
         default_columns = ("name",)
+        
+class ServiceTemplateGroupComponentTable(NetBoxTable):
+    name = tables.Column(linkify=True)
+
+    class Meta(NetBoxTable.Meta):
+        model = models.ServiceTemplateGroupComponent
+        fields = ("pk", "id", "name", "actions")
+        default_columns = ("name",)
+        
+class ServiceTable(NetBoxTable):
+    name = tables.Column(linkify=True)
+
+    class Meta(NetBoxTable.Meta):
+        model = models.Service
+        fields = ("pk", "id", "name", "actions")
+        default_columns = ("name",)
+        
+class ComponentTable(NetBoxTable):
+    name = tables.Column(linkify=True)
+
+    class Meta(NetBoxTable.Meta):
+        model = models.Component
+        fields = ("pk", "id", "name", "actions")
+        default_columns = ("name",)
 

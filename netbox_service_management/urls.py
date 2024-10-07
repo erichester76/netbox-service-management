@@ -5,6 +5,66 @@ from . import models, views
 
 
 urlpatterns = (
+    path("solutions/", views.SolutionListView.as_view(), name="solution_list"),
+    path("solutions/add/", views.SolutionEditView.as_view(), name="solution_add"),
+    path("solutions/<int:pk>/", views.SolutionDetailView.as_view(), name="solution_detail"),
+    path("solutions/<int:pk>/edit/", views.SolutionEditView.as_view(), name="solution_edit"),
+    path("solutions/<int:pk>/delete/", views.SolutionDeleteView.as_view(), name="solution_delete"),
+    path(
+        "solutions/<int:pk>/changelog/",
+        ObjectChangeLogView.as_view(),
+        name="solution_changelog",
+        kwargs={"model": models.Solution},
+    ),
+    
+    path("service_templatess/", views.ServiceTemplateListView.as_view(), name="service_template_list"),
+    path("service_templates/add/", views.ServiceTemplateEditView.as_view(), name="service_template_add"),
+    path("service_templates/<int:pk>/", views.ServiceTemplateDetailView.as_view(), name="service_template_detail"),
+    path("service_templates/<int:pk>/edit/", views.ServiceTemplateEditView.as_view(), name="service_template_edit"),
+    path("service_templates/<int:pk>/delete/", views.ServiceTemplateDeleteView.as_view(), name="service_template_delete"),
+    path(
+        "service_templates/<int:pk>/changelog/",
+        ObjectChangeLogView.as_view(),
+        name="service_template_changelog",
+        kwargs={"model": models.ServiceTemplate},
+    ),
+    
+    path("service_template_groups/", views.ServiceTemplateGroupListView.as_view(), name="service_template_group_list"),
+    path("service_template_groups/add/", views.ServiceTemplateGroupEditView.as_view(), name="service_template_group_add"),
+    path("service_template_groups/<int:pk>/", views.ServiceTemplateGroupDetailView.as_view(), name="service_template_group_detail"),
+    path("service_template_groups/<int:pk>/edit/", views.ServiceTemplateGroupEditView.as_view(), name="service_template_group_edit"),
+    path("service_template_groups/<int:pk>/delete/", views.ServiceTemplateGroupDeleteView.as_view(), name="service_template_group_delete"),
+    path(
+        "service_template_groups/<int:pk>/changelog/",
+        ObjectChangeLogView.as_view(),
+        name="service_template_groupchangelog",
+        kwargs={"model": models.ServiceTemplateGroup},
+    ),
+    
+    path("service_template_group_components/", views.ServiceTemplateGroupComponentListView.as_view(), name="service_template_group_component_list"),
+    path("service_template_group_components/add/", views.ServiceTemplateGroupComponentEditView.as_view(), name="service_template_group_component_add"),
+    path("service_template_group_components/<int:pk>/", views.ServiceTemplateGroupComponentDetailView.as_view(), name="service_template_groupd_component_etail"),
+    path("service_template_groups/<int:pk>/edit/", views.ServiceTemplateGroupComponentEditView.as_view(), name="service_template_group_component_edit"),
+    path("service_template_groups/<int:pk>/delete/", views.ServiceTemplateGroupComponentDeleteView.as_view(), name="service_template_group_component_delete"),
+    path(
+        "service_template_groups/<int:pk>/changelog/",
+        ObjectChangeLogView.as_view(),
+        name="service_template_groupchangelog",
+        kwargs={"model": models.ServiceTemplateGroupComponent},
+    ),
+    
+    path("components/", views.ComponentListView.as_view(), name="component_list"),
+    path("components/add/", views.ComponentEditView.as_view(), name="component_add"),
+    path("components/<int:pk>/", views.ComponentDetailView.as_view(), name="component_detail"),
+    path("components/<int:pk>/edit/", views.ComponentEditView.as_view(), name="component_edit"),
+    path("components/<int:pk>/delete/", views.ComponentDeleteView.as_view(), name="component_delete"),
+    path(
+        "components/<int:pk>/changelog/",
+        ObjectChangeLogView.as_view(),
+        name="component_changelog",
+        kwargs={"model": models.Component},
+    ), 
+    
     path("services/", views.ServiceListView.as_view(), name="service_list"),
     path("services/add/", views.ServiceEditView.as_view(), name="service_add"),
     path("services/<int:pk>/", views.ServiceDetailView.as_view(), name="service_detail"),
