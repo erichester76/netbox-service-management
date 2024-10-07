@@ -6,6 +6,7 @@ from . import models
 
 class SolutionTable(NetBoxTable):
     name = tables.Column(linkify=True)
+    tenant = tables.Column(linkify=True)
 
     class Meta(NetBoxTable.Meta):
         model = models.Solution
@@ -14,6 +15,7 @@ class SolutionTable(NetBoxTable):
 
 class ServiceTemplateTable(NetBoxTable):
     name = tables.Column(linkify=True)
+    solution = tables.Column(linkify=True)
 
     class Meta(NetBoxTable.Meta):
         model = models.ServiceTemplate
@@ -22,6 +24,7 @@ class ServiceTemplateTable(NetBoxTable):
 
 class ServiceTemplateGroupTable(NetBoxTable):
     name = tables.Column(linkify=True)
+    service_template = tables.Column(linkify=True)
 
     class Meta(NetBoxTable.Meta):
         model = models.ServiceTemplateGroup
@@ -30,6 +33,7 @@ class ServiceTemplateGroupTable(NetBoxTable):
         
 class ServiceTemplateGroupComponentTable(NetBoxTable):
     name = tables.Column(linkify=True)
+    service_template_group = tables.Column(linkify=True)
 
     class Meta(NetBoxTable.Meta):
         model = models.ServiceTemplateGroupComponent
@@ -38,6 +42,7 @@ class ServiceTemplateGroupComponentTable(NetBoxTable):
         
 class ServiceTable(NetBoxTable):
     name = tables.Column(linkify=True)
+    solution = tables.Column(linkify=True)
 
     class Meta(NetBoxTable.Meta):
         model = models.Service
@@ -46,9 +51,11 @@ class ServiceTable(NetBoxTable):
         
 class ComponentTable(NetBoxTable):
     name = tables.Column(linkify=True)
-
+    content_object = tables.Column(linkify=True)
+    service = tables.Column(linkify=True
+                            )
     class Meta(NetBoxTable.Meta):
         model = models.Component
-        fields = ("pk", "id", "name", "service", "template_component", "actions")
+        fields = ("pk", "id", "name", "service", "template_component", "content_object", "actions")
         default_columns = ("name", "service", "template_component")
 
