@@ -33,4 +33,4 @@ class ComponentForm(NetBoxModelForm):
 class ServiceForm(NetBoxModelForm):
     class Meta:
         model = models.Service
-        fields = ("name", "service_template", "deployment", "tags")
+        fields = ("name", "service_template", "deployment", "capability_category", "tags")

@@ -23,7 +23,8 @@ class ServiceTemplate(NetBoxModel):
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE, related_name='service_templates')
     tags = models.ManyToManyField(
     to='extras.Tag',
-    related_name='netbox_service_management_service_templates'  
+    related_name='netbox_service_management_service_templates'
+
     # Custom related_name to avoid conflict with ipam->services
     )
     class Meta:
@@ -82,7 +83,8 @@ class Service(NetBoxModel):
     service_template = models.ForeignKey(ServiceTemplate, on_delete=models.CASCADE, related_name='services')
     deployment = models.CharField(max_length=100, choices=DEPLOY_CHOICES, default='development')
     capability_category = models.CharField(max_length=100, choices=DEPLOY_CHOICES, default='deferrable')
-    
+    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name="services")
+ 
     tags = models.ManyToManyField(
         to='extras.Tag',
         related_name='netbox_service_management_services'  
@@ -102,6 +104,7 @@ class Component(NetBoxModel):
     name = models.CharField(max_length=100)
     service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='components')
     template_component = models.ForeignKey(ServiceTemplateGroupComponent, on_delete=models.CASCADE, related_name='components')
+    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name="services")
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
