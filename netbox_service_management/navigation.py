@@ -14,17 +14,6 @@ items = (
         ] 
     ),
     PluginMenuItem(
-        link="plugins:netbox_service_management:service_template_list",
-        link_text="Service Templates",
-        buttons=[
-            PluginMenuButton(
-                link="plugins:netbox_service_management:service_template_add",
-                title="Add",
-                icon_class="mdi mdi-plus-thick",
-            )
-        ]
-    ),  
-    PluginMenuItem(
         link="plugins:netbox_service_management:service_list",
         link_text="Services",
         buttons=[
@@ -35,6 +24,28 @@ items = (
             )
         ]   
     ),  
+    PluginMenuItem(
+        link="plugins:netbox_service_management:service_template_list",
+        link_text="Service Templates",
+        buttons=[
+            PluginMenuButton(
+                link="plugins:netbox_service_management:service_template_add",
+                title="Add",
+                icon_class="mdi mdi-plus-thick",
+            )
+        ]
+    ), 
+    PluginMenuItem(
+        link="plugins:netbox_service_management:service_template_group_list",
+        link_text="Service Template Groups",
+        buttons=[
+            PluginMenuButton(
+                link="plugins:netbox_service_management:service_template_group_add",
+                title="Add",
+                icon_class="mdi mdi-plus-thick",
+            )
+        ]
+    ),   
     PluginMenuItem(
         link="plugins:netbox_service_management:component_list",
         link_text="Components",
