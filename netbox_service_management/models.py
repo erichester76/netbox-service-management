@@ -3,11 +3,11 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.urls import reverse
 from netbox.models import NetBoxModel
-
+from tenancy.models import Tenant
 
 class Solution(NetBoxModel):
     name = models.CharField(max_length=100)
-    
+    tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,related_name="solutions")
     class Meta:
         ordering = ("name",)
 
@@ -45,7 +45,7 @@ class ServiceTemplateGroup(NetBoxModel):
     
 class ServiceTemplateGroupComponent(NetBoxModel):
     name = models.CharField(max_length=100)
-    template_group = models.ForeignKey(ServiceTemplateGroup, on_delete=models.CASCADE, related_name='applications')
+    service_template_group = models.ForeignKey(ServiceTemplateGroup, on_delete=models.CASCADE, related_name='applications')
     
     class Meta:
         ordering = ("name",)
@@ -59,6 +59,7 @@ class ServiceTemplateGroupComponent(NetBoxModel):
 class Service(NetBoxModel):
     name = models.CharField(max_length=100)
     service_template = models.ForeignKey(ServiceTemplate, on_delete=models.CASCADE, related_name='services')
+    deployment = models.CharField(max_length=100)
     tags = models.ManyToManyField(
         to='extras.Tag',
         related_name='netbox_service_management_services'  
@@ -76,6 +77,7 @@ class Service(NetBoxModel):
 
 class Component(NetBoxModel):
     name = models.CharField(max_length=100)
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='components')
     template_component = models.ForeignKey(ServiceTemplateGroupComponent, on_delete=models.CASCADE, related_name='components')
     component_type = models.ForeignKey(
         ContentType,

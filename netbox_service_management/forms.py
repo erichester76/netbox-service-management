@@ -13,24 +13,24 @@ class SolutionForm(NetBoxModelForm):
 class ServiceTemplateForm(NetBoxModelForm):
     class Meta:
         model = models.ServiceTemplate
-        fields = ("name", "tags")
+        fields = ("name", "solution", "tags")
         
 class ServiceTemplateGroupForm(NetBoxModelForm):
     class Meta:
         model = models.ServiceTemplateGroup
-        fields = ("name", "tags")
+        fields = ("name", "service_template", "tags")
         
 class ServiceTemplateGroupComponentForm(NetBoxModelForm):
     class Meta:
         model = models.ServiceTemplateGroupComponent
-        fields = ("name", "tags")
+        fields = ("name", "service_template_group" "tags")
         
 class ComponentForm(NetBoxModelForm):
     class Meta:
         model = models.Component
-        fields = ("name", "tags")                        
+        fields = ("name", "service", "template_component", "tags")                        
 
 class ServiceForm(NetBoxModelForm):
     class Meta:
         model = models.Service
-        fields = ("name", "tags")
+        fields = ("name", "service_template", "deployment", "tags")
