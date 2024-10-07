@@ -5,7 +5,12 @@ from netbox.models import NetBoxModel
 
 class Service(NetBoxModel):
     name = models.CharField(max_length=100)
-
+    tags = models.ManyToManyField(
+        to='extras.Tag',
+        related_name='netbox_service_management_services'  
+        # Custom related_name to avoid conflict with ipam->services
+    )
+    
     class Meta:
         ordering = ("name",)
 
