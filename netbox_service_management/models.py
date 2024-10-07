@@ -16,7 +16,7 @@ class Solution(NetBoxModel):
         return self.name
 
     def get_absolute_url(self):
-        return reverse("plugins:netbox_service_management:solution", args=[self.pk])
+        return reverse("plugins:netbox_service_management:solution_detail", args=[self.pk])
 
 class ServiceTemplate(NetBoxModel):
     name = models.CharField(max_length=100)
