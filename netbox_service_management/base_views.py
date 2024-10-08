@@ -115,7 +115,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=20)
+        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=7)
 
         return {
             'object_name': object_name,
@@ -170,7 +170,7 @@ class BaseDetailView(generic.ObjectView):
             color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
 
             # Sanitize the object name for use in the diagram
-            display_name = re.sub(r'[^a-zA-Z0-9_\ \/]', '', display_name)  # Replace quotes to avoid breaking Mermaid syntax
+            display_name = re.sub(r'[^a-zA-Z0-9_\ \/]', '', obj)  # Replace quotes to avoid breaking Mermaid syntax
 
             shape = f'{label}([{display_name}]):::color_{obj_type}'
             # Add the current object to the diagram
