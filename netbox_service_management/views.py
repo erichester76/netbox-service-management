@@ -1,9 +1,5 @@
-from django.db.models import Count
-from django.urls import reverse
-from django.shortcuts import render, redirect
 from netbox.views import generic
 from . import filtersets, forms, models, tables
-from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
 
 
 class SolutionDetailView(generic.ObjectView):
