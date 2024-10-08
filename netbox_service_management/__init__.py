@@ -13,7 +13,7 @@ class ServiceManagementConfig(PluginConfig):
     name = "netbox_service_management"
     verbose_name = "NetBox Service Management Plugin"
     description = "NetBox plugin for Service Management."
-    version = "__version__"
+    version = __version__
     base_url = "netbox_service_management"
 
 
