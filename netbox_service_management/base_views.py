@@ -236,7 +236,7 @@ class BaseDetailView(generic.ObjectView):
             Adds a related object to the diagram if it hasn't been visited.
             """
             related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-            if (related_label, label) not in processed_relationships:
+            if (related_label, label) not in processed_relationships and (label, related_label) not in processed_relationships:
                 add_node(related_obj, label, current_depth + 1)
 
         def handle_component_specifics(obj, label):
