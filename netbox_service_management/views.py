@@ -136,6 +136,7 @@ class BaseDetailView(generic.ObjectView):
 
             # Add the current object to the diagram
             diagram_line = f'{label}["{obj._meta.verbose_name}: {obj}"]'
+            nonlocal diagram 
             diagram += diagram_line + "\n"
 
             # Add an edge from the parent node if applicable
