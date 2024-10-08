@@ -10,32 +10,14 @@ class SolutionDetailView(generic.ObjectView):
     queryset = models.Solution.objects.all()
     
     def get_extra_context(self, request, instance):
-        related_tables = []
-        # Loop over fields and identify relationships
-        for field in instance._meta.get_fields():
-            if field.is_relation:  # Check if the field is a relationship (FK, M2M, O2O)
-                try:
-                    # Handle ManyToMany and Reverse ForeignKey relations
-                    if field.many_to_many or field.one_to_many:
-                        related_objects = getattr(instance, field.name).all()
-                    # Handle ForeignKey and OneToOne relations
-                    elif isinstance(field, (ForeignKey, OneToOneField)):
-                        related_objects = [getattr(instance, field.name)] if getattr(instance, field.name) else []
-                    else:
-                        related_objects = []
-
-                    # Append the related objects if any exist
-                    related_tables.append({
-                        'name': field.name,  # Name of the related field
-                        'objects': related_objects,  # The related objects
-                    })
-                except AttributeError:
-                    # Handle the case where the relationship attribute isn't available
-                    pass
+        # Get all ServiceRole instances related to this Service
+        service_templates = models.ServiceTemplates.objects.filter(solution=instance)
+        service_templates_table = tables.ServiceTemplateTable(service_templates)
 
         return {
-            'related_tables': related_tables,
-        }
+            'service_templates_table': service_templates_table,
+            'service_templates': service_templates,
+        }  
 
 class SolutionListView(generic.ObjectListView):
     queryset = models.Solution.objects.all()
