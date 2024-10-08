@@ -7,6 +7,27 @@ from . import filtersets, forms, models, tables
 class SolutionDetailView(generic.ObjectView):
     queryset = models.Solution.objects.all()
 
+    def get_extra_context(self, request, instance):
+        related_tables = []
+        # Loop over fields and identify relationships
+        for field in instance._meta.get_fields():
+            if field.is_relation:  # Check if the field is a relationship (FK, M2M, O2O)
+                # Handle ManyToMany and Reverse ForeignKey relations
+                if field.many_to_many or field.one_to_many:
+                    related_objects = getattr(instance, field.name).all()
+                # Handle ForeignKey and OneToOne relations
+                elif isinstance(field, (ForeignKey, OneToOneField)):
+                    related_objects = [getattr(instance, field.name)] if getattr(instance, field.name) else []
+
+                related_tables.append({
+                    'name': field.name,  # Name of the related field
+                    'objects': related_objects,  # The related objects
+                })
+
+        return {
+            'related_tables': related_tables,
+        }
+
 class SolutionListView(generic.ObjectListView):
     queryset = models.Solution.objects.all()
     table = tables.SolutionTable
