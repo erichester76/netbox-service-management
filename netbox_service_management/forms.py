@@ -1,5 +1,5 @@
 from django import forms
-from django.db.models import Q
+from django.db import models as djmodels  # Rename django.db.models to djmodels
 from ipam.models import Prefix
 from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
 from utilities.forms.fields import CommentField, DynamicModelChoiceField
@@ -31,7 +31,7 @@ class ServiceTemplateGroupComponentForm(NetBoxModelForm):
 class ComponentForm(forms.ModelForm):
     content_type = forms.ModelChoiceField(
         queryset=ContentType.objects.filter(
-            models.Q(app_label='dcim') | models.Q(app_label='ipam')
+            djmodels.Q(app_label='dcim') | djmodels.Q(app_label='ipam')
         ),
         label="Object Type",
         required=True,
