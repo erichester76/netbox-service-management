@@ -193,7 +193,7 @@ class BaseDetailView(generic.ObjectView):
                     service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
                 
                     # Add the explicit link from Component to Service
-                    if (label, service_label) not in processed_relationships and (service_label, label) not in processed_relationships 
+                    if (label, service_label) not in processed_relationships and (service_label, label) not in processed_relationships:
                         diagram += f"{label} --> {service_label}\n"
                         processed_relationships.add((label, service_label))
                         
