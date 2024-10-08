@@ -92,7 +92,7 @@ class BaseDetailView(generic.ObjectView):
                     if hasattr(related_model, 'get_absolute_url'):
                         model_name = related_model._meta.model_name
                         add_url = reverse(
-                            f'plugins:netbox_servicemanage_plugin:{model_name}_add'
+                            f'plugins:netbox_service_management:{model_name}_add'
                         )   
                         # Pre-fill the linking field with the current object's ID, if possible
                         add_url += f'?{instance._meta.model_name}={instance.pk}'
