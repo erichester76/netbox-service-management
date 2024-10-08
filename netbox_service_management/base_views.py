@@ -156,7 +156,7 @@ class BaseDetailView(generic.ObjectView):
 
             # Add an edge from the parent node if applicable and avoid duplicates
             if parent_label and (parent_label, label) not in processed_relationships:
-                diagram += f"{parent_label} --> {label}\n"
+                diagram += f"{label} --> {parent_label}\n"
                 processed_relationships.add((parent_label, label))
 
             # Define fields to skip (e.g., tags, problematic reverse relationships)
@@ -181,7 +181,7 @@ class BaseDetailView(generic.ObjectView):
                     service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
                 
                     # Add the explicit link from Component to Service
-                    if (service_label, label) not in processed_relationships:
+                    if (abel, service_label) not in processed_relationships:
                         diagram += f"{label} --> {service_label}\n"
                         processed_relationships.add((label, service_label))
                         
@@ -190,9 +190,9 @@ class BaseDetailView(generic.ObjectView):
                     stgc_label = f"{sanitize_label(stgc._meta.model_name)}_{stgc.pk}"
                 
                     # Add the explicit link from Component to Service
-                    if (service_label, label) not in processed_relationships:
+                    if (label, stgc_label) not in processed_relationships:
                         diagram += f"{label} --> {stgc_label}\n"
-                        processed_relationships.add((label, service_label))
+                        processed_relationships.add((label, stgc_label))
                 
                 # Continue processing relationships for Service, preserving its other connections
                 # add_node(service, label, current_depth)
