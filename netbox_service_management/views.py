@@ -162,13 +162,13 @@ class BaseDetailView(generic.ObjectView):
                         # Handle the case where the field is not accessible
                         continue
 
-            # Process reverse relationships (auto-created relationships)
-            for rel in obj._meta.get_fields():
-                if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
-                    related_objects = getattr(obj, rel.get_accessor_name(), None)
-                    if related_objects is not None and hasattr(related_objects, 'all'):
-                        for related_obj in related_objects.all():
-                            add_node(related_obj, label)
+            # # Process reverse relationships (auto-created relationships)
+            # for rel in obj._meta.get_fields():
+            #     if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
+            #         related_objects = getattr(obj, rel.get_accessor_name(), None)
+            #         if related_objects is not None and hasattr(related_objects, 'all'):
+            #             for related_obj in related_objects.all():
+            #                 add_node(related_obj, label)
 
         # Start the diagram with the main object
         add_node(instance)
