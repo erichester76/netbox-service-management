@@ -26,7 +26,7 @@
 </div>
 <div class="col col-md-5">
 {% for related_table in related_tables %}
-    <div class="card mt-3">
+    <div class="card">
         <h5 class="card-header">{{ related_table.name|capfirst }}</h5>
         <div class="card-body">
                 {% render_table related_table.table %}
