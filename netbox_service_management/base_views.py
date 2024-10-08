@@ -144,7 +144,7 @@ class BaseDetailView(generic.ObjectView):
 
             # Sanitize the object name for use in the diagram
             display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
-            shape = f'{label}[({obj._meta.verbose_name}: {display_name})]'
+            shape = f'{label}([{obj._meta.verbose_name}: {display_name}])'
             
             # Add the current object to the diagram
             nonlocal diagram
@@ -180,7 +180,7 @@ class BaseDetailView(generic.ObjectView):
                 service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
                 
                 # Add the explicit link from Component to Service
-                if (label, service_label) not in processed_relationships:
+                if (service_label, label) not in processed_relationships:
                     diagram += f"{service_label} --> {label}\n"
                     processed_relationships.add((label, service_label))
                 
@@ -191,7 +191,7 @@ class BaseDetailView(generic.ObjectView):
             if isinstance(obj, Service) and obj.service_template:
                 service_template = obj.service_template
                 st_label = f"{sanitize_label(service_template._meta.model_name)}_{service_template.pk}"
-                if (label, st_label) not in processed_relationships:
+                if (st_label, label) not in processed_relationships:
                     diagram += f"{st_label} --> {label}\n"
                     processed_relationships.add((label, st_label))
                     add_node(service_template, label, current_depth)
