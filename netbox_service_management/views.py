@@ -6,23 +6,30 @@ class SolutionDetailView(generic.ObjectView):
     queryset = models.Solution.objects.all()
     
     def get_extra_context(self, request, instance):
-        
-        related_tables = []
-        
+        # Extract fields and their values for the object
+        field_data = []
+        for field in instance._meta.get_fields():
+            if not field.is_relation:  # Skip relationships if not needed
+                value = getattr(instance, field.name, None)
+                field_data.append({
+                    'name': field.verbose_name if hasattr(field, 'verbose_name') else field.name,
+                    'value': value,
+                })
+
         # Get all ServiceTemplate instances related to this Solution
         service_templates = models.ServiceTemplate.objects.filter(solution=instance)
         service_templates_table = tables.ServiceTemplateTable(service_templates)
-        related_tables.append({'name':'service_templates','objects': service_templates_table})
-
+        
         # Get all Services that are linked to the above ServiceTemplates
         services = models.Service.objects.filter(service_template__in=service_templates)
         services_table = tables.ServiceTable(services)
-        related_tables.append({'name':'services','objects': services_table})
-        
+
         return {
-            'related_tables': related_tables,
+            'field_data': field_data,
+            'service_templates_table': service_templates_table,
+            'services_table': services_table,
         }
-        
+    
 class SolutionListView(generic.ObjectListView):
     queryset = models.Solution.objects.all()
     table = tables.SolutionTable

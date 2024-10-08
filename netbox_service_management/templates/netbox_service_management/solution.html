@@ -2,38 +2,34 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<div class="row mb-3">
-  <div class="col col-md-6">
+<h2>Solution: {{ object.name }}</h2>
+
+<div class="card">
     <h5 class="card-header">Solution Details</h5>
     <div class="card-body">
         <table class="table table-hover attr-table">
-            {% for field in object._meta.get_fields %}
-                {% if not field.is_relation %}  <!-- Exclude related fields if not needed -->
-                    <tr>
-                        <th scope="row">{{ field.verbose_name|capfirst }}</th>
-                        <td>{{ object|getattr:field.name }}</td>
-                    </tr>
-                {% endif %}
+            {% for field in field_data %}
+                <tr>
+                    <th scope="row">{{ field.name|capfirst }}</th>
+                    <td>{{ field.value }}</td>
+                </tr>
             {% endfor %}
         </table>
     </div>
-  </div>
-    {% include 'inc/panels/custom_fields.html' %}
-  </div>
-  
-<div class="col col-md-6">
-  {% for table in related_tables %}
-  <div class="card">
-      <h5 class="card-header">{{ table.name|capfirst }}</h5>
-      <table class="table table-hover attr-table">
-          <tbody>
-           {% render_table table.objects %}
-          </tbody>
-      </table>
-  </div>
-  {% endfor %}
-  {% include 'inc/panels/tags.html' %}
-  {% include 'inc/panels/comments.html' %}
 </div>
+
+<div class="card mt-3">
+    <h5 class="card-header">Service Templates</h5>
+    <div class="card-body">
+        {% render_table service_templates_table %}
+    </div>
 </div>
-{% endblock content %}
+
+<div class="card mt-3">
+    <h5 class="card-header">Services Using These Templates</h5>
+    <div class="card-body">
+        {% render_table services_table %}
+    </div>
+</div>
+
+{% endblock %}
