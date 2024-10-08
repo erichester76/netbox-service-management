@@ -20,7 +20,7 @@ class ServiceTemplateTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = models.ServiceTemplate
         fields = ("pk", "id", "name", "solution", "actions")
-        default_columns = ("name","solution")
+        default_columns = ("name", "solution")
 
 class ServiceTemplateGroupTable(NetBoxTable):
     name = tables.Column(linkify=True)

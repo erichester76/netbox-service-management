@@ -36,6 +36,17 @@ items = (
         ]
     ),   
     PluginMenuItem(
+        link="plugins:netbox_service_management:servicetemplategroupcomponent_list",
+        link_text="Service Template Components",
+        buttons=[
+            PluginMenuButton(
+                link="plugins:netbox_service_management:servicetemplategroupcomponent_add",
+                title="Add",
+                icon_class="mdi mdi-plus-thick",
+            )
+        ]
+    ),   
+    PluginMenuItem(
         link="plugins:netbox_service_management:service_list",
         link_text="Services",
         buttons=[
@@ -48,7 +59,7 @@ items = (
     ),  
     PluginMenuItem(
         link="plugins:netbox_service_management:component_list",
-        link_text="Components",
+        link_text="Service Components",
         buttons=[
             PluginMenuButton(
                 link="plugins:netbox_service_management:component_add",
