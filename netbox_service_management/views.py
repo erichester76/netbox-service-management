@@ -166,25 +166,25 @@ class BaseDetailView(generic.ObjectView):
             # Define fields to skip (e.g., tags, problematic reverse relationships)
             excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
 
-            # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
-            for field in obj._meta.get_fields():
-                if field.is_relation and not field.auto_created and field.name not in excluded_fields:
-                    if current_depth + 1 > max_depth:
-                        continue
-                    try:
-                        related_object = getattr(obj, field.name)
-                        if related_object:
-                            # Handle ManyToMany or reverse relationships
-                            if hasattr(related_object, 'all'):
-                                for rel_obj in related_object.all():
-                                    if (label, sanitize_label(rel_obj._meta.model_name) + f"_{rel_obj.pk}") not in processed_relationships:
-                                        add_node(rel_obj, label, current_depth + 1)
-                            else:
-                                related_label = f"{sanitize_label(related_object._meta.model_name)}_{related_object.pk}"
-                                if (label, related_label) not in processed_relationships:
-                                    add_node(related_object, label, current_depth + 1)
-                    except AttributeError:
-                        continue
+            # # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
+            # for field in obj._meta.get_fields():
+            #     if field.is_relation and not field.auto_created and field.name not in excluded_fields:
+            #         if current_depth + 1 > max_depth:
+            #             continue
+            #         try:
+            #             related_object = getattr(obj, field.name)
+            #             if related_object:
+            #                 # Handle ManyToMany or reverse relationships
+            #                 if hasattr(related_object, 'all'):
+            #                     for rel_obj in related_object.all():
+            #                         if (label, sanitize_label(rel_obj._meta.model_name) + f"_{rel_obj.pk}") not in processed_relationships:
+            #                             add_node(rel_obj, label, current_depth + 1)
+            #                 else:
+            #                     related_label = f"{sanitize_label(related_object._meta.model_name)}_{related_object.pk}"
+            #                     if (label, related_label) not in processed_relationships:
+            #                         add_node(related_object, label, current_depth + 1)
+            #         except AttributeError:
+            #             continue
 
             # Process GenericForeignKey if it exists
             if isinstance(obj, Component) and obj.content_object:
