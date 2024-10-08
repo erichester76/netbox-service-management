@@ -134,13 +134,13 @@ class BaseDetailView(generic.ObjectView):
         
          # Define colors for each model type
         color_map = {
-            'solution': '#D0E8FF',  # Light blue
-            'service': '#A4D1FF',   # Medium light blue
-            'service_template': '#78B8FF',  # Medium blue
-            'service_template_group': '#4C9FFF',  # Darker blue
-            'service_template_group_component': '#2886FF',  # Even darker blue
-            'component': '#0F6EFF',  # Dark blue
-        } 
+            'solution': '#3498db',  # Blue for general actions
+            'service': '#2ecc71',   # Green for "Add"
+            'service_template': '#e67e22',  # Orange for "Edit" (pencil)
+            'service_template_group': '#3498db',  # Blue
+            'service_template_group_component': '#e67e22',  # Orange
+            'component': '#e74c3c',  # Red for "Delete"
+        }
         
         # Define fields to skip (e.g., tags, problematic reverse relationships)
         excluded_fields = {
