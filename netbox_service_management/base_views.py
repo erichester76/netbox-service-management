@@ -128,7 +128,6 @@ class BaseDetailView(generic.ObjectView):
 
     def generate_mermaid_diagram(self, instance, max_depth=1):
         # Initialize the diagram string
-        diagram = ''
         diagram = "graph LR\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
@@ -185,7 +184,7 @@ class BaseDetailView(generic.ObjectView):
                 diagram += f'click {label} "{obj.get_absolute_url()}"\n'
 
             # Add an edge from the parent node if applicable and avoid duplicates
-            if parent_label and (parent_label, label) not in processed_relationships:
+            if parent_label and (parent_label, label) not in processed_relationships and (label, parent_label) not in processed_relationships:
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
 
