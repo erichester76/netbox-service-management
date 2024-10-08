@@ -23,8 +23,9 @@
         </table>
     </div>
 </div>
-
-<div class="col col-md-6">
+</div>
+</div>
+<div class="row mb-3">
 {% for related_table in related_tables %}
     <div class="card mt-3">
         <h5 class="card-header">{{ related_table.name|capfirst }}</h5>
@@ -36,6 +37,6 @@
 
 {% include 'inc/panels/tags.html' %}
 {% include 'inc/panels/comments.html' %}
-  </div>
+</div>
 </div>
 {% endblock %}
