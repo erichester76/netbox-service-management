@@ -125,10 +125,6 @@ class BaseDetailView(generic.ObjectView):
             'related_tables': related_tables,
             'mermaid_diagram': mermaid_diagram,
         }
-        
-    def sanitize_label(text):
-        """Sanitize a text string to be used in a Mermaid node."""
-        return re.sub(r'[^a-zA-Z0-9_]', '_', text)
 
     def generate_mermaid_diagram(self, instance, max_depth=1):
         # Initialize the diagram string
