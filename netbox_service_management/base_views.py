@@ -174,7 +174,7 @@ class BaseDetailView(generic.ObjectView):
                             if (related_label, label) not in processed_relationships:
                                 add_node(related_obj, label, current_depth + 1)
 
-            # Handle the specific relationship from Component to Service
+            """ # Handle the specific relationship from Component to Service
             if isinstance(obj, Component) and obj.service:
                 service = obj.service
                 service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
@@ -203,7 +203,7 @@ class BaseDetailView(generic.ObjectView):
                 if (label, st_label) not in processed_relationships:
                     diagram += f"{label} --> {st_label}\n"
                     processed_relationships.add((label, st_label))
-                    add_node(service_template, label, current_depth)
+                    add_node(service_template, label, current_depth) """
 
                                 
         # Start the diagram with the main object
