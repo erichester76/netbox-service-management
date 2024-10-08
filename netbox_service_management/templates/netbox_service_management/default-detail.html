@@ -27,10 +27,13 @@
 <div class="col col-md-6">
 {% for related_table in related_tables %}
     <div class="card">
-        <h5 class="card-header">{{ related_table.name|title }}{% if related_table.add_url %}
+        <h5 class="card-header">{{ related_table.name|title }}
+            {% if related_table.add_url %}
             <a href="{{ related_table.add_url }}" class="btn btn-sm btn-primary float-right">
-                + Add
-            </a></h5>
+                <i class="mdi mdi-plus"></i>
+            </a>
+            {% endif %}
+        </h5>
         <div class="card-body">
                 {% render_table related_table.table %}
         </div>
