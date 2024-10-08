@@ -129,6 +129,15 @@ class BaseDetailView(generic.ObjectView):
         diagram = "graph LR\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
+         # Define colors for each model type
+        color_map = {
+            'solution': '#FFDDC1',
+            'service': '#C1E1C1',
+            'service_template': '#C1D3FF',
+            'service_template_group': '#FFD1DC',
+            'service_template_group_component': '#FFFACD',
+            'component': '#E2C1FF',
+        }
         
         def sanitize_label(text):
             """Sanitize a text string to be used in a Mermaid node."""
@@ -142,10 +151,13 @@ class BaseDetailView(generic.ObjectView):
                 return
             visited.add(label)
 
+            # Get the color for the current object type
+            obj_type = obj._meta.model_name.lower()
+            color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
+
             # Sanitize the object name for use in the diagram
             display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
-            shape = f'{label}([{display_name}])'
-            
+            shape = f'{label}["{display_name}"]:::color_{obj_type}'
             # Add the current object to the diagram
             nonlocal diagram
             diagram += shape + "\n"
@@ -210,4 +222,15 @@ class BaseDetailView(generic.ObjectView):
         # Start the diagram with the main object
         add_node(instance)
 
+        # Add the color classes and legend to the diagram
+        for obj_type, color in color_map.items():
+            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px;\n'
+        
+        # Add a legend using a subgraph
+        diagram += "subgraph Legend\n"
+        for obj_type, color in color_map.items():
+            diagram += f'color_{obj_type}["{obj_type.capitalize()}"]:::color_{obj_type}\n'
+        diagram += "end\n"
+            
         return diagram
+    
