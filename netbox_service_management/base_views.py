@@ -172,7 +172,7 @@ class BaseDetailView(generic.ObjectView):
             color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
 
             # Sanitize the object name for use in the diagram
-            display_name = re.sub(r'[^a-zA-Z0-9_\ \/]', '', str(obj))  # Replace quotes to avoid breaking Mermaid syntax
+            display_name = re.sub(r'[^a-zA-Z0-9_\.\ \/]', '', str(obj))  # Replace quotes to avoid breaking Mermaid syntax
 
             shape = f'{label}({display_name}):::color_{obj_type}'
             # Add the current object to the diagram
@@ -212,19 +212,19 @@ class BaseDetailView(generic.ObjectView):
             # Handle the specific relationship from Component to Service to avoid circular reference loop
             if isinstance(obj, Component):
                 if obj.service:
-                    service = obj.service
-                    service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
-                    if (label, service_label) not in processed_relationships:
-                        diagram += f"{label} --> {service_label}\n"
-                        processed_relationships.add((label, service_label))
-                        
+                    diagram += f"component_{obj.pk} --> service_{obj.service.pk}\n"
+                    processed_relationships.add(f"component_{obj.pk}", f"service_{obj.service.pk}")
+
+                # Add the relationship from the component to its template component
+                if obj.template_component:
+                     diagram += f"servicetemplategroupcomponent_{obj.template_component.pk} --> component_{obj.pk}\n"
+                     processed_relationships.add(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
+
                 # Add the explicit link from Component to ServiceTemplateComponentGroup
                 if obj.template_component:
-                    stgc = obj.template_component
-                    stgc_label = f"{sanitize_label(stgc._meta.model_name)}_{stgc.pk}"
-                    if (label, stgc_label) not in processed_relationships:
-                        diagram += f"{stgc_label} --> {label}\n"
-                        processed_relationships.add((label, stgc_label))
+                    diagram += f"service_{obj.pk} --> servicetemplate_{obj.service_template.pk}\n"
+                    processed_relationships.add(f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}")
+
                                 
         # Start the diagram with the main object
         add_node(instance)
