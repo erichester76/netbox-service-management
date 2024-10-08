@@ -2,8 +2,7 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-<div class="row mb-3">
-<div class="col col-md-6">
+<div class="col col-md-4">
 <div class="card">
     <h5 class="card-header">{{ object_name|capfirst }} Details</h5>
     <div class="card-body">
@@ -24,7 +23,7 @@
     </div>
 </div>
 </div>
-<div class="col col-md-4">
+<div class="col col-md-5">
 {% for related_table in related_tables %}
     <div class="card mt-3">
         <h5 class="card-header">{{ related_table.name|capfirst }}</h5>
@@ -36,6 +35,5 @@
 
 {% include 'inc/panels/tags.html' %}
 {% include 'inc/panels/comments.html' %}
-</div>
 </div>
 {% endblock %}
