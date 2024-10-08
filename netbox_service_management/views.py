@@ -135,7 +135,8 @@ class BaseDetailView(generic.ObjectView):
             visited.add(label)
 
             # Add the current object to the diagram
-            diagram_line = f'{label}["{obj._meta.verbose_name}: {obj}"]'
+            shape = "(( ))" if obj._meta.model_name == 'service' else "[ ]"
+            diagram_line = f'{label}{shape}["{obj._meta.verbose_name}: {obj}"]'            
             nonlocal diagram
             diagram += diagram_line + "\n"
 
