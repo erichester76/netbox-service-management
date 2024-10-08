@@ -115,19 +115,20 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=7)
+        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=7)
 
         return {
             'object_name': object_name,
             'field_data': field_data,
             'related_tables': related_tables,
             'mermaid_diagram': mermaid_diagram,
+            'mermaid_legend': mermaid_legend,
         }
 
     def generate_mermaid_diagram(self, instance, max_depth=1):
         # Initialize the diagram string
         diagram = ''
-        #diagram = "graph LR\n"
+        diagram = "graph LR\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
         
@@ -245,5 +246,5 @@ class BaseDetailView(generic.ObjectView):
         for obj_type, color in color_map.items():
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
 
-        return legend + diagram
+        return diagram, legend
     
