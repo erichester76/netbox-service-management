@@ -136,7 +136,7 @@ class BaseDetailView(generic.ObjectView):
             'service': '#A4D1FF',   # Medium light blue
             'servicetemplate': '#78B8FF',  # Medium blue
             'servicetemplategroup': '#4C9FFF',  # Darker blue
-            'servicetemplategroup_omponent': '#2886FF',  # Even darker blue
+            'servicetemplategroupcomponent': '#2886FF',  # Even darker blue
             'component': '#0F6EFF',  # Dark blue
         } 
         
@@ -214,6 +214,7 @@ class BaseDetailView(generic.ObjectView):
                         diagram += f"{label} --> {service_label}\n"
                         processed_relationships.add((label, service_label))
                         
+                # Add the explicit link from Component to ServiceTemplateComponentGroup
                 if obj.template_component:
                     stgc = obj.template_component
                     stgc_label = f"{sanitize_label(stgc._meta.model_name)}_{stgc.pk}"
