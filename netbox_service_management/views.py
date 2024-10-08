@@ -138,25 +138,25 @@ class BaseDetailView(generic.ObjectView):
 
         def add_node(obj, parent_label=None, current_depth=0):
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
-            if label not in visited:
-                visited.add(label)
+            if label in visited or current_depth > max_depth:
+                return
+            visited.add(label)
 
-                # Sanitize the object name for use in the diagram
-                display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
-                shape = f'{label}["{obj._meta.verbose_name}: {display_name}"]'  # Use square brackets for a standard box shape
+            # Sanitize the object name for use in the diagram
+            display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
+            shape = f'{label}["{obj._meta.verbose_name}: {display_name}"]'  # Use square brackets for a standard box shape
+            
+            # Add the current object to the diagram
+            nonlocal diagram
+            diagram += shape + "\n"
 
-                # Add the current object to the diagram
-                nonlocal diagram
-                diagram += shape + "\n"
-
-                # Add a click event if the object has a URL
-                if hasattr(obj, 'get_absolute_url'):
-                    diagram += f'click {label} "{obj.get_absolute_url()}"\n'
+            # Add a click event if the object has a URL
+            if hasattr(obj, 'get_absolute_url'):
+                diagram += f'click {label} "{obj.get_absolute_url()}"\n'
 
             # Add an edge from the parent node if applicable
-            if parent_label and (parent_label, label) not in connections:
+            if parent_label:
                 diagram += f"{parent_label} --> {label}\n"
-                connections.add((parent_label, label))
 
             # Define fields to skip (e.g., tags, problematic reverse relationships)
             excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
@@ -164,6 +164,7 @@ class BaseDetailView(generic.ObjectView):
             # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
             for field in obj._meta.get_fields():
                 if field.is_relation and not field.auto_created and field.name not in excluded_fields:
+                    # Stop if max depth is reached
                     if current_depth + 1 > max_depth:
                         continue
                     try:
@@ -187,12 +188,24 @@ class BaseDetailView(generic.ObjectView):
             # Process reverse relationships (auto-created relationships)
             for rel in obj._meta.get_fields():
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
+                    # Stop if max depth is reached
                     if current_depth + 1 > max_depth:
                         continue
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
                             add_node(related_obj, label, current_depth + 1)
+
+            # Ensure that any back-references to the service are preserved
+            # This part is crucial for keeping the relationship between Component and Service visible
+            if isinstance(obj, Component):
+                # Add an explicit link to the related service
+                service = obj.service
+                if service:
+                    service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
+                    diagram += f"{label} --> {service_label}\n"
+                    # Add the service as a node if it hasn't been visited
+                    add_node(service, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
