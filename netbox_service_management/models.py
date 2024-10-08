@@ -32,6 +32,10 @@ class ServiceTemplate(NetBoxModel):
     def __str__(self):
         return self.name
 
+    def get_services_list(self):
+        """Return a comma-separated string of services associated with this template."""
+        return ", ".join(service.name for service in self.services.all())
+
     def get_absolute_url(self):
         return reverse("plugins:netbox_service_management:servicetemplate", args=[self.pk])
     
