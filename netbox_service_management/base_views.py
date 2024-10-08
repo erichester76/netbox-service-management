@@ -213,7 +213,7 @@ class BaseDetailView(generic.ObjectView):
             if isinstance(obj, Component):
                 if obj.service:
                     diagram += f"component_{obj.pk} --> service_{obj.service.pk}\n"
-                    processed_relationships.add((f"component_{obj.pk}", f"service_{obj.service.pk}")s)
+                    processed_relationships.add((f"component_{obj.pk}", f"service_{obj.service.pk}"))
 
                 # Add the relationship from the component to its template component
                 if obj.template_component:
@@ -226,8 +226,8 @@ class BaseDetailView(generic.ObjectView):
                     processed_relationships.add((f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}"))
 
                                 
-            # Start the diagram with the main object
-            add_node(instance)
+        # Start the diagram with the main object
+        add_node(instance)
 
         # Add the legend subgraph with a specific color and style
         legend = "graph LR\n"
