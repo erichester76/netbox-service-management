@@ -234,5 +234,5 @@ class BaseDetailView(generic.ObjectView):
             verbose_name = obj_type.replace('_', ' ').title()
             legend += f'color_{obj_type}(["{verbose_name}"]):::color_{obj_type}\n'
         
-        return legend + "\nend\n" + diagram
+        return legend + diagram
     
