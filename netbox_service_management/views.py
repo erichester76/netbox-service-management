@@ -20,7 +20,7 @@ from netbox.views import generic
 from django.db import models
 
 class BaseDetailView(generic.ObjectView):
-    template_name = 'netbox_servicemanage_plugin/default-detail.html'
+    template_name = 'netbox_servicemanage_plugin/defaultdetail.html'
     
     def get_extra_context(self, request, instance):
         # Extract fields and their values for the object, including relationships
