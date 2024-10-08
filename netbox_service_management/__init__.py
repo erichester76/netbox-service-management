@@ -1,5 +1,5 @@
 """Top-level package for NetBox Service Management Plugin."""
-from importlib_metadata import version
+from importlib.metadata import version
 
 __version__ = version(__package__)
 __author__ = """Eric Hester"""
