@@ -240,14 +240,14 @@ class BaseDetailView(generic.ObjectView):
        
         # Style the subgraph for the legend
         for obj_type, color in color_map.items():
-            verbose_name = obj_type
-            legend += f'color_{obj_type}["{verbose_name}"]:::color_{obj_type}\n'
+            verbose_name = re.sub(r'[^a-zA-Z0-9_]', '_', obj_type)
+            legend += f'color_{obj_type}([{verbose_name}]):::color_{obj_type}\n'
         legend += "end\n"
         legend += "style Legend fill:transparent,stroke-width:0px;\n"
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
-            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
-            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
+            legend += f'classDef color_{obj_type} fill:{color},stroke:{color},stroke-width:12px,font-weight:bold;\n'
+            diagram += f'classDef color_{obj_type} fill:{color},stroke:{color},stroke-width:2px,font-weight:bold;\n'
         
         return diagram, legend
     
