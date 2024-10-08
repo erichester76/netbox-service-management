@@ -123,36 +123,36 @@ class BaseDetailView(generic.ObjectView):
             'mermaid_diagram': mermaid_diagram,
         }
         
-def generate_mermaid_diagram(self, instance):
-    # Helper function to generate a Mermaid diagram string for the given instance.
-    diagram = "graph TD\n"
-    visited = set()
+    def generate_mermaid_diagram(self, instance):
+        # Helper function to generate a Mermaid diagram string for the given instance.
+        diagram = "graph TD\n"
+        visited = set()
 
-    def add_node(obj, parent_label=None):
-        label = f"{obj._meta.model_name}_{obj.pk}"
-        if label in visited:
-            return
-        visited.add(label)
+        def add_node(obj, parent_label=None):
+            label = f"{obj._meta.model_name}_{obj.pk}"
+            if label in visited:
+                return
+            visited.add(label)
 
-        # Add the current object to the diagram
-        diagram_line = f'{label}["{obj._meta.verbose_name}: {obj}"]'
-        diagram += diagram_line + "\n"
+            # Add the current object to the diagram
+            diagram_line = f'{label}["{obj._meta.verbose_name}: {obj}"]'
+            diagram += diagram_line + "\n"
 
-        # Add an edge from the parent node if applicable
-        if parent_label:
-            diagram += f"{parent_label} --> {label}\n"
+            # Add an edge from the parent node if applicable
+            if parent_label:
+                diagram += f"{parent_label} --> {label}\n"
 
-        # Process related objects recursively
-        for rel in obj._meta.get_fields():
-            if rel.is_relation and rel.auto_created and not rel.concrete:
-                related_objects = getattr(obj, rel.get_accessor_name()).all()
-                for related_obj in related_objects:
-                    add_node(related_obj, label)
+            # Process related objects recursively
+            for rel in obj._meta.get_fields():
+                if rel.is_relation and rel.auto_created and not rel.concrete:
+                    related_objects = getattr(obj, rel.get_accessor_name()).all()
+                    for related_obj in related_objects:
+                        add_node(related_obj, label)
 
-    # Start the diagram with the main object
-    add_node(instance)
+        # Start the diagram with the main object
+        add_node(instance)
 
-    return diagram
+        return diagram
 
 class SolutionDetailView(BaseDetailView):
     queryset = Solution.objects.all()
