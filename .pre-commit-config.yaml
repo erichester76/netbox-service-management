@@ -3,6 +3,12 @@ ci:
   autofix_commit_msg: "style: pre-commit fixes"
 
 repos:
+-   repo: local
+    hooks:
+    -   id: poetry
+        args: version patch
+        language: system
+        
 -   repo: https://github.com/psf/black
     rev: 24.3.0
     hooks:
