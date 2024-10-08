@@ -2,9 +2,7 @@
 name = "netbox-service-management"
 version = "0.1.1"
 description = "Netbox Service Management Plugin"
-authors = [
-    {name = "Eric Hester", email = "hester1@clemson.edu"},
-]
+authors = ["Eric Hester <hester1@clemson.edu>"]
 readme = "README.md"
 
 classifiers=[
