@@ -115,7 +115,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=5)
+        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=7)
 
         return {
             'object_name': object_name,
@@ -185,7 +185,7 @@ class BaseDetailView(generic.ObjectView):
                     processed_relationships.add((label, service_label))
                 
                 # Continue processing relationships for Service, preserving its other connections
-                add_node(service, label, current_depth)
+                # add_node(service, label, current_depth)
 
             # Directly link the Service to its ServiceTemplate
             if isinstance(obj, Service) and obj.service_template:
@@ -194,7 +194,7 @@ class BaseDetailView(generic.ObjectView):
                 if (st_label, label) not in processed_relationships:
                     diagram += f"{st_label} --> {label}\n"
                     processed_relationships.add((label, st_label))
-                    add_node(service_template, label, current_depth)
+                    #add_node(service_template, label, current_depth)
 
                                 
         # Start the diagram with the main object
