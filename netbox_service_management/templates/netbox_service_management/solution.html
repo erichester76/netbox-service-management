@@ -1,53 +1,21 @@
-
-{% extends 'generic/object_list.html' %}
-{% load render_table from django_tables2 %}
+{% extends 'generic/object_detail.html' %}
+{% load render_table %}
 
 {% block content %}
-  <div class="row mb-3">
-    <div class="col col-md-6">
-      <div class="card">
+<h2>Solution: {{ object.name }}</h2>
 
-        <h5 class="card-header">Solution Information</h5>
-
-        <table class="table table-hover attr-table">
-          <tr>
-            <th scope="row">Name</th>
-            <td>{{ object.name }}</td>
-          </tr>
-        </table>
-      </div>
-      {% include 'inc/panels/custom_fields.html' %}
+<div class="card">
+    <h5 class="card-header">Service Templates</h5>
+    <div class="card-body">
+        {% render_table service_templates_table %}
     </div>
-    <div class="col col-md-6">
-      {% for table in related_tables %}
-      <div class="card">
-        <h5 class="card-header">{{ table.name|capfirst }}</h5>
-        <table class="table table-hover attr-table">
-            <tbody>
-                {% for obj in table.objects %}
-                    <tr>
-                        <td>
-                            {% if obj.get_absolute_url %}
-                                <!-- If the related object has a URL, link it -->
-                                <a href="{{ obj.get_absolute_url }}">{{ obj }}</a>
-                            {% else %}
-                                <!-- Otherwise, just display the object name or field -->
-                                {{ obj }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% empty %}
-                    <tr>
-                        <td>No related objects found.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-      </div>
-      {% endfor %}
-      {% include 'inc/panels/tags.html' %}
-      {% include 'inc/panels/comments.html' %}
-    </div>
-  </div>
-{% endblock content %}
+</div>
 
+<div class="card mt-3">
+    <h5 class="card-header">Services Using These Templates</h5>
+    <div class="card-body">
+        {% render_table services_table %}
+    </div>
+</div>
+
+{% endblock %}
