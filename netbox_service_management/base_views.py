@@ -213,17 +213,17 @@ class BaseDetailView(generic.ObjectView):
             if isinstance(obj, Component):
                 if obj.service:
                     diagram += f"component_{obj.pk} --> service_{obj.service.pk}\n"
-                    processed_relationships.add(f"component_{obj.pk}", f"service_{obj.service.pk}")
+                    processed_relationships.add((f"component_{obj.pk}", f"service_{obj.service.pk}")s)
 
                 # Add the relationship from the component to its template component
                 if obj.template_component:
                      diagram += f"servicetemplategroupcomponent_{obj.template_component.pk} --> component_{obj.pk}\n"
-                     processed_relationships.add(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
+                     processed_relationships.add((f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}"))
 
                 # Add the explicit link from Component to ServiceTemplateComponentGroup
                 if obj.template_component:
                     diagram += f"service_{obj.pk} --> servicetemplate_{obj.service_template.pk}\n"
-                    processed_relationships.add(f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}")
+                    processed_relationships.add((f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}"))
 
                                 
             # Start the diagram with the main object
