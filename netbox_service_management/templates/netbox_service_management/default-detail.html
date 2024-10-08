@@ -13,7 +13,7 @@
                     <th scope="row">{{ field.name|title }}</th>
                     <td>
                         {% if field.url %}
-                            <a href="{{ field.url }}">{{ field.value|title }}</a>
+                            <a href="{{ field.url }}">{{ field.value }}</a>
                         {% else %}
                             {{ field.value }}
                         {% endif %}
