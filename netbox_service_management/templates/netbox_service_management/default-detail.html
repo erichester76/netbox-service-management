@@ -15,7 +15,7 @@
                         {% if field.url %}
                             <a href="{{ field.url }}">{{ field.value|title }}</a>
                         {% else %}
-                            {{ field.value|title }}
+                            {{ field.value }}
                         {% endif %}
                     </td>
                 </tr> 
@@ -27,11 +27,12 @@
 <div class="col col-md-6">
 {% for related_table in related_tables %}
     <div class="card">
-        <h5 class="card-header">{{ related_table.name|title }}
+        <h5 class="card-header d-flex justify-content-between align-items-center">
+            <span>{{ related_table.name|title }}</span>
             {% if related_table.add_url %}
-            <a href="{{ related_table.add_url }}" class="btn btn-sm btn-primary float-right">
-                <i class="mdi mdi-plus"></i>
-            </a>
+                <a href="{{ related_table.add_url }}" class="btn btn-sm btn-primary">
+                    <i class="mdi mdi-plus"></i> Add
+                </a>
             {% endif %}
         </h5>
         <div class="card-body">
