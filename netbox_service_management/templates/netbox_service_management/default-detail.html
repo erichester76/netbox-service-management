@@ -4,7 +4,11 @@
 {% block content %}
 <style>
     .mermaid {
-        width: 100%;
+        width: 100% !important;
+        display: block;
+    }
+    .mermaid svg {
+        width: 100% !important;
     }
 </style>
 <script type="module">
@@ -33,7 +37,7 @@
     </div>
 </div>
 </div>
-<div class="col col-md-6">
+<div class="col col-md-12">
 {% for related_table in related_tables %}
     <div class="card">
         <h5 class="card-header d-flex justify-content-between align-items-center">

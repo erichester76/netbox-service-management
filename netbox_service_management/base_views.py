@@ -136,9 +136,9 @@ class BaseDetailView(generic.ObjectView):
         color_map = {
             'solution': '#D0E8FF',  # Light blue
             'service': '#A4D1FF',   # Medium light blue
-            'servicetemplate': '#78B8FF',  # Medium blue
-            'servicetemplategroup': '#4C9FFF',  # Darker blue
-            'servicetemplategroupcomponent': '#2886FF',  # Even darker blue
+            'service_template': '#78B8FF',  # Medium blue
+            'service_template_group': '#4C9FFF',  # Darker blue
+            'service_template_group_component': '#2886FF',  # Even darker blue
             'component': '#0F6EFF',  # Dark blue
         } 
         
@@ -159,14 +159,15 @@ class BaseDetailView(generic.ObjectView):
         
         def add_node(obj, parent_label=None, current_depth=0):
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
-            
             # Prevent circular reference by ensuring we don't revisit a node
             if label in visited or current_depth > max_depth:
                 return
             visited.add(label)
 
             # Get the color for the current object type
+            
             obj_type = obj._meta.model_name.lower()
+            
             color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
 
             # Sanitize the object name for use in the diagram
@@ -187,24 +188,25 @@ class BaseDetailView(generic.ObjectView):
 
             # Process reverse relationships (auto-created relationships)
             for rel in obj._meta.get_fields():
-                if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
+                 #Handle GenericForeignKey relationships
+                if isinstance(rel, GenericForeignKey):
+                    related_obj = getattr(obj, rel.name, None)
+                    if related_obj:
+                        related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                        if (related_label, label) not in processed_relationships:
+                            add_node(related_obj, label, current_depth + 1)
+                            
+                elif rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
                     if current_depth + 1 > max_depth:
                         continue
-                    # Handle GenericForeignKey relationships
-                    if isinstance(rel, GenericForeignKey):
-                        related_obj = getattr(obj, rel.name, None)
-                        if related_obj:
+
+                    related_objects = getattr(obj, rel.get_accessor_name(), None)
+                    if related_objects is not None and hasattr(related_objects, 'all'):
+                        for related_obj in related_objects.all():
                             related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                             if (related_label, label) not in processed_relationships:
                                 add_node(related_obj, label, current_depth + 1)
-                    else:            
-                        related_objects = getattr(obj, rel.get_accessor_name(), None)
-                        if related_objects is not None and hasattr(related_objects, 'all'):
-                            for related_obj in related_objects.all():
-                                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                                if (related_label, label) not in processed_relationships:
-                                    add_node(related_obj, label, current_depth + 1)
-                
+            
             # Handle the specific relationship from Component to Service to avoid circular reference loop
             if isinstance(obj, Component):
                 if obj.service:
@@ -241,10 +243,11 @@ class BaseDetailView(generic.ObjectView):
             verbose_name = obj_type
             legend += f'color_{obj_type}["{verbose_name}"]:::color_{obj_type}\n'
         legend += "end\n"
-        legend += "style Legend fill:#E5F2FF,stroke:#E5F2FF,stroke-width:0px;\n"
+        legend += "style Legend fill:transparent,stroke-width:0px;\n"
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
             diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
+        
         return diagram, legend
     
