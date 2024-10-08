@@ -185,7 +185,8 @@ class BaseDetailView(generic.ObjectView):
                 if (label, service_label) not in processed_relationships:
                     diagram += f"{label} --> {service_label}\n"
                     processed_relationships.add((label, service_label))
-                    add_node(service, label, current_depth + 1)
+                    
+                add_node(service, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)

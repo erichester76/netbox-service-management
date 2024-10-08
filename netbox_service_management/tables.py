@@ -60,6 +60,7 @@ class ComponentTable(NetBoxTable):
     content_object = tables.Column(linkify=True)
     service = tables.Column(linkify=True)
     tenant = tables.Column(linkify=True)
+    template_component = tables.Column(linkify=True)
                          
     class Meta(NetBoxTable.Meta):
         model = models.Component
