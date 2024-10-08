@@ -37,6 +37,8 @@ class ComponentForm(forms.ModelForm):
         required=True,
     )
     object_id = forms.ChoiceField(label="Object", required=True)
+    template_name = 'netbox_service_management/component_form.html'
+
 
     class Meta:
         model = models.Component

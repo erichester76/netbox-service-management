@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from .. import models
 from . import serializers
+from django.contrib.contenttypes.models import ContentType
+from django.http import JsonResponse
 
 class SolutionViewSet(viewsets.ModelViewSet):
     queryset = models.Solution.objects.all()
@@ -24,4 +26,13 @@ class ServiceTemplateGroupComponentViewSet(viewsets.ModelViewSet):
 
 class ComponentViewSet(viewsets.ModelViewSet):
     queryset = models.Component.objects.all()
-    serializer_class = serializers.ComponentSerializer
+    
+def dynamic_object_list(request, content_type_id):
+    try:
+        content_type = ContentType.objects.get(pk=content_type_id)
+        model_class = content_type.model_class()
+        objects = model_class.objects.all()
+        data = [{'pk': obj.pk, 'name': str(obj)} for obj in objects]
+        return JsonResponse(data, safe=False)
+    except ContentType.DoesNotExist:
+        return JsonResponse([], safe=False)
