@@ -160,7 +160,7 @@ class BaseDetailView(generic.ObjectView):
                 processed_relationships.add((parent_label, label))
 
             # Define fields to skip (e.g., tags, problematic reverse relationships)
-            excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
+            excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'tenant', 'journal_entries', 'subscriptions'}
 
             # Process reverse relationships (auto-created relationships)
             for rel in obj._meta.get_fields():
@@ -181,7 +181,7 @@ class BaseDetailView(generic.ObjectView):
                 
                 # Add the explicit link from Component to Service
                 if (service_label, label) not in processed_relationships:
-                    diagram += f"{service_label} --> {label}\n"
+                    diagram += f"{label} --> {service_label}\n"
                     processed_relationships.add((label, service_label))
                 
                 # Continue processing relationships for Service, preserving its other connections
