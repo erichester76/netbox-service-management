@@ -1,5 +1,6 @@
 from django.db.models import Count
-
+from django.urls import reverse
+from django.shortcuts import render, redirect
 from netbox.views import generic
 from . import filtersets, forms, models, tables
 from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
@@ -7,23 +8,30 @@ from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOn
 
 class SolutionDetailView(generic.ObjectView):
     queryset = models.Solution.objects.all()
-
+    
     def get_extra_context(self, request, instance):
         related_tables = []
         # Loop over fields and identify relationships
         for field in instance._meta.get_fields():
             if field.is_relation:  # Check if the field is a relationship (FK, M2M, O2O)
-                # Handle ManyToMany and Reverse ForeignKey relations
-                if field.many_to_many or field.one_to_many:
-                    related_objects = getattr(instance, field.name).all()
-                # Handle ForeignKey and OneToOne relations
-                elif isinstance(field, (ForeignKey, OneToOneField)):
-                    related_objects = [getattr(instance, field.name)] if getattr(instance, field.name) else []
+                try:
+                    # Handle ManyToMany and Reverse ForeignKey relations
+                    if field.many_to_many or field.one_to_many:
+                        related_objects = getattr(instance, field.name).all()
+                    # Handle ForeignKey and OneToOne relations
+                    elif isinstance(field, (ForeignKey, OneToOneField)):
+                        related_objects = [getattr(instance, field.name)] if getattr(instance, field.name) else []
+                    else:
+                        related_objects = []
 
-                related_tables.append({
-                    'name': field.name,  # Name of the related field
-                    'objects': related_objects,  # The related objects
-                })
+                    # Append the related objects if any exist
+                    related_tables.append({
+                        'name': field.name,  # Name of the related field
+                        'objects': related_objects,  # The related objects
+                    })
+                except AttributeError:
+                    # Handle the case where the relationship attribute isn't available
+                    pass
 
         return {
             'related_tables': related_tables,
