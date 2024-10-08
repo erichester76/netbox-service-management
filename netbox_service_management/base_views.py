@@ -138,7 +138,17 @@ class BaseDetailView(generic.ObjectView):
             'service_template_group_component': '#FFFACD',
             'component': '#E2C1FF',
         }
-        
+        # Define fields to skip (e.g., tags, problematic reverse relationships)
+        excluded_fields = {
+            'tags', 
+            'datasource_set', 
+            'custom_field_data', 
+            'bookmarks', 
+            'tenant', 
+            'journal_entries', 
+            'subscriptions'
+        }
+
         def sanitize_label(text):
             """Sanitize a text string to be used in a Mermaid node."""
             return re.sub(r'[^a-zA-Z0-9_]', '_', text)
@@ -171,9 +181,6 @@ class BaseDetailView(generic.ObjectView):
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
 
-            # Define fields to skip (e.g., tags, problematic reverse relationships)
-            excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'tenant', 'journal_entries', 'subscriptions'}
-
             # Process reverse relationships (auto-created relationships)
             for rel in obj._meta.get_fields():
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
@@ -186,7 +193,7 @@ class BaseDetailView(generic.ObjectView):
                             if (related_label, label) not in processed_relationships:
                                 add_node(related_obj, label, current_depth + 1)
 
-             # Handle the specific relationship from Component to Service
+             # Handle the specific relationship from Component to Service to avoid circular reference loop
             if isinstance(obj, Component):
                 if obj.service:
                     service = obj.service
@@ -202,8 +209,8 @@ class BaseDetailView(generic.ObjectView):
                     stgc_label = f"{sanitize_label(stgc._meta.model_name)}_{stgc.pk}"
                 
                     # Add the explicit link from Component to Service
-                    if (label, stgc_label) not in processed_relationships:
-                        diagram += f"{label} --> {stgc_label}\n"
+                    if (label, stgc_label) not in processed_relationships and (stgc_label, label) not in processed_relationships:
+                        diagram += f"{stgc_label} --> {label}\n"
                         processed_relationships.add((label, stgc_label))
                                 
         # Start the diagram with the main object
