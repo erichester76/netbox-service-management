@@ -245,6 +245,6 @@ class BaseDetailView(generic.ObjectView):
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
-
+            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
         return diagram, legend
     
