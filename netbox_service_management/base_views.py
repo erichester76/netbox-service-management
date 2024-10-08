@@ -226,13 +226,11 @@ class BaseDetailView(generic.ObjectView):
                     processed_relationships.add(f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}")
 
                                 
-        # Start the diagram with the main object
-        add_node(instance)
-
-        legend = ''
+            # Start the diagram with the main object
+            add_node(instance)
 
         # Add the legend subgraph with a specific color and style
-        legend += "graph LR\n"
+        legend = "graph LR\n"
         legend += "direction LR\n"  # Place items in the legend in a horizontal row
         legend += "subgraph Legend [Legend]\n"
        
