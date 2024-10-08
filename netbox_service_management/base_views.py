@@ -228,9 +228,6 @@ class BaseDetailView(generic.ObjectView):
         add_node(instance)
 
         legend = ''
-        # Append classDef styles directly to the diagram string
-        for obj_type, color in color_map.items():
-            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
 
         # Add the legend subgraph with a specific color and style
         legend += "graph LR\n"
@@ -243,6 +240,9 @@ class BaseDetailView(generic.ObjectView):
             legend += f'color_{obj_type}["{verbose_name}"]:::color_{obj_type}\n'
         legend += "end\n"
         legend += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\n"
+        # Append classDef styles directly to the diagram string
+        for obj_type, color in color_map.items():
+            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
 
         return legend + diagram
     
