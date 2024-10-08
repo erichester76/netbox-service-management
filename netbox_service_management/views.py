@@ -117,7 +117,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=1)
+        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=4)
 
         return {
             'object_name': object_name,
@@ -158,7 +158,7 @@ class BaseDetailView(generic.ObjectView):
                 diagram += f"{parent_label} --> {label}\n"
 
             # Define fields to skip (e.g., tags, problematic reverse relationships)
-            excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
+            excluded_fields = {'tags', 'tenant', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
 
             # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
             for field in obj._meta.get_fields():
