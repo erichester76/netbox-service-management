@@ -136,9 +136,9 @@ class BaseDetailView(generic.ObjectView):
         color_map = {
             'solution': '#3498db',  # Blue for general actions
             'service': '#2ecc71',   # Green for "Add"
-            'service_template': '#e67e22',  # Orange for "Edit" (pencil)
-            'service_template_group': '#3498db',  # Blue
-            'service_template_group_component': '#e67e22',  # Orange
+            'servicetemplate': '#e67e22',  # Orange for "Edit" (pencil)
+            'servicetemplategroup': '#3498db',  # Blue
+            'servicetemplategroupcomponent': '#e67e22',  # Orange
             'component': '#e74c3c',  # Red for "Delete"
         }
         
@@ -167,7 +167,6 @@ class BaseDetailView(generic.ObjectView):
             # Get the color for the current object type
             
             obj_type = obj._meta.model_name.lower()
-            
             color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
 
             # Sanitize the object name for use in the diagram
