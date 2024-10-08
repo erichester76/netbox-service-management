@@ -143,16 +143,21 @@ class BaseDetailView(generic.ObjectView):
             if parent_label:
                 diagram += f"{parent_label} --> {label}\n"
 
-            # Process related objects recursively
+            # Process related objects recursively, filtering out unwanted ones
             for rel in obj._meta.get_fields():
-                if rel.is_relation and rel.auto_created and not rel.concrete:
-                    # Get all related objects through the reverse relationship
-                    related_objects = getattr(obj, rel.get_accessor_name()).all()
-                    for related_obj in related_objects:
-                        add_node(related_obj, label)
+                # Skip fields related to tags or other problematic reverse relationships
+                if rel.is_relation and (rel.name in ['tags', 'datasource_set'] or rel.auto_created and not rel.concrete):
+                    continue
 
+                # Handle reverse relationships safely
+                if rel.is_relation and rel.auto_created and not rel.concrete:
+                    related_objects = getattr(obj, rel.get_accessor_name(), None)
+                    if related_objects is not None and hasattr(related_objects, 'all'):
+                        for related_obj in related_objects.all():
+                            add_node(related_obj, label)
+
+                # Handle direct relationships (ForeignKey or OneToOneField)
                 elif isinstance(rel, (models.ForeignKey, models.OneToOneField)):
-                    # Handle direct relationships (ForeignKey or OneToOneField)
                     related_object = getattr(obj, rel.name, None)
                     if related_object:
                         add_node(related_object, label)
@@ -161,6 +166,7 @@ class BaseDetailView(generic.ObjectView):
         add_node(instance)
 
         return diagram
+
 
 
 class SolutionDetailView(BaseDetailView):
