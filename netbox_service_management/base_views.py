@@ -217,6 +217,10 @@ class BaseDetailView(generic.ObjectView):
                                 
         # Start the diagram with the main object
         add_node(instance)
+        
+        # Append classDef styles directly to the diagram string
+        for obj_type, color in color_map.items():
+            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px;\n'
 
         # Add the legend subgraph with a specific color and style
         diagram += "subgraph Legend\n"
