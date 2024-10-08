@@ -15,7 +15,7 @@
                         {% if field.url %}
                             <a href="{{ field.url }}">{{ field.value }}</a>
                         {% else %}
-                            {{ field.value }}
+                            {{ field.value|capfirst }}
                         {% endif %}
                     </td>
                 </tr> 
