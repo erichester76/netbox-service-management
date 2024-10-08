@@ -2,6 +2,7 @@ from netbox.views import generic
 from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
 from django.urls import reverse
 import re
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 from . import (
     filtersets, 
@@ -115,7 +116,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram = self.generate_mermaid_diagram(instance)
+        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=1)
 
         return {
             'object_name': object_name,
@@ -124,31 +125,29 @@ class BaseDetailView(generic.ObjectView):
             'mermaid_diagram': mermaid_diagram,
         }
         
-    def generate_mermaid_diagram(self, instance):
+
+    def generate_mermaid_diagram(self, instance, max_depth=1):
         # Initialize the diagram string
         diagram = "graph TD\n"
         visited = set()
-   
-        def sanitize_label(text):
-            """Sanitize a text string to be used in a Mermaid node."""
-            return re.sub(r'[^a-zA-Z0-9_]', '_', text)
 
-        def add_node(obj, parent_label=None):
+        def add_node(obj, parent_label=None, current_depth=0):
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
-            if label in visited:
+            if label in visited or current_depth > max_depth:
                 return
             visited.add(label)
 
-            # Add the current object to the diagram
+            # Sanitize the object name for use in the diagram
             display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
-            shape = f"{label}([{obj._meta.verbose_name}: {display_name}])"  
+            shape = f'{label}["{obj._meta.verbose_name}: {display_name}"]'  # Use square brackets for a standard box shape
+            
+            # Add the current object to the diagram
             nonlocal diagram
             diagram += shape + "\n"
 
             # Add a click event if the object has a URL
             if hasattr(obj, 'get_absolute_url'):
                 diagram += f'click {label} "{obj.get_absolute_url()}"\n'
-
 
             # Add an edge from the parent node if applicable
             if parent_label:
@@ -157,34 +156,46 @@ class BaseDetailView(generic.ObjectView):
             # Define fields to skip (e.g., tags, problematic reverse relationships)
             excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
 
-            # # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
-            # for field in obj._meta.get_fields():
-            #     if field.is_relation and not field.auto_created and field.name not in excluded_fields:
-            #         try:
-            #             related_object = getattr(obj, field.name)
-            #             if related_object:
-            #                 # For ManyToManyField or reverse relationships, iterate over them
-            #                 if hasattr(related_object, 'all'):
-            #                     for rel_obj in related_object.all():
-            #                         add_node(rel_obj, label)
-            #                 else:
-            #                     add_node(related_object, label)
-            #         except AttributeError:
-            #             # Handle the case where the field is not accessible
-            #             continue
+            # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
+            for field in obj._meta.get_fields():
+                if field.is_relation and not field.auto_created and field.name not in excluded_fields:
+                    # Stop if max depth is reached
+                    if current_depth + 1 > max_depth:
+                        continue
+                    try:
+                        related_object = getattr(obj, field.name)
+                        if related_object:
+                            # For ManyToManyField or reverse relationships, iterate over them
+                            if hasattr(related_object, 'all'):
+                                for rel_obj in related_object.all():
+                                    add_node(rel_obj, label, current_depth + 1)
+                            else:
+                                add_node(related_object, label, current_depth + 1)
+                    except AttributeError:
+                        continue
+
+            # Process GenericForeignKey if it exists
+            if isinstance(obj, GenericForeignKey):
+                related_object = obj.content_object
+                if related_object:
+                    add_node(related_object, label, current_depth + 1)
 
             # Process reverse relationships (auto-created relationships)
             for rel in obj._meta.get_fields():
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
+                    # Stop if max depth is reached
+                    if current_depth + 1 > max_depth:
+                        continue
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
-                            add_node(related_obj, label)
+                            add_node(related_obj, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
 
         return diagram
+
 
 
 
