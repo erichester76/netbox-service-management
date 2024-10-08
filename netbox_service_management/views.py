@@ -1,5 +1,19 @@
 from netbox.views import generic
-from . import filtersets, forms, models, tables
+
+from . import (
+    filtersets, 
+    forms, 
+    tables
+    )
+
+from .models import (
+    Solution, 
+    ServiceTemplate, 
+    ServiceTemplateGroup, 
+    ServiceTemplateGroupComponent, 
+    Service, 
+    Component
+)
 
 from netbox.views import generic
 from django.db import models
@@ -12,6 +26,8 @@ class BaseDetailView(generic.ObjectView):
         field_data = []
         for field in instance._meta.get_fields():
             value = None
+            url = None
+
             try:
                 # Handle many-to-many or one-to-many relationships
                 if field.many_to_many or field.one_to_many:
@@ -19,10 +35,12 @@ class BaseDetailView(generic.ObjectView):
                     value = ", ".join([str(obj) for obj in related_objects])
 
                 # Handle ForeignKey and OneToOne relationships
-                elif isinstance(field, (models.ForeignKey, models.OneToOneField)):
+                elif isinstance(field, (ForeignKey, OneToOneField)):
                     related_object = getattr(instance, field.name)
                     value = str(related_object) if related_object else None
-
+                    if hasattr(related_object, 'get_absolute_url'):
+                        url = related_object.get_absolute_url()
+                        
                 # Handle regular fields
                 else:
                     value = getattr(instance, field.name)
@@ -32,6 +50,8 @@ class BaseDetailView(generic.ObjectView):
             field_data.append({
                 'name': field.verbose_name if hasattr(field, 'verbose_name') else field.name,
                 'value': value,
+                'url': url,  # Include the URL if available
+
             })
 
         # Find reverse relations dynamically and add them to related_tables
@@ -62,87 +82,87 @@ class BaseDetailView(generic.ObjectView):
         }
 
 class SolutionDetailView(BaseDetailView):
-    queryset = models.Solution.objects.all()
+    queryset = Solution.objects.all()
     table = tables.SolutionTable
     
 class SolutionListView(generic.ObjectListView):
-    queryset = models.Solution.objects.all()
+    queryset = Solution.objects.all()
     table = tables.SolutionTable
 
 class SolutionEditView(generic.ObjectEditView):
-    queryset = models.Solution.objects.all()
+    queryset = Solution.objects.all()
     form = forms.SolutionForm
 
 class SolutionDeleteView(generic.ObjectDeleteView):
-    queryset = models.Solution.objects.all()
+    queryset = Solution.objects.all()
     
 class ServiceTemplateDetailView(BaseDetailView):
-    queryset = models.ServiceTemplate.objects.all()
+    queryset = ServiceTemplate.objects.all()
 
 class ServiceTemplateListView(generic.ObjectListView):
-    queryset = models.ServiceTemplate.objects.all()
+    queryset = ServiceTemplate.objects.all()
     table = tables.ServiceTemplateTable
 
 class ServiceTemplateEditView(generic.ObjectEditView):
-    queryset = models.ServiceTemplate.objects.all()
+    queryset = ServiceTemplate.objects.all()
     form = forms.ServiceTemplateForm
 
 class ServiceTemplateDeleteView(generic.ObjectDeleteView):
-    queryset = models.ServiceTemplate.objects.all()
+    queryset = ServiceTemplate.objects.all()
 
 class ServiceTemplateGroupDetailView(BaseDetailView):
-    queryset = models.ServiceTemplateGroup.objects.all()
+    queryset = ServiceTemplateGroup.objects.all()
 
 class ServiceTemplateGroupListView(generic.ObjectListView):
-    queryset = models.ServiceTemplateGroup.objects.all()
+    queryset = ServiceTemplateGroup.objects.all()
     table = tables.ServiceTemplateGroupTable
 
 class ServiceTemplateGroupEditView(generic.ObjectEditView):
-    queryset = models.ServiceTemplateGroup.objects.all()
+    queryset = ServiceTemplateGroup.objects.all()
     form = forms.ServiceTemplateGroupForm
 
 class ServiceTemplateGroupDeleteView(generic.ObjectDeleteView):
-    queryset = models.ServiceTemplateGroup.objects.all()
+    queryset = ServiceTemplateGroup.objects.all()
 
 class ServiceTemplateGroupComponentDetailView(BaseDetailView):
-    queryset = models.ServiceTemplateGroupComponent.objects.all()
+    queryset = ServiceTemplateGroupComponent.objects.all()
 
 class ServiceTemplateGroupComponentListView(generic.ObjectListView):
-    queryset = models.ServiceTemplateGroupComponent.objects.all()
+    queryset = ServiceTemplateGroupComponent.objects.all()
     table = tables.ServiceTemplateGroupComponentTable
 
 class ServiceTemplateGroupComponentEditView(generic.ObjectEditView):
-    queryset = models.ServiceTemplateGroupComponent.objects.all()
+    queryset = ServiceTemplateGroupComponent.objects.all()
     form = forms.ServiceTemplateGroupComponentForm
 
 class ServiceTemplateGroupComponentDeleteView(generic.ObjectDeleteView):
-    queryset = models.ServiceTemplateGroupComponent.objects.all()
+    queryset = ServiceTemplateGroupComponent.objects.all()
 
 class ServiceDetailView(BaseDetailView):
-    queryset = models.Service.objects.all()
+    queryset = Service.objects.all()
 
 class ServiceListView(generic.ObjectListView):
-    queryset = models.Service.objects.all()
+    queryset = Service.objects.all()
     table = tables.ServiceTable
 
 class ServiceEditView(generic.ObjectEditView):
-    queryset = models.Service.objects.all()
+    queryset = Service.objects.all()
     form = forms.ServiceForm
 
 class ServiceDeleteView(generic.ObjectDeleteView):
-    queryset = models.Service.objects.all()
+    queryset = Service.objects.all()
 
 class ComponentDetailView(BaseDetailView):
-    queryset = models.Component.objects.all()
+    queryset = Component.objects.all()
 
 class ComponentListView(generic.ObjectListView):
-    queryset = models.Component.objects.all()
+    queryset = Component.objects.all()
     table = tables.ComponentTable
 
 class ComponentEditView(generic.ObjectEditView):
-    queryset = models.Component.objects.all()
+    queryset = Component.objects.all()
     form = forms.ComponentForm
 
 class ComponentDeleteView(generic.ObjectDeleteView):
-    queryset = models.Component.objects.all()
+    queryset = Component.objects.all()
 
