@@ -135,8 +135,8 @@ class BaseDetailView(generic.ObjectView):
          # Define colors for each model type
         color_map = {
             'solution': '#16a2b8',  # Darker Teal 
-            'service': '#01f2d4',   # Teal 
-            'servicetemplate': '#022e36',  # GreenBlue
+            'service': '#023038',   # Teal 
+            'servicetemplate': '#02252f',  # GreenBlue
             'servicetemplategroup': '#f59f01',  # Orange1
             'servicetemplategroupcomponent': '#f76706',  # Orange2
             'component': '#d63a39',  # Red 
