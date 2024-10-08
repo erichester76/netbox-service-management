@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "netbox-service-management"
-version = "0.1.2"
+version = "0.1.3"
 description = "Netbox Service Management Plugin"
 authors = ["Eric Hester <hester1@clemson.edu>"]
 readme = "README.md"
