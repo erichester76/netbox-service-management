@@ -231,7 +231,7 @@ class BaseDetailView(generic.ObjectView):
         diagram += "end\n"
 
         # Style the subgraph for the legend
-        diagram += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px,font-size:10px,padding:2px;\n"
+        diagram += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px,font-size:10px,padding:1px;\n"
             
         return diagram
     
