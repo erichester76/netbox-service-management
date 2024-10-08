@@ -5,7 +5,6 @@ description = "Netbox Service Management Plugin"
 authors = [
     {name = "Eric Hester", email = "hester1@clemson.edu"},
 ]
-description = "NetBox plugin for Service Management."
 readme = "README.md"
 
 classifiers=[
@@ -18,15 +17,6 @@ classifiers=[
     'Programming Language :: Python :: 3.12',
 ]
 
-[project.optional-dependencies]
-test = [
-    "black==24.3.0",
-    "check-manifest==0.49",
-    "flake8",
-    "flake8-pyproject",
-    "pre-commit==3.7.0",
-    "pytest==8.1.1",
-]
 
 [project.urls]
 Documentation = "https://github.com/erichester76/netbox-service-management/blob/main/README.md"
