@@ -1,8 +1,17 @@
-[tool.poetry]
-name = "netbox-service-management"
-version = "0.2.1"
-description = "Netbox Service Management Plugin"
-authors = ["Eric Hester <hester1@clemson.edu>"]
+# See PEP 518 for the spec of this file
+# https://www.python.org/dev/peps/pep-0518/
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name =  "netbox-service-management"
+version = "0.0.2"
+authors = [
+    {name = "Eric Hester", email = "hester1@clemson.edu"},
+]
+description = "NetBox plugin for Service Management."
 readme = "README.md"
 
 classifiers=[
@@ -15,6 +24,17 @@ classifiers=[
     'Programming Language :: Python :: 3.12',
 ]
 
+requires-python = ">=3.10.0"
+
+[project.optional-dependencies]
+test = [
+    "black==24.3.0",
+    "check-manifest==0.49",
+    "flake8",
+    "flake8-pyproject",
+    "pre-commit==3.7.0",
+    "pytest==8.1.1",
+]
 
 [project.urls]
 Documentation = "https://github.com/erichester76/netbox-service-management/blob/main/README.md"
@@ -27,10 +47,3 @@ target_version = ['py39', 'py310', 'py311', 'py312']
 
 [tool.setuptools.package-data]
 netbox_service_management = ["templates/**"]
-
-[tool.poetry.dependencies]
-python = "^3.9"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
