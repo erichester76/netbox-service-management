@@ -20,6 +20,37 @@ from .models import (
 from netbox.views import generic
 from django.db import models
 
+def generate_mermaid_diagram(self, instance):
+    # Helper function to generate a Mermaid diagram string for the given instance.
+    diagram = "graph TD\n"
+    visited = set()
+
+    def add_node(obj, parent_label=None):
+        label = f"{obj._meta.model_name}_{obj.pk}"
+        if label in visited:
+            return
+        visited.add(label)
+
+        # Add the current object to the diagram
+        diagram_line = f'{label}["{obj._meta.verbose_name}: {obj}"]'
+        diagram += diagram_line + "\n"
+
+        # Add an edge from the parent node if applicable
+        if parent_label:
+            diagram += f"{parent_label} --> {label}\n"
+
+        # Process related objects recursively
+        for rel in obj._meta.get_fields():
+            if rel.is_relation and rel.auto_created and not rel.concrete:
+                related_objects = getattr(obj, rel.get_accessor_name()).all()
+                for related_obj in related_objects:
+                    add_node(related_obj, label)
+
+    # Start the diagram with the main object
+    add_node(instance)
+
+    return diagram
+
 class BaseDetailView(generic.ObjectView):
     template_name = 'netbox_service_management/default-detail.html'
     
@@ -38,6 +69,7 @@ class BaseDetailView(generic.ObjectView):
             'tagged_items', 
             'service_templates',
             'stg_components',
+            'components',
             'template_groups',
             'services',
             'depends_on',
@@ -110,11 +142,17 @@ class BaseDetailView(generic.ObjectView):
                         'table': related_table,
                         'add_url': add_url,
                     })
+                    
+        # Generate Mermaid diagram for the object and its related objects
+        mermaid_diagram = self.generate_mermaid_diagram(instance)
+
         return {
             'object_name': object_name,
             'field_data': field_data,
             'related_tables': related_tables,
+            'mermaid_diagram': mermaid_diagram,
         }
+        
 
 class SolutionDetailView(BaseDetailView):
     queryset = Solution.objects.all()
