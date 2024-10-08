@@ -140,10 +140,10 @@ class BaseDetailView(generic.ObjectView):
             visited.add(label)
 
             # Add the current object to the diagram
-            shape = "(( ))" if obj._meta.model_name == 'service' else "[ ]"
-            diagram_line = f'{label}{shape}["{obj._meta.verbose_name}: {obj}"]'            
+            display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
+            shape = f"{label}[""{obj._meta.verbose_name}: {display_name}""]"  
             nonlocal diagram
-            diagram += diagram_line + "\n"
+            diagram += shape + "\n"
 
             # Add an edge from the parent node if applicable
             if parent_label:
