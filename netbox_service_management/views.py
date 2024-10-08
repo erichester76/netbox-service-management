@@ -124,7 +124,7 @@ class BaseDetailView(generic.ObjectView):
         }
         
     def generate_mermaid_diagram(self, instance):
-        # Helper function to generate a Mermaid diagram string for the given instance.
+        # Initialize the diagram string
         diagram = "graph TD\n"
         visited = set()
 
@@ -136,7 +136,7 @@ class BaseDetailView(generic.ObjectView):
 
             # Add the current object to the diagram
             diagram_line = f'{label}["{obj._meta.verbose_name}: {obj}"]'
-            nonlocal diagram 
+            nonlocal diagram
             diagram += diagram_line + "\n"
 
             # Add an edge from the parent node if applicable
@@ -146,14 +146,22 @@ class BaseDetailView(generic.ObjectView):
             # Process related objects recursively
             for rel in obj._meta.get_fields():
                 if rel.is_relation and rel.auto_created and not rel.concrete:
+                    # Get all related objects through the reverse relationship
                     related_objects = getattr(obj, rel.get_accessor_name()).all()
                     for related_obj in related_objects:
                         add_node(related_obj, label)
+
+                elif isinstance(rel, (models.ForeignKey, models.OneToOneField)):
+                    # Handle direct relationships (ForeignKey or OneToOneField)
+                    related_object = getattr(obj, rel.name, None)
+                    if related_object:
+                        add_node(related_object, label)
 
         # Start the diagram with the main object
         add_node(instance)
 
         return diagram
+
 
 class SolutionDetailView(BaseDetailView):
     queryset = Solution.objects.all()
