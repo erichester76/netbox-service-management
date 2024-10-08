@@ -233,7 +233,7 @@ class BaseDetailView(generic.ObjectView):
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
 
         # Add the legend subgraph with a specific color and style
-        #legend += "graph LR\n"
+        legend += "graph LR\n"
         legend += "subgraph Legend [Legend]\n"
         legend += "direction LR\n"  # Place items in the legend in a horizontal row
        
@@ -244,5 +244,5 @@ class BaseDetailView(generic.ObjectView):
         legend += "end\n"
         legend += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\n"
 
-        return diagram + legend
+        return legend + diagram
     
