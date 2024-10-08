@@ -224,6 +224,7 @@ class BaseDetailView(generic.ObjectView):
         # Add a legend using a subgraph
         diagram += "subgraph Legend\n"
         diagram += "direction TD\n"  # Place items in the legend in a horizontal row
+        diagram += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\n"
         for obj_type, color in color_map.items():
             diagram += f'color_{obj_type}([{obj_type.replace('_', ' ').title()}]):::color_{obj_type}\n'
         diagram += "end\n"
