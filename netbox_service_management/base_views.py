@@ -217,19 +217,20 @@ class BaseDetailView(generic.ObjectView):
                                 
         # Start the diagram with the main object
         add_node(instance)
-        
+
+        legend = ''
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
-            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
+            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
 
         # Add the legend subgraph with a specific color and style
-        diagram += "graph LR\n"
-        diagram += "subgraph Legend [Legend]\n"
-        diagram += "direction LR\n"  # Place items in the legend in a horizontal row
+        legend += "graph LR\n"
+        legend += "subgraph Legend [Legend]\n"
+        legend += "direction LR\n"  # Place items in the legend in a horizontal row
         for obj_type, color in color_map.items():
             verbose_name = obj_type.replace('_', ' ').title()
-            diagram += f'color_{obj_type}(["{verbose_name}"]):::color_{obj_type}\n'
-        diagram += "end\n"
+            legend += f'color_{obj_type}(["{verbose_name}"]):::color_{obj_type}\n'
+        legend += "end\n"
 
         # Style the subgraph for the legend
         legend += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\n"
