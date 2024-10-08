@@ -212,9 +212,7 @@ class BaseDetailView(generic.ObjectView):
                 if obj.service:
                     service = obj.service
                     service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
-                
-                    # Add the explicit link from Component to Service
-                    if (label, service_label) not in processed_relationships and (service_label, label) not in processed_relationships:
+                    if (label, service_label) not in processed_relationships:
                         diagram += f"{label} --> {service_label}\n"
                         processed_relationships.add((label, service_label))
                         
@@ -222,9 +220,7 @@ class BaseDetailView(generic.ObjectView):
                 if obj.template_component:
                     stgc = obj.template_component
                     stgc_label = f"{sanitize_label(stgc._meta.model_name)}_{stgc.pk}"
-                
-                    # Add the explicit link from Component to Service
-                    if (label, stgc_label) not in processed_relationships and (stgc_label, label) not in processed_relationships:
+                    if (label, stgc_label) not in processed_relationships:
                         diagram += f"{stgc_label} --> {label}\n"
                         processed_relationships.add((label, stgc_label))
                                 
@@ -246,8 +242,8 @@ class BaseDetailView(generic.ObjectView):
         legend += "style Legend fill:transparent,stroke-width:0px;\n"
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
-            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,font-weight:bold,color:#fff,font-size:12px;\n'
-            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,font-weight:bold,color:#fff,font-size:12px;\n'
+            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,color:#fff,font-size:14px;\n'
+            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,color:#fff,font-size:14px;\n'
         
         return diagram, legend
     
