@@ -157,77 +157,107 @@ class BaseDetailView(generic.ObjectView):
             """Sanitize a text string to be used in a Mermaid node."""
             return re.sub(r'[^a-zA-Z0-9_]', '_', text)
         
+        def sanitize_display_name(name):
+            """
+            Sanitizes the object name for use in the diagram.
+            """
+            return re.sub(r'[^a-zA-Z0-9_\.\ \/]', '', name)
+     
         def add_node(obj, parent_label=None, current_depth=0):
-         
+            """
+            Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
+            """
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
-         
-            # Prevent circular reference by ensuring we don't revisit a node
             if label in visited or current_depth > max_depth:
                 return
             visited.add(label)
 
-            # Get the color for the current object type
-            
             obj_type = obj._meta.model_name.lower()
             color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
-
-            # Sanitize the object name for use in the diagram
-            display_name = re.sub(r'[^a-zA-Z0-9_\.\ \/]', '', str(obj))  # Replace quotes to avoid breaking Mermaid syntax
-
+            display_name = sanitize_display_name(str(obj))
             shape = f'{label}({display_name}):::color_{obj_type}'
-            # Add the current object to the diagram
+
+            # Add the node and its clickable link if available
+            add_to_diagram(shape, label, obj)
+
+            # Add an edge from the parent node if applicable
+            add_edge(parent_label, label)
+
+            # Process related objects and handle specific relationships
+            process_relationships(obj, label, current_depth)
+            handle_component_specifics(obj, label)
+
+
+        def add_to_diagram(shape, label, obj):
+            """
+            Adds a node shape to the diagram and includes a clickable link if applicable.
+            """
             nonlocal diagram
             diagram += shape + "\n"
-
-            # Add a click event if the object has a URL
             if hasattr(obj, 'get_absolute_url'):
                 diagram += f'click {label} "{obj.get_absolute_url()}"\n'
 
-            # Add an edge from the parent node if applicable and avoid duplicates
-            if parent_label and (parent_label, label) not in processed_relationships and (label, parent_label) not in processed_relationships:
+        def add_edge(parent_label, label):
+            """
+            Adds an edge between the parent and the current label, avoiding duplicates.
+            """
+            if parent_label and (parent_label, label) not in processed_relationships:
+                nonlocal diagram
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
 
-            # Process reverse relationships (auto-created relationships)
+        def process_relationships(obj, label, current_depth):
+            """
+            Processes reverse relationships and GenericForeignKey for the given object.
+            """
             for rel in obj._meta.get_fields():
-                 #Handle GenericForeignKey relationships
+                # Handle GenericForeignKey relationships
                 if isinstance(rel, GenericForeignKey):
-                    related_obj = getattr(obj, rel.name, None)
-                    if related_obj:
-                        related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                        if (related_label, label) not in processed_relationships and (label, related_label) not in processed_relationships:
-                            add_node(related_obj, label, current_depth + 1)
-                            
+                    handle_generic_foreign_key(rel, obj, label, current_depth)
+                # Handle other reverse relationships
                 elif rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
                     if current_depth + 1 > max_depth:
                         continue
-
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
-                            related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                            if (related_label, label) not in processed_relationships:
-                                add_node(related_obj, label, current_depth + 1)
-            
-            # Handle the specific relationship from Component to Service to avoid circular reference loop
+                            add_node_if_not_visited(related_obj, label, current_depth)
+
+        def handle_generic_foreign_key(rel, obj, label, current_depth):
+            """
+            Handles relationships for GenericForeignKey fields.
+            """
+            related_obj = getattr(obj, rel.name, None)
+            if related_obj:
+                add_node_if_not_visited(related_obj, label, current_depth)
+
+        def add_node_if_not_visited(related_obj, label, current_depth):
+            """
+            Adds a related object to the diagram if it hasn't been visited.
+            """
+            related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+            if (related_label, label) not in processed_relationships:
+                add_node(related_obj, label, current_depth + 1)
+
+        def handle_component_specifics(obj, label):
+            """
+            Handles specific relationships for the Component class.
+            """
+            nonlocal diagram
+
             if isinstance(obj, Component):
+                # Link Component to its related Service
                 if obj.service:
-                    diagram += f"component_{obj.pk} --> service_{obj.service.pk}\n"
-                    processed_relationships.add((f"component_{obj.pk}", f"service_{obj.service.pk}"))
-                    #add_node(obj.service, label, current_depth + 1)
-
-                # Add the relationship from the component to its template component
+                    add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
+                # Link Component to its template component
                 if obj.template_component:
-                     diagram += f"servicetemplategroupcomponent_{obj.template_component.pk} --> component_{obj.pk}\n"
-                     processed_relationships.add((f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}"))
+                    add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
 
-                # Add the explicit link from Service to ServiceTemplate
-                if isinstance(obj, Service):
-                    if obj.service_templatet:
-                         diagram += f"service_{obj.pk} --> servicetemplate_{obj.service_template.pk}\n"
-                         processed_relationships.add((f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}"))
+            elif isinstance(obj, Service):
+                # Explicitly link Service to its ServiceTemplate
+                if obj.service_template:
+                    add_edge(f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}")
 
-                                
         # Start the diagram with the main object
         add_node(instance)
 
