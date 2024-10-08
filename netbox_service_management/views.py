@@ -126,25 +126,29 @@ class BaseDetailView(generic.ObjectView):
             'mermaid_diagram': mermaid_diagram,
         }
 
+
+
     def generate_mermaid_diagram(self, instance, max_depth=1):
         # Initialize the diagram string
         diagram = "graph TD\n"
         visited = set()
-        edges = set()  # Keep track of added edges to avoid duplicates
+        processed_relationships = set()  # Track relationships to prevent circular references
         
         def sanitize_label(text):
             """Sanitize a text string to be used in a Mermaid node."""
             return re.sub(r'[^a-zA-Z0-9_]', '_', text)
-        
+
         def add_node(obj, parent_label=None, current_depth=0):
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+            
+            # Prevent circular reference by ensuring we don't revisit a node
             if label in visited or current_depth > max_depth:
                 return
             visited.add(label)
 
             # Sanitize the object name for use in the diagram
             display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
-            shape = f'{label}["{obj._meta.verbose_name}: {display_name}"]'  # Use square brackets for a standard box shape
+            shape = f'{label}["{obj._meta.verbose_name}: {display_name}"]'
             
             # Add the current object to the diagram
             nonlocal diagram
@@ -155,9 +159,9 @@ class BaseDetailView(generic.ObjectView):
                 diagram += f'click {label} "{obj.get_absolute_url()}"\n'
 
             # Add an edge from the parent node if applicable and avoid duplicates
-            if parent_label and (parent_label, label) not in edges:
+            if parent_label and (parent_label, label) not in processed_relationships:
                 diagram += f"{parent_label} --> {label}\n"
-                edges.add((parent_label, label))
+                processed_relationships.add((parent_label, label))
 
             # Define fields to skip (e.g., tags, problematic reverse relationships)
             excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
@@ -165,18 +169,20 @@ class BaseDetailView(generic.ObjectView):
             # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
             for field in obj._meta.get_fields():
                 if field.is_relation and not field.auto_created and field.name not in excluded_fields:
-                    # Stop if max depth is reached
                     if current_depth + 1 > max_depth:
                         continue
                     try:
                         related_object = getattr(obj, field.name)
                         if related_object:
-                            # For ManyToManyField or reverse relationships, iterate over them
+                            # Handle ManyToMany or reverse relationships
                             if hasattr(related_object, 'all'):
                                 for rel_obj in related_object.all():
-                                    add_node(rel_obj, label, current_depth + 1)
+                                    if (label, sanitize_label(rel_obj._meta.model_name) + f"_{rel_obj.pk}") not in processed_relationships:
+                                        add_node(rel_obj, label, current_depth + 1)
                             else:
-                                add_node(related_object, label, current_depth + 1)
+                                related_label = f"{sanitize_label(related_object._meta.model_name)}_{related_object.pk}"
+                                if (label, related_label) not in processed_relationships:
+                                    add_node(related_object, label, current_depth + 1)
                     except AttributeError:
                         continue
 
@@ -184,35 +190,37 @@ class BaseDetailView(generic.ObjectView):
             if isinstance(obj, Component) and obj.content_object:
                 related_object = obj.content_object
                 content_label = f"{sanitize_label(related_object._meta.model_name)}_{related_object.pk}"
-                if (label, content_label) not in edges:
+                if (label, content_label) not in processed_relationships:
                     diagram += f"{label} --> {content_label}\n"
-                    edges.add((label, content_label))
+                    processed_relationships.add((label, content_label))
                     add_node(related_object, label, current_depth + 1)
 
             # Process reverse relationships (auto-created relationships)
             for rel in obj._meta.get_fields():
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
-                    # Stop if max depth is reached
                     if current_depth + 1 > max_depth:
                         continue
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
-                            add_node(related_obj, label, current_depth + 1)
+                            related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                            if (related_label, label) not in processed_relationships:
+                                add_node(related_obj, label, current_depth + 1)
 
-            # Ensure that any back-references to the service are preserved without duplication
+            # Add the back-reference from Component to Service without duplication
             if isinstance(obj, Component) and obj.service:
                 service = obj.service
                 service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
-                if (label, service_label) not in edges:
+                if (label, service_label) not in processed_relationships:
                     diagram += f"{label} --> {service_label}\n"
-                    edges.add((label, service_label))
+                    processed_relationships.add((label, service_label))
                     add_node(service, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
 
         return diagram
+
 
 class SolutionDetailView(BaseDetailView):
     queryset = Solution.objects.prefetch_related('tags')
