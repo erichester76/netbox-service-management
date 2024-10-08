@@ -40,6 +40,7 @@ class BaseDetailView(generic.ObjectView):
             'template_groups',
             'services',
             'depends_on',
+            'dependencies',
         }
 
         # Extract fields and their values for the object, including relationships
