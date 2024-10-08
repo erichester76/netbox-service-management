@@ -126,7 +126,7 @@ class BaseDetailView(generic.ObjectView):
 
     def generate_mermaid_diagram(self, instance, max_depth=1):
         # Initialize the diagram string
-        diagram = "graph TD\n"
+        diagram = "graph LR\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
         
