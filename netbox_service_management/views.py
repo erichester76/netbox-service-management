@@ -117,7 +117,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=4)
+        mermaid_diagram = self.generate_mermaid_diagram(instance, max_depth=3)
 
         return {
             'object_name': object_name,
@@ -130,12 +130,12 @@ class BaseDetailView(generic.ObjectView):
         # Initialize the diagram string
         diagram = "graph TD\n"
         visited = set()
-        connections = set()
+        edges = set()  # Keep track of added edges to avoid duplicates
         
         def sanitize_label(text):
             """Sanitize a text string to be used in a Mermaid node."""
             return re.sub(r'[^a-zA-Z0-9_]', '_', text)
-
+        
         def add_node(obj, parent_label=None, current_depth=0):
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
             if label in visited or current_depth > max_depth:
@@ -154,9 +154,10 @@ class BaseDetailView(generic.ObjectView):
             if hasattr(obj, 'get_absolute_url'):
                 diagram += f'click {label} "{obj.get_absolute_url()}"\n'
 
-            # Add an edge from the parent node if applicable
-            if parent_label:
+            # Add an edge from the parent node if applicable and avoid duplicates
+            if parent_label and (parent_label, label) not in edges:
                 diagram += f"{parent_label} --> {label}\n"
+                edges.add((parent_label, label))
 
             # Define fields to skip (e.g., tags, problematic reverse relationships)
             excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
@@ -180,9 +181,12 @@ class BaseDetailView(generic.ObjectView):
                         continue
 
             # Process GenericForeignKey if it exists
-            if isinstance(obj, GenericForeignKey):
+            if isinstance(obj, Component) and obj.content_object:
                 related_object = obj.content_object
-                if related_object:
+                content_label = f"{sanitize_label(related_object._meta.model_name)}_{related_object.pk}"
+                if (label, content_label) not in edges:
+                    diagram += f"{label} --> {content_label}\n"
+                    edges.add((label, content_label))
                     add_node(related_object, label, current_depth + 1)
 
             # Process reverse relationships (auto-created relationships)
@@ -196,15 +200,13 @@ class BaseDetailView(generic.ObjectView):
                         for related_obj in related_objects.all():
                             add_node(related_obj, label, current_depth + 1)
 
-            # Ensure that any back-references to the service are preserved
-            # This part is crucial for keeping the relationship between Component and Service visible
-            if isinstance(obj, Component):
-                # Add an explicit link to the related service
+            # Ensure that any back-references to the service are preserved without duplication
+            if isinstance(obj, Component) and obj.service:
                 service = obj.service
-                if service:
-                    service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
+                service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
+                if (label, service_label) not in edges:
                     diagram += f"{label} --> {service_label}\n"
-                    # Add the service as a node if it hasn't been visited
+                    edges.add((label, service_label))
                     add_node(service, label, current_depth + 1)
 
         # Start the diagram with the main object
