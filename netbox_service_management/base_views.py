@@ -214,6 +214,7 @@ class BaseDetailView(generic.ObjectView):
                 if obj.service:
                     diagram += f"component_{obj.pk} --> service_{obj.service.pk}\n"
                     processed_relationships.add((f"component_{obj.pk}", f"service_{obj.service.pk}"))
+                    #add_node(obj.service, label, current_depth + 1)
 
                 # Add the relationship from the component to its template component
                 if obj.template_component:
