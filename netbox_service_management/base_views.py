@@ -107,6 +107,7 @@ class BaseDetailView(generic.ObjectView):
                         related_table = table_class(related_objects)
                     else:
                         related_table = None
+                        
                     related_tables.append({
                         'name': related_model._meta.verbose_name_plural,
                         'objects': related_objects,
@@ -115,7 +116,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=7)
+        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=10)
 
         return {
             'object_name': object_name,
@@ -158,7 +159,9 @@ class BaseDetailView(generic.ObjectView):
             return re.sub(r'[^a-zA-Z0-9_]', '_', text)
         
         def add_node(obj, parent_label=None, current_depth=0):
+         
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+         
             # Prevent circular reference by ensuring we don't revisit a node
             if label in visited or current_depth > max_depth:
                 return
@@ -193,7 +196,7 @@ class BaseDetailView(generic.ObjectView):
                     related_obj = getattr(obj, rel.name, None)
                     if related_obj:
                         related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                        if (related_label, label) not in processed_relationships:
+                        if (related_label, label) not in processed_relationships and (label, related_label) not in processed_relationships:
                             add_node(related_obj, label, current_depth + 1)
                             
                 elif rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
@@ -244,6 +247,5 @@ class BaseDetailView(generic.ObjectView):
         for obj_type, color in color_map.items():
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,color:#fff,font-size:14px;\n'
             diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,color:#fff,font-size:14px;\n'
-            diagram += f'linkStyle default stroke:#01f2d4,stroke-width:2px;\n'
         return diagram, legend
     
