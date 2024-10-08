@@ -183,17 +183,17 @@ class BaseDetailView(generic.ObjectView):
                     diagram += f"{label} --> {service_label}\n"
                     processed_relationships.add((label, service_label))
 
-            # Continue processing relationships for Service, preserving its other connections
-            add_node(service, label, current_depth)
+                # Continue processing relationships for Service, preserving its other connections
+                add_node(service, label, current_depth)
 
-            # Ensure the Service connects back to its ServiceTemplateGroup through the Component's template_component
-            if obj.template_component:
-                stg = obj.template_component.service_template_group
-                stg_label = f"{sanitize_label(stg._meta.model_name)}_{stg.pk}"
-                if (service_label, stg_label) not in processed_relationships:
-                    diagram += f"{service_label} --> {stg_label}\n"
-                    processed_relationships.add((service_label, stg_label))
-                    add_node(stg, service_label, current_depth)
+                # Ensure the Service connects back to its ServiceTemplateGroup through the Component's template_component
+                if obj.template_component:
+                    stg = obj.template_component.service_template_group
+                    stg_label = f"{sanitize_label(stg._meta.model_name)}_{stg.pk}"
+                    if (service_label, stg_label) not in processed_relationships:
+                        diagram += f"{service_label} --> {stg_label}\n"
+                        processed_relationships.add((service_label, stg_label))
+                        add_node(stg, service_label, current_depth)
                     
         # Start the diagram with the main object
         add_node(instance)
