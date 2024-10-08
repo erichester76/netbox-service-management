@@ -1,5 +1,6 @@
 from netbox.views import generic
 from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
+from django.urls import reverse
 
 from . import (
     filtersets, 
@@ -41,6 +42,8 @@ class BaseDetailView(generic.ObjectView):
             'services',
             'depends_on',
             'dependencies',
+            'created',
+            'last_updated',
         }
 
         # Extract fields and their values for the object, including relationships
@@ -84,6 +87,16 @@ class BaseDetailView(generic.ObjectView):
                 related_model = rel.related_model
                 related_objects = getattr(instance, rel.get_accessor_name()).all() 
                 if related_objects.exists():
+                                    # Create the URL for adding a new related object
+                    add_url = None
+                    if hasattr(related_model, 'get_absolute_url'):
+                        model_name = related_model._meta.model_name
+                        add_url = reverse(
+                            f'plugins:netbox_servicemanage_plugin:{model_name}_add'
+                        )   
+                        # Pre-fill the linking field with the current object's ID, if possible
+                        add_url += f'?{instance._meta.model_name}={instance.pk}'
+
                     # Create a table dynamically if a suitable one exists
                     table_class_name = f"{related_model.__name__}Table"
                     if hasattr(tables, table_class_name):
@@ -95,6 +108,7 @@ class BaseDetailView(generic.ObjectView):
                         'name': related_model._meta.verbose_name_plural,
                         'objects': related_objects,
                         'table': related_table,
+                        'add_url': add_url,
                     })
         return {
             'object_name': object_name,
