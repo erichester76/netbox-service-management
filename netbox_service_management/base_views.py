@@ -188,6 +188,13 @@ class BaseDetailView(generic.ObjectView):
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
                     if current_depth + 1 > max_depth:
                         continue
+                    # Handle GenericForeignKey relationships
+                    if isinstance(rel, GenericForeignKey):
+                        related_obj = getattr(obj, rel.name, None)
+                        if related_obj:
+                            related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                            if (related_label, label) not in processed_relationships:
+                                add_node(related_obj, label, current_depth + 1)
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
@@ -196,8 +203,10 @@ class BaseDetailView(generic.ObjectView):
                                 add_node(related_obj, label, current_depth + 1)
                                 
             # Handle special case: GenericForeignKey or other manual relations
-            if isinstance(obj, Component) and obj.service:
-                add_node(obj.service, label, current_depth + 1)
+            if isinstance(obj, Component) and obj.content_object:
+                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+
+                add_node(obj.content_obj, label, current_depth + 1)
                 
             # Handle the specific relationship from Component to Service to avoid circular reference loop
             if isinstance(obj, Component):
@@ -238,5 +247,5 @@ class BaseDetailView(generic.ObjectView):
             verbose_name = obj_type.replace('_', ' ').title()
             legend += f'color_{obj_type}(["{verbose_name}"]):::color_{obj_type}\n'
         
-        return legend + diagram
+        return diagram + legend
     
