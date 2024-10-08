@@ -9,12 +9,28 @@ class SolutionDetailView(generic.ObjectView):
         # Extract fields and their values for the object
         field_data = []
         for field in instance._meta.get_fields():
-            if not field.is_relation:  # Skip relationships if not needed
-                value = getattr(instance, field.name, None)
-                field_data.append({
-                    'name': field.verbose_name if hasattr(field, 'verbose_name') else field.name,
-                    'value': value,
-                })
+            value = None
+            try:
+                # Handle many-to-many or one-to-many relationships
+                if field.many_to_many or field.one_to_many:
+                    related_objects = getattr(instance, field.name).all()
+                    value = ", ".join([str(obj) for obj in related_objects])
+
+                # Handle ForeignKey and OneToOne relationships
+                elif isinstance(field, (models.ForeignKey, models.OneToOneField)):
+                    related_object = getattr(instance, field.name)
+                    value = str(related_object) if related_object else None
+
+                # Handle regular fields
+                else:
+                    value = getattr(instance, field.name)
+            except AttributeError:
+                value = None  # In case the relationship doesn't exist or is optional
+
+            field_data.append({
+                'name': field.verbose_name if hasattr(field, 'verbose_name') else field.name,
+                'value': value,
+            })
 
         # Get all ServiceTemplate instances related to this Solution
         service_templates = models.ServiceTemplate.objects.filter(solution=instance)
