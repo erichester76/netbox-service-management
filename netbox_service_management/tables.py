@@ -48,7 +48,7 @@ class ServiceTable(NetBoxTable):
     class Meta(NetBoxTable.Meta):
         model = models.Service
         fields = ("pk", "id", "name", "solution", "tenant", "deployment", "capability_category", "actions")
-        default_columns = ("name", "solution", "deployment", "capability_category", "tenant")
+        default_columns = ("name", "deployment", "capability_category", "tenant")
         
 class ComponentTable(NetBoxTable):
     name = tables.Column(linkify=True)

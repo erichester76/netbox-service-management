@@ -37,7 +37,7 @@ class BaseDetailView(generic.ObjectView):
             'tagged_items', 
             'service_templates',
             'stg_components',
-            'service_template_groups',
+            'template_groups',
             'services',
             'depends_on',
         }
