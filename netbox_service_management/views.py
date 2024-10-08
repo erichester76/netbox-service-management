@@ -28,7 +28,6 @@ class BaseDetailView(generic.ObjectView):
         for field in instance._meta.get_fields():
             value = None
             url = None
-
             try:
                 # Handle many-to-many or one-to-many relationships
                 if field.many_to_many or field.one_to_many:
@@ -51,8 +50,7 @@ class BaseDetailView(generic.ObjectView):
             field_data.append({
                 'name': field.verbose_name if hasattr(field, 'verbose_name') else field.name,
                 'value': value,
-                'url': url,  # Include the URL if available
-
+                'url': url,  
             })
 
         # Find reverse relations dynamically and add them to related_tables
@@ -60,8 +58,7 @@ class BaseDetailView(generic.ObjectView):
         for rel in instance._meta.get_fields():
             if rel.is_relation and rel.auto_created and not rel.concrete:
                 related_model = rel.related_model
-                related_objects = getattr(instance, rel.get_accessor_name()).all()
-                
+                related_objects = getattr(instance, rel.get_accessor_name()).all() 
                 if related_objects.exists():
                     # Create a table dynamically if a suitable one exists
                     table_class_name = f"{related_model.__name__}Table"
@@ -70,13 +67,11 @@ class BaseDetailView(generic.ObjectView):
                         related_table = table_class(related_objects)
                     else:
                         related_table = None
-
                     related_tables.append({
                         'name': related_model._meta.verbose_name_plural,
                         'objects': related_objects,
                         'table': related_table,
                     })
-
         return {
             'field_data': field_data,
             'related_tables': related_tables,
