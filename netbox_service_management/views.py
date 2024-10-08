@@ -141,7 +141,7 @@ class BaseDetailView(generic.ObjectView):
 
             # Add the current object to the diagram
             display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
-            shape = f"{label}[""{obj._meta.verbose_name}: {display_name}""]"  
+            shape = f"{label}([{obj._meta.verbose_name}: {display_name}])"  
             nonlocal diagram
             diagram += shape + "\n"
 
