@@ -175,7 +175,7 @@ class BaseDetailView(generic.ObjectView):
                                 add_node(related_obj, label, current_depth + 1)
 
              # Handle the specific relationship from Component to Service
-            if isinstance(obj, Component) 
+            if isinstance(obj, Component):
                 if obj.service:
                     service = obj.service
                     service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
