@@ -1,5 +1,5 @@
 
-{% extends 'generic/object.html' %}
+{% extends 'generic/object_list.html' %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
@@ -43,7 +43,7 @@
             </tbody>
         </table>
     </div>
-{% endfor %}
+    {% endfor %}
       {% include 'inc/panels/tags.html' %}
       {% include 'inc/panels/comments.html' %}
     </div>
