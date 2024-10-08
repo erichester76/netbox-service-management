@@ -238,7 +238,7 @@ class BaseDetailView(generic.ObjectView):
        
         # Style the subgraph for the legend
         for obj_type, color in color_map.items():
-            verbose_name = obj_type.title()
+            verbose_name = obj_type
             legend += f'color_{obj_type}["{verbose_name}"]:::color_{obj_type}\n'
         legend += "end\n"
         legend += "style Legend fill:#E5F2FF,stroke:#E5F2FF,stroke-width:0px;\n"
