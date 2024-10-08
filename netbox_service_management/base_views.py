@@ -134,9 +134,9 @@ class BaseDetailView(generic.ObjectView):
         color_map = {
             'solution': '#D0E8FF',  # Light blue
             'service': '#A4D1FF',   # Medium light blue
-            'service_template': '#78B8FF',  # Medium blue
-            'service_template_group': '#4C9FFF',  # Darker blue
-            'service_template_group_component': '#2886FF',  # Even darker blue
+            'servicetemplate': '#78B8FF',  # Medium blue
+            'servicetemplategroup': '#4C9FFF',  # Darker blue
+            'servicetemplategroup_omponent': '#2886FF',  # Even darker blue
             'component': '#0F6EFF',  # Dark blue
         } 
         
