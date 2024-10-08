@@ -26,7 +26,18 @@ class BaseDetailView(generic.ObjectView):
         # Extract fields and their values for the object, including relationships
         field_data = []
         object_name = instance._meta.verbose_name
+                # Define fields to exclude
+        excluded_fields = {
+            'id', 'custom_field_data', 'tags', 'bookmarks', 'journal_entries', 'subscriptions'
+        }
+
+        # Extract fields and their values for the object, including relationships
+        field_data = []
         for field in instance._meta.get_fields():
+            # Skip excluded fields
+            if field.name in excluded_fields:
+                continue
+            
             value = None
             url = None
             try:
