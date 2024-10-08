@@ -25,7 +25,6 @@ class ServiceTemplate(NetBoxModel):
     to='extras.Tag',
     related_name='netbox_service_management_service_templates'
     
-
     # Custom related_name to avoid conflict with ipam->services
     )
     class Meta:
