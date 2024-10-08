@@ -25,6 +25,7 @@ class BaseDetailView(generic.ObjectView):
     def get_extra_context(self, request, instance):
         # Extract fields and their values for the object, including relationships
         field_data = []
+        object_name = instance._meta._meta.verbose_name
         for field in instance._meta.get_fields():
             value = None
             url = None
@@ -73,6 +74,7 @@ class BaseDetailView(generic.ObjectView):
                         'table': related_table,
                     })
         return {
+            'object_name': object_name,
             'field_data': field_data,
             'related_tables': related_tables,
         }
