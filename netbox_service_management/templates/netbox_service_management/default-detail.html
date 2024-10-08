@@ -10,10 +10,10 @@
         <table class="table table-hover attr-table">
             {% for field in field_data %}
                 <tr>
-                    <th scope="row">{{ field.name|titile }}</th>
+                    <th scope="row">{{ field.name|title }}</th>
                     <td>
                         {% if field.url %}
-                            <a href="{{ field.url }}">{{ field.value }}</a>
+                            <a href="{{ field.url }}">{{ field.value|title }}</a>
                         {% else %}
                             {{ field.value|title }}
                         {% endif %}
