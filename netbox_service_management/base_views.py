@@ -175,26 +175,36 @@ class BaseDetailView(generic.ObjectView):
                                 add_node(related_obj, label, current_depth + 1)
 
              # Handle the specific relationship from Component to Service
-            if isinstance(obj, Component) and obj.service:
-                service = obj.service
-                service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
+            if isinstance(obj, Component) 
+                if obj.service:
+                    service = obj.service
+                    service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
                 
-                # Add the explicit link from Component to Service
-                if (service_label, label) not in processed_relationships:
-                    diagram += f"{label} --> {service_label}\n"
-                    processed_relationships.add((label, service_label))
+                    # Add the explicit link from Component to Service
+                    if (service_label, label) not in processed_relationships:
+                        diagram += f"{label} --> {service_label}\n"
+                        processed_relationships.add((label, service_label))
+                        
+                if obj.template_component:
+                    stgc = obj.template_component
+                    stgc_label = f"{sanitize_label(stgc._meta.model_name)}_{stgc.pk}"
+                
+                    # Add the explicit link from Component to Service
+                    if (service_label, label) not in processed_relationships:
+                        diagram += f"{label} --> {stgc_label}\n"
+                        processed_relationships.add((label, service_label))
                 
                 # Continue processing relationships for Service, preserving its other connections
                 # add_node(service, label, current_depth)
 
-            # Directly link the Service to its ServiceTemplate
+            """ # Directly link the Service to its ServiceTemplate
             if isinstance(obj, Service) and obj.service_template:
                 service_template = obj.service_template
                 st_label = f"{sanitize_label(service_template._meta.model_name)}_{service_template.pk}"
                 if (st_label, label) not in processed_relationships:
                     diagram += f"{st_label} --> {label}\n"
                     processed_relationships.add((label, st_label))
-                    #add_node(service_template, label, current_depth)
+                    #add_node(service_template, label, current_depth) """
 
                                 
         # Start the diagram with the main object
