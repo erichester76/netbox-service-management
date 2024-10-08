@@ -172,7 +172,7 @@ class BaseDetailView(generic.ObjectView):
             # Sanitize the object name for use in the diagram
             display_name = re.sub(r'[^a-zA-Z0-9_\ \/]', '', str(obj))  # Replace quotes to avoid breaking Mermaid syntax
 
-            shape = f'{label}([{display_name}]):::color_{obj_type}'
+            shape = f'{label}({display_name}):::color_{obj_type}'
             # Add the current object to the diagram
             nonlocal diagram
             diagram += shape + "\n"
@@ -241,7 +241,7 @@ class BaseDetailView(generic.ObjectView):
         # Style the subgraph for the legend
         for obj_type, color in color_map.items():
             verbose_name = re.sub(r'[^a-zA-Z0-9_]', '_', obj_type)
-            legend += f'key_{obj_type}([{verbose_name}]):::color_{obj_type}\n'
+            legend += f'key_{obj_type}({verbose_name}):::color_{obj_type}\n'
         legend += "end\n"
         legend += "style Legend fill:transparent,stroke-width:0px;\n"
         # Append classDef styles directly to the diagram string
