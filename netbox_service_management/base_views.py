@@ -131,13 +131,14 @@ class BaseDetailView(generic.ObjectView):
         processed_relationships = set()  # Track relationships to prevent circular references
          # Define colors for each model type
         color_map = {
-            'solution': '#FFDDC1',
-            'service': '#C1E1C1',
-            'service_template': '#C1D3FF',
-            'service_template_group': '#FFD1DC',
-            'service_template_group_component': '#FFFACD',
-            'component': '#E2C1FF',
-        }
+            'solution': '#D0E8FF',  # Light blue
+            'service': '#A4D1FF',   # Medium light blue
+            'service_template': '#78B8FF',  # Medium blue
+            'service_template_group': '#4C9FFF',  # Darker blue
+            'service_template_group_component': '#2886FF',  # Even darker blue
+            'component': '#0F6EFF',  # Dark blue
+        } 
+        
         # Define fields to skip (e.g., tags, problematic reverse relationships)
         excluded_fields = {
             'tags', 
@@ -167,7 +168,7 @@ class BaseDetailView(generic.ObjectView):
 
             # Sanitize the object name for use in the diagram
             display_name = str(obj).replace('"', "'")  # Replace quotes to avoid breaking Mermaid syntax
-            shape = f'{label}["{display_name}"]:::color_{obj_type}'
+            shape = f'{label}([{display_name}]):::color_{obj_type}'
             # Add the current object to the diagram
             nonlocal diagram
             diagram += shape + "\n"
@@ -222,8 +223,9 @@ class BaseDetailView(generic.ObjectView):
         
         # Add a legend using a subgraph
         diagram += "subgraph Legend\n"
+        diagram += "direction TD\n"  # Place items in the legend in a horizontal row
         for obj_type, color in color_map.items():
-            diagram += f'color_{obj_type}["{obj_type.capitalize()}"]:::color_{obj_type}\n'
+            diagram += f'color_{obj_type}([{obj_type.replace('_', ' ').title()}]):::color_{obj_type}\n'
         diagram += "end\n"
             
         return diagram
