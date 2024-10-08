@@ -199,11 +199,6 @@ class BaseDetailView(generic.ObjectView):
 
         return diagram
 
-
-
-
-
-
 class SolutionDetailView(BaseDetailView):
     queryset = Solution.objects.prefetch_related('tags')
     table = tables.SolutionTable
