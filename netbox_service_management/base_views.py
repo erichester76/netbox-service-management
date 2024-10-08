@@ -129,6 +129,7 @@ class BaseDetailView(generic.ObjectView):
         diagram = "graph LR\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
+        
          # Define colors for each model type
         color_map = {
             'solution': '#D0E8FF',  # Light blue
