@@ -143,29 +143,38 @@ class BaseDetailView(generic.ObjectView):
             if parent_label:
                 diagram += f"{parent_label} --> {label}\n"
 
-            # Process related objects recursively, filtering out unwanted ones
-            for rel in obj._meta.get_fields():
-                # Skip fields related to tags or other problematic reverse relationships
-                if rel.is_relation and (rel.name in ['tags', 'datasource_set'] or rel.auto_created and not rel.concrete):
-                    continue
+            # Define fields to skip (e.g., tags, problematic reverse relationships)
+            excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
 
-                # Handle reverse relationships safely
-                if rel.is_relation and rel.auto_created and not rel.concrete:
+            # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
+            for field in obj._meta.get_fields():
+                if field.is_relation and not field.auto_created and field.name not in excluded_fields:
+                    try:
+                        related_object = getattr(obj, field.name)
+                        if related_object:
+                            # For ManyToManyField or reverse relationships, iterate over them
+                            if hasattr(related_object, 'all'):
+                                for rel_obj in related_object.all():
+                                    add_node(rel_obj, label)
+                            else:
+                                add_node(related_object, label)
+                    except AttributeError:
+                        # Handle the case where the field is not accessible
+                        continue
+
+            # Process reverse relationships (auto-created relationships)
+            for rel in obj._meta.get_fields():
+                if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
                             add_node(related_obj, label)
 
-                # Handle direct relationships (ForeignKey or OneToOneField)
-                elif isinstance(rel, (models.ForeignKey, models.OneToOneField)):
-                    related_object = getattr(obj, rel.name, None)
-                    if related_object:
-                        add_node(related_object, label)
-
         # Start the diagram with the main object
         add_node(instance)
 
         return diagram
+
 
 
 
