@@ -137,7 +137,7 @@ class BaseDetailView(generic.ObjectView):
         def sanitize_label(text):
             """Sanitize a text string to be used in a Mermaid node."""
             return re.sub(r'[^a-zA-Z0-9_]', '_', text)
-
+        
         def add_node(obj, parent_label=None, current_depth=0):
             label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
             
@@ -166,35 +166,6 @@ class BaseDetailView(generic.ObjectView):
             # Define fields to skip (e.g., tags, problematic reverse relationships)
             excluded_fields = {'tags', 'datasource_set', 'custom_field_data', 'bookmarks', 'journal_entries', 'subscriptions'}
 
-            # # Process forward relationships (ForeignKey, OneToOneField, ManyToManyField)
-            # for field in obj._meta.get_fields():
-            #     if field.is_relation and not field.auto_created and field.name not in excluded_fields:
-            #         if current_depth + 1 > max_depth:
-            #             continue
-            #         try:
-            #             related_object = getattr(obj, field.name)
-            #             if related_object:
-            #                 # Handle ManyToMany or reverse relationships
-            #                 if hasattr(related_object, 'all'):
-            #                     for rel_obj in related_object.all():
-            #                         if (label, sanitize_label(rel_obj._meta.model_name) + f"_{rel_obj.pk}") not in processed_relationships:
-            #                             add_node(rel_obj, label, current_depth + 1)
-            #                 else:
-            #                     related_label = f"{sanitize_label(related_object._meta.model_name)}_{related_object.pk}"
-            #                     if (label, related_label) not in processed_relationships:
-            #                         add_node(related_object, label, current_depth + 1)
-            #         except AttributeError:
-            #             continue
-
-            # Process GenericForeignKey if it exists
-            if isinstance(obj, Component) and obj.content_object:
-                related_object = obj.content_object
-                content_label = f"{sanitize_label(related_object._meta.model_name)}_{related_object.pk}"
-                if (label, content_label) not in processed_relationships:
-                    diagram += f"{label} --> {content_label}\n"
-                    processed_relationships.add((label, content_label))
-                    add_node(related_object, label, current_depth + 1)
-
             # Process reverse relationships (auto-created relationships)
             for rel in obj._meta.get_fields():
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
@@ -207,7 +178,7 @@ class BaseDetailView(generic.ObjectView):
                             if (related_label, label) not in processed_relationships:
                                 add_node(related_obj, label, current_depth + 1)
 
-            # Add the back-reference from Component to Service without duplication
+            # Add the forced forward reference from Component to Service
             if isinstance(obj, Component) and obj.service:
                 service = obj.service
                 service_label = f"{sanitize_label(service._meta.model_name)}_{service.pk}"
