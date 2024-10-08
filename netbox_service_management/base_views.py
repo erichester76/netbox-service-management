@@ -238,10 +238,11 @@ class BaseDetailView(generic.ObjectView):
         legend += "direction LR\n"  # Place items in the legend in a horizontal row
        
         # Style the subgraph for the legend
-        legend += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\n"
         for obj_type, color in color_map.items():
             verbose_name = obj_type.replace('_', ' ').title()
-            legend += f'color_{obj_type}(["{verbose_name}"]):::color_{obj_type}\n'
-        
+            legend += f'color_{obj_type}["{verbose_name}"]:::color_{obj_type}\n'
+        legend += "end\n"
+        legend += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\n"
+
         return diagram + legend
     
