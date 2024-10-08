@@ -145,6 +145,11 @@ class BaseDetailView(generic.ObjectView):
             nonlocal diagram
             diagram += shape + "\n"
 
+            # Add a click event if the object has a URL
+            if hasattr(obj, 'get_absolute_url'):
+                diagram += f'click {label} "{obj.get_absolute_url()}"\n'
+
+
             # Add an edge from the parent node if applicable
             if parent_label:
                 diagram += f"{parent_label} --> {label}\n"
