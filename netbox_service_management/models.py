@@ -8,10 +8,7 @@ from tenancy.models import Tenant
 class Solution(NetBoxModel):
     name = models.CharField(max_length=100)
     tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE, null=True, blank=True, related_name='netbox_service_management_solution_tenant')
-    tags = models.ManyToManyField(
-        to='extras.Tag',
-        related_name='netbox_service_management_solutions' 
-    ) 
+
     class Meta:
         ordering = ("name",)
 
@@ -42,10 +39,7 @@ class ServiceTemplateGroup(NetBoxModel):
     name = models.CharField(max_length=100)
     service_template = models.ForeignKey(ServiceTemplate, on_delete=models.CASCADE, related_name='template_groups')
     depends_on = models.ForeignKey('self', on_delete=models.CASCADE, related_name='dependencies', null=True,  blank=True)
-    tags = models.ManyToManyField(
-        to='extras.Tag',
-        related_name='netbox_service_management_service_template_groups' 
-    ) 
+
     class Meta:
         ordering = ("name",)
 
@@ -58,12 +52,7 @@ class ServiceTemplateGroup(NetBoxModel):
 class ServiceTemplateGroupComponent(NetBoxModel):
     name = models.CharField(max_length=100)
     service_template_group = models.ForeignKey(ServiceTemplateGroup, on_delete=models.CASCADE, related_name='stg_components')
-     
-    tags = models.ManyToManyField(
-        to='extras.Tag',
-        related_name='netbox_service_management_service_template_group_components' 
-    ) 
-        
+
     class Meta:
         ordering = ("name",)
 
@@ -122,10 +111,7 @@ class Component(NetBoxModel):
     )
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
-    tags = models.ManyToManyField(
-        to='extras.Tag',
-        related_name='netbox_service_management_components' 
-    ) 
+
     class Meta:
         ordering = ("name",)
 
