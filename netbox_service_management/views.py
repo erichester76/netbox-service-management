@@ -135,8 +135,12 @@ class BaseDetailView(generic.ObjectView):
         diagram = "graph TD\n"
         visited = set()
 
+        def sanitize_label(text):
+            """Sanitize a text string to be used in a Mermaid node."""
+            return re.sub(r'[^a-zA-Z0-9_]', '_', text)
+        
         def add_node(obj, parent_label=None, current_depth=0):
-            label = f"{self.sanitize_label(obj._meta.model_name)}_{obj.pk}"
+            label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
             if label in visited or current_depth > max_depth:
                 return
             visited.add(label)
