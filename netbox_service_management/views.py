@@ -12,12 +12,12 @@ class SolutionDetailView(generic.ObjectView):
         # Get all ServiceTemplate instances related to this Solution
         service_templates = models.ServiceTemplate.objects.filter(solution=instance)
         service_templates_table = tables.ServiceTemplateTable(service_templates)
-        related_tables.append(service_templates_table)
+        related_tables.append({'name':'service_templates','objects': service_templates_table})
 
         # Get all Services that are linked to the above ServiceTemplates
         services = models.Service.objects.filter(service_template__in=service_templates)
         services_table = tables.ServiceTable(services)
-        related_tables.append(services_table)
+        related_tables.append({'name':'services','objects': services_table})
         
         return {
             'related_tables': related_tables,
