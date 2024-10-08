@@ -1,9 +1,11 @@
 from netbox.views import generic
 from . import filtersets, forms, models, tables
 
+from netbox.views import generic
+from django.db import models
 
-class SolutionDetailView(generic.ObjectView):
-    queryset = models.Solution.objects.all()
+class BaseDetailView(generic.ObjectView):
+    template_name = 'netbox_servicemanage_plugin/detail-default.html'
     
     def get_extra_context(self, request, instance):
         # Extract fields and their values for the object, including relationships
@@ -59,6 +61,9 @@ class SolutionDetailView(generic.ObjectView):
             'related_tables': related_tables,
         }
 
+class SolutionDetailView(BaseDetailView):
+    queryset = models.Solution.objects.all()
+    table = tables.SolutionTable
     
 class SolutionListView(generic.ObjectListView):
     queryset = models.Solution.objects.all()
@@ -71,7 +76,7 @@ class SolutionEditView(generic.ObjectEditView):
 class SolutionDeleteView(generic.ObjectDeleteView):
     queryset = models.Solution.objects.all()
     
-class ServiceTemplateDetailView(generic.ObjectView):
+class ServiceTemplateDetailView(BaseDetailView):
     queryset = models.ServiceTemplate.objects.all()
 
 class ServiceTemplateListView(generic.ObjectListView):
@@ -85,7 +90,7 @@ class ServiceTemplateEditView(generic.ObjectEditView):
 class ServiceTemplateDeleteView(generic.ObjectDeleteView):
     queryset = models.ServiceTemplate.objects.all()
 
-class ServiceTemplateGroupDetailView(generic.ObjectView):
+class ServiceTemplateGroupDetailView(BaseDetailView):
     queryset = models.ServiceTemplateGroup.objects.all()
 
 class ServiceTemplateGroupListView(generic.ObjectListView):
@@ -99,7 +104,7 @@ class ServiceTemplateGroupEditView(generic.ObjectEditView):
 class ServiceTemplateGroupDeleteView(generic.ObjectDeleteView):
     queryset = models.ServiceTemplateGroup.objects.all()
 
-class ServiceTemplateGroupComponentDetailView(generic.ObjectView):
+class ServiceTemplateGroupComponentDetailView(BaseDetailView):
     queryset = models.ServiceTemplateGroupComponent.objects.all()
 
 class ServiceTemplateGroupComponentListView(generic.ObjectListView):
@@ -113,7 +118,7 @@ class ServiceTemplateGroupComponentEditView(generic.ObjectEditView):
 class ServiceTemplateGroupComponentDeleteView(generic.ObjectDeleteView):
     queryset = models.ServiceTemplateGroupComponent.objects.all()
 
-class ServiceDetailView(generic.ObjectView):
+class ServiceDetailView(BaseDetailView):
     queryset = models.Service.objects.all()
 
 class ServiceListView(generic.ObjectListView):
@@ -127,7 +132,7 @@ class ServiceEditView(generic.ObjectEditView):
 class ServiceDeleteView(generic.ObjectDeleteView):
     queryset = models.Service.objects.all()
 
-class ComponentDetailView(generic.ObjectView):
+class ComponentDetailView(BaseDetailView):
     queryset = models.Component.objects.all()
 
 class ComponentListView(generic.ObjectListView):
