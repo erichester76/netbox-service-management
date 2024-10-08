@@ -2,9 +2,8 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
-
 <div class="card">
-    <h5 class="card-header">Solution Details</h5>
+    <h5 class="card-header">{{ object._meta.verbose_name }} Details</h5>
     <div class="card-body">
         <table class="table table-hover attr-table">
             {% for field in field_data %}
@@ -17,18 +16,21 @@
     </div>
 </div>
 
-<div class="card mt-3">
-    <h5 class="card-header">Service Templates</h5>
-    <div class="card-body">
-        {% render_table service_templates_table %}
+{% for related_table in related_tables %}
+    <div class="card mt-3">
+        <h5 class="card-header">{{ related_table.name|capfirst }}</h5>
+        <div class="card-body">
+            {% if related_table.table %}
+                {% render_table related_table.table %}
+            {% else %}
+                <ul>
+                    {% for obj in related_table.objects %}
+                        <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
     </div>
-</div>
-
-<div class="card mt-3">
-    <h5 class="card-header">Services Using These Templates</h5>
-    <div class="card-body">
-        {% render_table services_table %}
-    </div>
-</div>
+{% endfor %}
 
 {% endblock %}

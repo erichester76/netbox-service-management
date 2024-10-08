@@ -6,7 +6,7 @@ class SolutionDetailView(generic.ObjectView):
     queryset = models.Solution.objects.all()
     
     def get_extra_context(self, request, instance):
-        # Extract fields and their values for the object
+        # Extract fields and their values for the object, including relationships
         field_data = []
         for field in instance._meta.get_fields():
             value = None
@@ -32,19 +32,33 @@ class SolutionDetailView(generic.ObjectView):
                 'value': value,
             })
 
-        # Get all ServiceTemplate instances related to this Solution
-        service_templates = models.ServiceTemplate.objects.filter(solution=instance)
-        service_templates_table = tables.ServiceTemplateTable(service_templates)
-        
-        # Get all Services that are linked to the above ServiceTemplates
-        services = models.Service.objects.filter(service_template__in=service_templates)
-        services_table = tables.ServiceTable(services)
+        # Find reverse relations dynamically and add them to related_tables
+        related_tables = []
+        for rel in instance._meta.get_fields():
+            if rel.is_relation and rel.auto_created and not rel.concrete:
+                related_model = rel.related_model
+                related_objects = getattr(instance, rel.get_accessor_name()).all()
+                
+                if related_objects.exists():
+                    # Create a table dynamically if a suitable one exists
+                    table_class_name = f"{related_model.__name__}Table"
+                    if hasattr(tables, table_class_name):
+                        table_class = getattr(tables, table_class_name)
+                        related_table = table_class(related_objects)
+                    else:
+                        related_table = None
+
+                    related_tables.append({
+                        'name': related_model._meta.verbose_name_plural,
+                        'objects': related_objects,
+                        'table': related_table,
+                    })
 
         return {
             'field_data': field_data,
-            'service_templates_table': service_templates_table,
-            'services_table': services_table,
+            'related_tables': related_tables,
         }
+
     
 class SolutionListView(generic.ObjectListView):
     queryset = models.Solution.objects.all()
