@@ -224,15 +224,15 @@ class BaseDetailView(generic.ObjectView):
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:2px,font-weight:bold;\n'
 
         # Add the legend subgraph with a specific color and style
-        legend += "graph LR\n"
+        #legend += "graph LR\n"
         legend += "subgraph Legend [Legend]\n"
         legend += "direction LR\n"  # Place items in the legend in a horizontal row
+       
+        # Style the subgraph for the legend
+        legend += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\n"
         for obj_type, color in color_map.items():
             verbose_name = obj_type.replace('_', ' ').title()
             legend += f'color_{obj_type}(["{verbose_name}"]):::color_{obj_type}\n'
-
-        # Style the subgraph for the legend
-        legend += "style Legend fill:#E5F2FF,stroke:#0F6EFF,stroke-width:1px;\nend\n"
         
-        return legend + "\n" + diagram
+        return legend + "\nend\n" + diagram
     
