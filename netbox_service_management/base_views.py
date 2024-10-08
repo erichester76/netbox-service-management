@@ -194,8 +194,12 @@ class BaseDetailView(generic.ObjectView):
                             related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                             if (related_label, label) not in processed_relationships:
                                 add_node(related_obj, label, current_depth + 1)
-
-             # Handle the specific relationship from Component to Service to avoid circular reference loop
+                                
+            # Handle special case: GenericForeignKey or other manual relations
+            if isinstance(obj, Component) and obj.service:
+                add_node(obj.service, label, current_depth + 1)
+                
+            # Handle the specific relationship from Component to Service to avoid circular reference loop
             if isinstance(obj, Component):
                 if obj.service:
                     service = obj.service
