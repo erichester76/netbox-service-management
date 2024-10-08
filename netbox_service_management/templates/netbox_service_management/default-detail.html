@@ -10,12 +10,12 @@
         <table class="table table-hover attr-table">
             {% for field in field_data %}
                 <tr>
-                    <th scope="row">{{ field.name|capfirst }}</th>
+                    <th scope="row">{{ field.name|titile }}</th>
                     <td>
                         {% if field.url %}
                             <a href="{{ field.url }}">{{ field.value }}</a>
                         {% else %}
-                            {{ field.value|capfirst }}
+                            {{ field.value|title }}
                         {% endif %}
                     </td>
                 </tr> 
@@ -27,7 +27,7 @@
 <div class="col col-md-6">
 {% for related_table in related_tables %}
     <div class="card">
-        <h5 class="card-header">{{ related_table.name|capfirst }}{% if related_table.add_url %}
+        <h5 class="card-header">{{ related_table.name|title }}{% if related_table.add_url %}
             <a href="{{ related_table.add_url }}" class="btn btn-sm btn-primary float-right">
                 + Add
             </a></h5>
