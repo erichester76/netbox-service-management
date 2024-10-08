@@ -195,12 +195,13 @@ class BaseDetailView(generic.ObjectView):
                             related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                             if (related_label, label) not in processed_relationships:
                                 add_node(related_obj, label, current_depth + 1)
-                    related_objects = getattr(obj, rel.get_accessor_name(), None)
-                    if related_objects is not None and hasattr(related_objects, 'all'):
-                        for related_obj in related_objects.all():
-                            related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                            if (related_label, label) not in processed_relationships:
-                                add_node(related_obj, label, current_depth + 1)
+                    else:            
+                        related_objects = getattr(obj, rel.get_accessor_name(), None)
+                        if related_objects is not None and hasattr(related_objects, 'all'):
+                            for related_obj in related_objects.all():
+                                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                                if (related_label, label) not in processed_relationships:
+                                    add_node(related_obj, label, current_depth + 1)
                 
             # Handle the specific relationship from Component to Service to avoid circular reference loop
             if isinstance(obj, Component):
