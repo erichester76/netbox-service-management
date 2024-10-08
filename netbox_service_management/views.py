@@ -136,7 +136,7 @@ class BaseDetailView(generic.ObjectView):
         visited = set()
 
         def add_node(obj, parent_label=None, current_depth=0):
-            label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+            label = f"{self.sanitize_label(obj._meta.model_name)}_{obj.pk}"
             if label in visited or current_depth > max_depth:
                 return
             visited.add(label)
