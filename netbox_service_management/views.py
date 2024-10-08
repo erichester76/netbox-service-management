@@ -129,7 +129,7 @@ class BaseDetailView(generic.ObjectView):
         visited = set()
 
         def add_node(obj, parent_label=None):
-            label = f"{obj._meta.model_name}_{obj.pk}"
+            label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
             if label in visited:
                 return
             visited.add(label)
