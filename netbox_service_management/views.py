@@ -10,15 +10,19 @@ class SolutionDetailView(generic.ObjectView):
     queryset = models.Solution.objects.all()
     
     def get_extra_context(self, request, instance):
-        # Get all ServiceRole instances related to this Service
-        service_templates = models.ServiceTemplates.objects.filter(solution=instance)
+        # Get all ServiceTemplate instances related to this Solution
+        service_templates = models.ServiceTemplate.objects.filter(solution=instance)
         service_templates_table = tables.ServiceTemplateTable(service_templates)
+        
+        # Get all Services that are linked to the above ServiceTemplates
+        services = models.Service.objects.filter(service_template__in=service_templates)
+        services_table = tables.ServiceTable(services)
 
         return {
             'service_templates_table': service_templates_table,
-            'service_templates': service_templates,
-        }  
-
+            'services_table': services_table,
+        }
+        
 class SolutionListView(generic.ObjectListView):
     queryset = models.Solution.objects.all()
     table = tables.SolutionTable
