@@ -134,12 +134,12 @@ class BaseDetailView(generic.ObjectView):
         
          # Define colors for each model type
         color_map = {
-            'solution': '#3498db',  # Blue for general actions
-            'service': '#2ecc71',   # Green for "Add"
-            'servicetemplate': '#e67e22',  # Orange for "Edit" (pencil)
-            'servicetemplategroup': '#3498db',  # Blue
-            'servicetemplategroupcomponent': '#e67e22',  # Orange
-            'component': '#e74c3c',  # Red for "Delete"
+            'solution': '#16a2b8',  # Darker Teal 
+            'service': '#01f2d4',   # Teal 
+            'servicetemplate': '#022e36',  # GreenBlue
+            'servicetemplategroup': '#f59f01',  # Orange1
+            'servicetemplategroupcomponent': '#f76706',  # Orange2
+            'component': '#d63a39',  # Red 
         }
         
         # Define fields to skip (e.g., tags, problematic reverse relationships)
@@ -246,8 +246,8 @@ class BaseDetailView(generic.ObjectView):
         legend += "style Legend fill:transparent,stroke-width:0px;\n"
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
-            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,font-weight:bold,color:#fff,font-size:10px;\n'
-            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,font-weight:bold,color:#fff,font-size:10px;\n'
+            legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,font-weight:bold,color:#fff,font-size:12px;\n'
+            diagram += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,font-weight:bold,color:#fff,font-size:12px;\n'
         
         return diagram, legend
     
