@@ -232,8 +232,8 @@ class BaseDetailView(generic.ObjectView):
 
         # Add the legend subgraph with a specific color and style
         legend += "graph LR\n"
-        legend += "subgraph Legend [Legend]\n"
         legend += "direction LR\n"  # Place items in the legend in a horizontal row
+        legend += "subgraph Legend [Legend]\n"
        
         # Style the subgraph for the legend
         for obj_type, color in color_map.items():
