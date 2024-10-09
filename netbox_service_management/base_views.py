@@ -95,7 +95,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=20)
+        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=15)
 
         return {
             'object_name': object_name,
@@ -223,6 +223,9 @@ class BaseDetailView(generic.ObjectView):
                     return
                 if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
                     diagram += f"#RETURN-cluster PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
+                    return
+                if (label and parent_label) and ('servicetemplategroup' in parent_label and 'servietemplate' in label):
+                    diagram += f"#RETURN-STG-LOOP PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
                     return
                 
                 #stop at stgc in recursion so services dont wrap around
