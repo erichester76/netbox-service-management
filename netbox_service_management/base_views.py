@@ -331,9 +331,13 @@ class BaseDetailView(generic.ObjectView):
                 related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
             else:
                 related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
-                
+            nonlocal diagram
+            
             if related_label not in visited:
+                diagram += f'%% {related_label} calling addnode'
                 add_node(related_obj, label, current_depth + 1)
+            else:
+                diagram += f'%% {related_label} in visited'    
                       
         def process_relationships(obj, label, current_depth):
             """
