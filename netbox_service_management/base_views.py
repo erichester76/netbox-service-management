@@ -222,13 +222,13 @@ class BaseDetailView(generic.ObjectView):
                     diagram += f"#RETURN-vm-loop PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                 if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
-                    diagram += f"#RETURN-cluster PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
+                    diagram += f"#RETURN-cluster PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                 if (label and parent_label) and ('servicetemplategroup' in parent_label and 'servicetemplate' in label):
-                    diagram += f"#RETURN-STG-LOOP PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
+                    diagram += f"#RETURN-STG-LOOP PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                 if (label and parent_label) and ('component' in parent_label and 'service' in label):
-                    diagram += f"#RETURN-COMP-LOOP PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
+                    diagram += f"#RETURN-COMP-LOOP PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                 
                 #stop at stgc in recursion so services dont wrap around
