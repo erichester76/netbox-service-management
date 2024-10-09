@@ -211,32 +211,31 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
-
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
                     diagram += f"%% RETURN-visited-or-max PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
-                #define edges - I tried not to have to do it.. but I give up
-                if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
-                    diagram += f"%% ETURN-vm-loop PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                    return
-                if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
-                    diagram += f"%% RETURN-cluster PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
-                    return
-                if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label) and 'servicetemplate' in label):
-                    diagram += f"%% RETURN-STG-LOOP PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                    return
-                if (label and parent_label) and 'component' in parent_label and ('service' in label and not 'ipam_service' in label):
-                    diagram += f"%% RETURN-COMP-LOOP PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
-                    return
+                # #define edges - I tried not to have to do it.. but I give up
+                # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
+                #     diagram += f"%% ETURN-vm-loop PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                #     return
+                # if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
+                #     diagram += f"%% RETURN-cluster PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
+                #     return
+                # if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label) and 'servicetemplate' in label):
+                #     diagram += f"%% RETURN-STG-LOOP PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                #     return
+                # if (label and parent_label) and 'component' in parent_label and ('service' in label and not 'ipam_service' in label):
+                #     diagram += f"%% RETURN-COMP-LOOP PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
+                #     return
                 
-                #stop at stgc in recursion so services dont wrap around
-                if parent_label and ('servicetemplategroupcomponent' in parent_label):
-                    diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                    return
+                # #stop at stgc in recursion so services dont wrap around
+                # if parent_label and ('servicetemplategroupcomponent' in parent_label):
+                #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                #     return
                 
-                if not parent_label and 'cluster': visited.add(label)
+                if not parent_label and 'cluster' in parent_label: visited.add(label)
 
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
