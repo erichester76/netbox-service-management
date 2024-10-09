@@ -280,11 +280,11 @@ class BaseDetailView(generic.ObjectView):
                     add_node_if_not_visited(obj.service_template, label, current_depth + 1)
                     related_app_label = obj.service_template._meta.app_label.lower()
                     related_model_name = sanitize_label(obj.service_template._meta.model_name)
-                    if 'netbox_service_management' in service_app_label:
+                    if 'netbox_service_management' in related_app_label:
                         related_label = f"{related_model_name}_{obj.content_object.pk}"
                     else:
                         related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
-                    add_edge(f"{obj._meta.model_name}_{obj.pk}", related_label)
+                    add_edge(f"{sanitize_label(related_obj._meta.model_name)}_{obj.pk}", related_label)
                     
                 if hasattr(obj, 'content_object') and obj.content_object:
                     related_app_label = obj.content_object._meta.app_label.lower()
