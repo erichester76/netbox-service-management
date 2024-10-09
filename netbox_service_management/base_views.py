@@ -11,7 +11,7 @@ from . import (
     tables
     )
 
-from virtualization.models import VirtualMachine
+from dcim.models import Device
 
 from .models import (
     Solution, 
@@ -166,6 +166,8 @@ class BaseDetailView(generic.ObjectView):
             'vlan',
             'coordinate',
             'cabletermination',
+            'vrf',
+            'prefix'
             
         }
 
@@ -310,7 +312,7 @@ class BaseDetailView(generic.ObjectView):
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
                             # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
-                            if isinstance(related_obj, VirtualMachine) and related_obj.cluster:
+                            if isinstance(related_obj, Device) and related_obj.cluster:
                                 cluster = getattr(related_obj, 'cluster', None)
                                 if cluster:
                                     related_obj = cluster                            
@@ -324,7 +326,7 @@ class BaseDetailView(generic.ObjectView):
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
                         # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
-                        if isinstance(related_objects, VirtualMachine) and related_objects.cluster:
+                        if isinstance(related_objects, Device) and related_objects.cluster:
                             cluster = getattr(related_objects, 'cluster', None)
                             if cluster:
                                 related_objects = cluster                                 
