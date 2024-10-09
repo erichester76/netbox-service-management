@@ -30,34 +30,11 @@ class BaseDetailView(generic.ObjectView):
         field_data = []
         object_name = instance._meta.verbose_name
         # Define fields to exclude
-        excluded_fields = {
-            'id', 
-            'custom_field_data', 
-            'tags', 
-            'bookmarks', 
-            'journal_entries', 
-            'subscriptions', 
-            'tagged_items', 
-            # 'service_templates',
-            # 'stg_components',
-            # 'components',
-            # 'template_groups',
-            # 'services',
-            'role',
-            'depends_on',
-            'dependencies',
-            'created',
-            'last_updated',
-            'object_id',
-        }
+
 
         # Extract fields and their values for the object, including relationships
         field_data = []
-        for field in instance._meta.get_fields():
-            # Skip excluded fields
-            if field.name in excluded_fields:
-                continue
-            
+        for field in instance._meta.get_fields():            
             value = None
             url = None
             try:
@@ -149,8 +126,8 @@ class BaseDetailView(generic.ObjectView):
             'vminterface',
             'site',
             'platform',
-            'ipamipaddress'
-            'dcimdevicerole',
+            'ipaddress'
+            'devicerole',
             'role',
             'taggeditem',
             'platform',
@@ -171,6 +148,29 @@ class BaseDetailView(generic.ObjectView):
             'vrf',
             'prefix'
             
+        }
+        
+        excluded_fields = {
+            'id', 
+            'custom_field_data', 
+            'tags', 
+            'bookmarks', 
+            'journal_entries', 
+            'subscriptions', 
+            'tagged_items', 
+            # 'service_templates',
+            # 'stg_components',
+            # 'components',
+            # 'template_groups',
+            # 'services',
+            'role',
+            'depends_on',
+            'dependencies',
+            'created',
+            'last_updated',
+            'object_id',
+            'primary_ipv4',
+            'primary_ipv6'
         }
 
         def sanitize_label(text):
@@ -211,9 +211,8 @@ class BaseDetailView(generic.ObjectView):
                     return
                 
                 #stop at clusters in recursion so we dont draw the whole platform
-                if parent_label and ('dcim_device' in parent_label):
-                    
-                    return
+                #if parent_label and ('dcim_device' in parent_label):
+                #    return
                 
                 if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
                     return
@@ -314,7 +313,7 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 # Handle reverse and forward relationships, excluding certain fields.
-                if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names):
+                if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     # Process the related objects if it's a queryset (reverse relationships)
