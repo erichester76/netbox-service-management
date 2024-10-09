@@ -162,7 +162,9 @@ class BaseDetailView(generic.ObjectView):
             Sanitizes the object name for use in the diagram.
             """
             return re.sub(r'[^a-zA-Z0-9_\.\ \/]', '', name)
-     
+       
+        open_subgraphs = set()
+
         def add_node(obj, parent_label=None, current_depth=0):
                 """
                 Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
@@ -178,9 +180,25 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
+                # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
                     return
-                
+
+                # Handle subgraphs for service_templates
+                if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
+                    # Start a subgraph for the service template
+                    add_subgraph_start(label, f"Service Template: {sanitize_display_name(str(obj))}")
+                    open_subgraphs.add(label)
+
+                # Handle subgraphs for services under a service_template
+                if isinstance(obj, Service) and label not in open_subgraphs:
+                    service_template_label = f"{obj.service_template._meta.app_label.lower()}_{sanitize_label(obj.service_template._meta.model_name)}_{obj.service_template.pk}"
+                    if service_template_label in open_subgraphs:
+                        # Start a subgraph for the service under the service template's subgraph
+                        add_subgraph_start(label, f"Service: {sanitize_display_name(str(obj))}")
+                        open_subgraphs.add(label)
+
+                # Sanitize the display name for the diagram
                 display_name = sanitize_display_name(str(obj))
                 shape = f'{label}("{display_name}"):::color_{obj_type}'
 
@@ -188,13 +206,36 @@ class BaseDetailView(generic.ObjectView):
                 add_to_diagram(shape, label, obj)
 
                 # Add an edge from the parent node if applicable
-                if parent_label != label: add_edge(parent_label, label)
+                add_edge(parent_label, label)
 
-                # Process related objects and handle specific relationships
+                # Process relationships before marking this object as visited
                 process_relationships(obj, label, current_depth)
-                
-                   # Now mark the object as visited to ensure we don't reprocess it
+
+                # Close subgraphs if they were opened
+                if isinstance(obj, Service) and label in open_subgraphs:
+                    add_subgraph_end()
+                    open_subgraphs.remove(label)
+
+                if isinstance(obj, ServiceTemplate) and label in open_subgraphs:
+                    add_subgraph_end()
+                    open_subgraphs.remove(label)
+
+                # Now mark the object as visited to ensure we don't reprocess it
                 visited.add(label)
+
+        def add_subgraph_start(label, description):
+            """
+            Adds the start of a subgraph with a given label and description.
+            """
+            nonlocal diagram
+            diagram += f"subgraph {label} [{description}]\n"
+
+        def add_subgraph_end():
+            """
+            Ends the most recent subgraph.
+            """
+            nonlocal diagram
+            diagram += "end\n"
 
         def add_to_diagram(shape, label, obj):
             """
