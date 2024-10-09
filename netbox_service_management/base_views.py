@@ -220,7 +220,7 @@ class BaseDetailView(generic.ObjectView):
                 # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
                 #     diagram += f"%% ETURN-vm-loop PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                 #     return
-                if (label and parent_label) and ('cluster' in parent_label and ('device' in label or 'virtualmachine' in label)):
+                if (parent_label) and ('cluster' in parent_label):
                     diagram += f"%% RETURN-cluster PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
                     return
                 # if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label) and 'servicetemplate' in label):
