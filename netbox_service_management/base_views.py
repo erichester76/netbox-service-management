@@ -240,13 +240,13 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and ('cluster' not in parent_label): visited.add(label)
 
                 # Create subgraphs for service_templates
-                if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
+                if parent_label and (isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs):
                     # Start a subgraph for the service template
                     add_subgraph_start(label+"_sg", f"T: {sanitize_display_name(str(obj))}")
                     open_subgraphs.add(label+"_sg")
 
                 # Create subgraphs for services under a service_template
-                if isinstance(obj, Service) and label+"_sg" not in open_subgraphs:
+                if parent_label and (isinstance(obj, Service) and label+"_sg" not in open_subgraphs):
                     service_template_label = f"{obj.service_template._meta.model_name.lower()}_{obj.service_template.pk}_sg"
                     #if service_template_label in open_subgraphs:
                     # Start a subgraph for the service under the service template's subgraph
@@ -257,11 +257,12 @@ class BaseDetailView(generic.ObjectView):
                 display_name = sanitize_display_name(str(obj))
                 shape = f'{label}("{display_name}"):::color_{obj_type}'
                
-                #close the service subgroup before we add the item, we dont want it in any specific service
+                #close the service subgroup before we add the item if its a cluster, we dont want it in any specific service
                 if 'cluster' in label:
                     for item in list(open_subgraphs):
                         if '_servgrp' in item:
                              open_subgraphs.remove(item)
+                             
                 # Add the node and its clickable link if available
                 add_to_diagram(shape, label, obj)
 
