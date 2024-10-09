@@ -220,13 +220,13 @@ class BaseDetailView(generic.ObjectView):
             Processes direct and reverse relationships for the given object.
             """
             for rel in obj._meta.get_fields():
-                # Handle GenericForeignKey relationships
-                if isinstance(rel, GenericForeignKey):
-                    handle_generic_foreign_key(rel, obj, label, current_depth)
-                    
                 # Handle reverse relationships like service to service instances
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
-                    related_objects = getattr(obj, rel.get_accessor_name(), None)
+                    if isinstance(rel, GenericForeignKey):
+                        related_objects = getattr(obj, rel.name, None)
+                    else:
+                        related_objects = getattr(obj, rel.get_accessor_name(), None)
+
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
                             related_app_label = related_obj._meta.app_label.lower()
