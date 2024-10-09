@@ -348,8 +348,6 @@ class BaseDetailView(generic.ObjectView):
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects: 
-                        nonlocal diagram
-                        diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                         add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
