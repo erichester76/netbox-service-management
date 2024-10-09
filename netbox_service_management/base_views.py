@@ -188,7 +188,7 @@ class BaseDetailView(generic.ObjectView):
                 add_to_diagram(shape, label, obj)
 
                 # Add an edge from the parent node if applicable
-                add_edge(parent_label, label)
+                if parent_label not in label: add_edge(parent_label, label)
 
                 # Process related objects and handle specific relationships
                 process_relationships(obj, label, current_depth)
