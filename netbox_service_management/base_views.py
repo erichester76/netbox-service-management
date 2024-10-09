@@ -171,8 +171,8 @@ class BaseDetailView(generic.ObjectView):
             'created',
             'lastupdated',
             'objectid',
-            'primaryipv4',
-            'primaryipv6',
+            'primaryip4',
+            'primaryip6',
             'clustergroup',
             'clustertype',
         }
