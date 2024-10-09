@@ -245,7 +245,7 @@ class BaseDetailView(generic.ObjectView):
             """
             nonlocal diagram
 
-            if isinstance(obj, Component):
+            """ if isinstance(obj, Component):
                 # Link Component to its related Service
                 if obj.service:
                     add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
@@ -256,7 +256,7 @@ class BaseDetailView(generic.ObjectView):
             elif isinstance(obj, Service):
                 # Explicitly link Service to its ServiceTemplate
                 if obj.service_template:
-                    add_edge(f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}")
+                    add_edge(f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}") """
 
         # Start the diagram with the main object
         add_node(instance)
