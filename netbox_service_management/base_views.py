@@ -303,7 +303,7 @@ class BaseDetailView(generic.ObjectView):
             if hasattr(obj, 'content_object') and obj.content_object:
                 related_obj = obj.content_object
                 add_node_if_not_visited(related_obj, label, current_depth + 1)
-                add_edge(f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}", f"{related_obj._meta_app_label.lower()}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}")
+                #add_edge(f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}", f"{related_obj._meta_app_label.lower()}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}")
 
 
         # Start the diagram with the main object
