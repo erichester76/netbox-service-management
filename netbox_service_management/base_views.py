@@ -208,6 +208,10 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and ('servicetemplategroupcomponent' in parent_label):
                     return
                 
+                #stop at clusters in recursion so we dont draw the whole platform
+                if parent_label and ('virtualization_cluster' in parent_label):
+                    return
+                
                 if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
                     return
                 
@@ -313,28 +317,11 @@ class BaseDetailView(generic.ObjectView):
                     # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
-                            # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
-                            if isinstance(related_obj, Device) and related_obj.cluster:
-                                cluster = getattr(related_obj, 'cluster', None)
-                                if cluster:
-                                    related_obj = cluster                            
-                            # add the edge for the service to component now on the forward recursion
-                            if (isinstance(related_obj,Component) and isinstance(obj,Service)):
-                                 related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
-                                 add_edge(label,related_label)
-                            else:
-                                 add_node_if_not_visited(related_obj, label, current_depth + 1)
+                            add_node_if_not_visited(related_obj, label, current_depth + 1)
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
-                    elif related_objects:
-                        # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
-                        if isinstance(related_objects, Device) and related_objects.cluster:
-                            cluster = getattr(related_objects, 'cluster', None)
-                            if cluster:
-                                related_objects = cluster                                 
-                        #stop the component to service link so we can recurse back from
-                        if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
-                            add_node_if_not_visited(related_objects, label, current_depth + 1)
+                    elif related_objects: 
+                        add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
             if hasattr(obj, 'content_object') and obj.content_object:
