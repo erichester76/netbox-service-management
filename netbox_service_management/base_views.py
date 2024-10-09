@@ -201,8 +201,9 @@ class BaseDetailView(generic.ObjectView):
                     obj_type = obj._meta.model_name.lower()
 
                 nonlocal diagram
-                diagram += f"#{sanitize_label(obj._meta.model_name.lower())}"
-                diagram += f"#{parent_label}"
+                diagram += f"#PARENT:{parent_label}\n"
+                diagram += f"#CHILD:{sanitize_label(obj._meta.model_name.lower())}\n"
+
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
                     return
