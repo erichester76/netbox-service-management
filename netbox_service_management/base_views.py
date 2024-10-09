@@ -303,7 +303,7 @@ class BaseDetailView(generic.ObjectView):
                                 add_node_if_not_visited(obj.service, label, current_depth + 1)
 
                     if obj.template_component:
-                        stc_label = f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}"
+                        stc_label = f"servicetemplategroupcomponent_{obj.template_component.pk}"
                         if stc_label not in visited:
                             add_edge(stc_label, f"component_{obj.pk}")
                             add_node_if_not_visited(obj.template_component, label, current_depth + 1)
@@ -330,12 +330,15 @@ class BaseDetailView(generic.ObjectView):
         # Add the legend subgraph with a specific color and style
         legend = "graph LR\n"
         legend += "direction LR\n"  # Place items in the legend in a horizontal row
-       
+        legend += "subgraph Legend [Legend]"
+        
         # Style the subgraph for the legend
         for obj_type, color in color_map.items():
             verbose_name = re.sub(r'[^a-zA-Z0-9_]', '_', obj_type)
             legend += f'key_{obj_type}({verbose_name}):::color_{obj_type}\n'
+        legend += "end\n"
         legend += "style Legend fill:transparent,stroke-width:0px;\n"
+        
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,color:#fff,font-size:14px;\n'
