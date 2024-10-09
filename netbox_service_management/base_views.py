@@ -153,7 +153,15 @@ class BaseDetailView(generic.ObjectView):
             'subscriptions',
             'permission',
             'content_type',
-            'tagged_item'
+            'taggeditem',
+            'virtualdisk',
+            'vminterface',
+            'site',
+            'platform',
+            'ipaddress',
+            'device_role',
+            
+            
         }
 
         def sanitize_label(text):
