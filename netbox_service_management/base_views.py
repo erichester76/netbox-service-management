@@ -201,8 +201,8 @@ class BaseDetailView(generic.ObjectView):
                     return
 
                 #stop at clusters in recursion so we dont draw the whole platform
-                if parent_label and ('cluster' in parent_label):
-                    return
+                #if parent_label and ('cluster' in parent_label):
+                #    return
                 
                 if sanitize_label(obj._meta.model_name) in excluded_objects:
                     return
@@ -303,7 +303,7 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 # Handle reverse and forward relationships, excluding certain fields.
-                if rel.is_relation and (obj._meta.model_name not in excluded_objects):
+                if rel.is_relation and (sanitize_label(obj._meta.model_name) not in excluded_objects):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     # Process the related objects if it's a queryset (reverse relationships)
