@@ -278,29 +278,39 @@ class BaseDetailView(generic.ObjectView):
                 # Handle forward relationships explicitly (e.g., service to service template)
                 if hasattr(obj, 'service_template') and obj.service_template:
                     add_node_if_not_visited(obj.service_template, label, current_depth + 1)
+                    related_app_label = obj.service_template._meta.app_label.lower()
+                    related_model_name = sanitize_label(obj.service_template._meta.model_name)
+                    if 'netbox_service_management' in service_app_label:
+                        related_label = f"{related_model_name}_{obj.content_object.pk}"
+                    else:
+                        related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
+                    add_edge(f"{obj._meta.model_name}_{obj.pk}", related_label)
                     
                 if hasattr(obj, 'content_object') and obj.content_object:
                     related_app_label = obj.content_object._meta.app_label.lower()
                     related_model_name = sanitize_label(obj.content_object._meta.model_name)
                     related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
-                    # Use the display name of the content object for better readability
-                    display_name = sanitize_display_name(str(obj.content_object))
-                    shape = f'{related_label}("{display_name}"):::color_{related_model_name}'
-                    # Add the node for the content object and its clickable link if available
-                    add_to_diagram(shape, related_label, obj.content_object)
-                    add_edge(f"component_{obj.pk}", related_label)
-                    add_node(obj.content_object, label, current_depth + 1)
+                    if related_label not in visited:
+                        # Use the display name of the content object for better readability
+                        display_name = sanitize_display_name(str(obj.content_object))
+                        shape = f'{related_label}("{display_name}"):::color_{related_model_name}'
+                        # Add the node for the content object and its clickable link if available
+                        add_to_diagram(shape, related_label, obj.content_object)
+                        add_edge(f"component_{obj.pk}", related_label)
+                        add_node(obj.content_object, label, current_depth + 1)
+                    
                         
                 # Handle direct relationships like component links more thoroughly
                 if isinstance(obj, Component):
                     if obj.service:
                         service_app_label = obj.service._meta.app_label.lower()
-                        if 'netbox_service_management' in service_app_label:
-                            add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
-                            add_node_if_not_visited(obj.service, label, current_depth + 1)
-                        else:
-                            add_edge(f"component_{obj.pk}", f"{service_app_label}_.service_{obj.service.pk}")
-                            add_node_if_not_visited(obj.service, label, current_depth + 1)
+                        if f"service_{obj.service.pk}" not in visited:
+                            if 'netbox_service_management' in service_app_label:
+                                add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
+                                add_node_if_not_visited(obj.service, label, current_depth + 1)
+                            else:
+                                add_edge(f"component_{obj.pk}", f"{service_app_label}_.service_{obj.service.pk}")
+                                add_node_if_not_visited(obj.service, label, current_depth + 1)
 
                     if obj.template_component:
                         stc_label = f"servicetemplategroupcomponent_{obj.template_component.pk}"
