@@ -163,7 +163,7 @@ class BaseDetailView(generic.ObjectView):
             # 'components',
             # 'template_groups',
             # 'services',
-            'device',
+            # 'device',
             'role',
             'ipaddress'
             'depends_on',
