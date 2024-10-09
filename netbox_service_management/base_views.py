@@ -256,9 +256,9 @@ class BaseDetailView(generic.ObjectView):
             related_app_label = related_obj._meta.app_label.lower()
             related_label = ""
             if 'ipam' in related_app_label or 'dcim' in related_app_label: 
-                    related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
             else:
-                    related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
             if related_label not in visited:
                 add_node(related_obj, label, current_depth + 1)
 
@@ -266,26 +266,16 @@ class BaseDetailView(generic.ObjectView):
             """
             Handles specific relationships for the Component class, ensuring all links are represented.
             """
-            if isinstance(obj, Component):
-                """ # Link Component to its related Service
-                if obj.service and 'ipam' not in obj._meta.app_label.lower() and 'dcimxs' not in obj._meta.app_label.lower():
-                    add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
-                    add_node(obj.service, label, current_depth + 1)
-
-                # Link Component to its template component
-                if obj.template_component:
-                    add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
-            """
-                # Ensure connections to other related entities like VMs and Devices if applicable
-                if hasattr(obj, 'content_object') and obj.content_object:
-                    related_app_label = obj._meta.app_label.lower()
-                    if 'ipam' in related_app_label or 'dcim' in related_app_label: 
-                        related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                    else:
-                        related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"                    
-                    
-                    add_edge(f"component_{obj.pk}", related_label)
-                    add_node(obj.content_object, label, current_depth + 1)
+            # Ensure connections to other related entities like VMs and Devices if applicable
+            if hasattr(obj, 'content_object') and obj.content_object:
+                related_app_label = obj._meta.app_label.lower()
+                if 'ipam' in related_app_label or 'dcim' in related_app_label: 
+                    related_label = f"{related_app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+                else:
+                    related_label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"                    
+                
+                add_edge(f"component_{obj.pk}", related_label)
+                add_node(obj.content_object, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
