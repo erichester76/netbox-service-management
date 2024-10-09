@@ -278,8 +278,9 @@ class BaseDetailView(generic.ObjectView):
                     open_subgraphs.remove(label+"_sg")
 
                 # Now mark the object as visited to ensure we don't reprocess it
-                visited.add(label)
-                diagram += f"%% MARKED VISITED: {label} depth:{current_depth}\n"
+                if 'cluster' not in label:
+                    visited.add(label)
+                    diagram += f"%% MARKED VISITED: {label} depth:{current_depth}\n"
 
 
         def add_subgraph_start(label, description):
