@@ -93,12 +93,12 @@ class BaseDetailView(generic.ObjectView):
                                     # Create the URL for adding a new related object
                     add_url = None
                     if hasattr(related_model, 'get_absolute_url'):
-                        model_name = related_model._meta.model_name
+                        model_name = related_model._meta.model_name.lower()
                         add_url = reverse(
                             f'plugins:netbox_service_management:{model_name}_add'
                         )   
                         # Pre-fill the linking field with the current object's ID, if possible
-                        add_url += f'?{instance._meta.model_name}={instance.pk}'
+                        add_url += f'?{instance._meta.model_name.lower()}={instance.pk}'
 
                     # Create a table dynamically if a suitable one exists
                     table_class_name = f"{related_model.__name__}Table"
@@ -174,10 +174,10 @@ class BaseDetailView(generic.ObjectView):
                 obj_type = ""
                 
                 if 'netbox_service_management' not in app_label:
-                    label = f"{app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+                    label = f"{app_label}_{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = f"{app_label}_{obj._meta.model_name.lower()}"
                 else:
-                    label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+                    label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
                 # Check if we've already visited this node with its relationships processed.
@@ -267,9 +267,9 @@ class BaseDetailView(generic.ObjectView):
             related_app_label = related_obj._meta.app_label.lower()
             related_label = ""
             if 'netbox_service_management' not in related_app_label:
-                related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
             else:
-                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
                 
             if related_label not in visited:
                 add_node(related_obj, label, current_depth + 1)
@@ -296,7 +296,7 @@ class BaseDetailView(generic.ObjectView):
             if hasattr(obj, 'content_object') and obj.content_object:
                 related_obj = obj.content_object
                 add_node_if_not_visited(related_obj, label, current_depth + 1)
-                add_edge(f"{sanitize_label(obj._meta.model_name)}_{obj.pk}", f"{related_obj._meta.app_label.lower()}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}")
+                add_edge(f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}", f"{related_obj._meta.app_label.lower()}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}")
 
 
         # Start the diagram with the main object
