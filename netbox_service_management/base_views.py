@@ -229,7 +229,6 @@ class BaseDetailView(generic.ObjectView):
 
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():                            
-                            related_app_label = related_obj._meta.app_label.lower()                            
                             add_node_if_not_visited(related_obj, label, current_depth + 1)
 
                 # Handle forward relationships explicitly (e.g., service to service template)
@@ -239,8 +238,13 @@ class BaseDetailView(generic.ObjectView):
                 # Handle direct relationships like component links more thoroughly
                 if isinstance(obj, Component):
                     if obj.service:
-                        add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
-                        add_node_if_not_visited(obj.service, label, current_depth + 1)
+                        service_app_label = obj.service._meta.app_label.lower()
+                        if 'netbox_service_management' in service_app_label:
+                            add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
+                            add_node_if_not_visited(obj.service, label, current_depth + 1)
+                        else:
+                            add_edge(f"component_{obj.pk}", f"{service_app_label}_.service_{obj.service.pk}")
+                            add_node_if_not_visited(obj.service, label, current_depth + 1)
 
                     if obj.template_component:
                         add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
