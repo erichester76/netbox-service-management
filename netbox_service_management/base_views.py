@@ -185,7 +185,7 @@ class BaseDetailView(generic.ObjectView):
 
                 # Process related objects and handle specific relationships
                 process_relationships(obj, label, current_depth)
-                handle_component_specifics(obj, label)
+                handle_component_specifics(obj, label, current_depth)
 
         def add_to_diagram(shape, label, obj):
             """
@@ -243,24 +243,25 @@ class BaseDetailView(generic.ObjectView):
             if (related_label, label) not in processed_relationships and (label, related_label) not in processed_relationships:
                 add_node(related_obj, label, current_depth + 1)
 
-        def handle_component_specifics(obj, label):
+        def handle_component_specifics(obj, label, current_depth):
             """
-            Handles specific relationships for the Component class.
+            Handles specific relationships for the Component class, ensuring all links are represented.
             """
-            nonlocal diagram
-
-            """ if isinstance(obj, Component):
+            if isinstance(obj, Component):
                 # Link Component to its related Service
                 if obj.service:
                     add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
+                    add_node(obj.service, label, current_depth + 1)
+
                 # Link Component to its template component
                 if obj.template_component:
                     add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
 
-            elif isinstance(obj, Service):
-                # Explicitly link Service to its ServiceTemplate
-                if obj.service_template:
-                    add_edge(f"service_{obj.pk}", f"servicetemplate_{obj.service_template.pk}") """
+                # Ensure connections to other related entities like VMs and Devices if applicable
+                if hasattr(obj, 'content_object') and obj.content_object:
+                    related_label = f"{sanitize_label(obj.content_object._meta.model_name)}_{obj.content_object.pk}"
+                    add_edge(f"component_{obj.pk}", related_label)
+                    add_node(obj.content_object, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
