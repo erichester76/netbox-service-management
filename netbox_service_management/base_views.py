@@ -290,7 +290,7 @@ class BaseDetailView(generic.ObjectView):
                     
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
-                        if not (isinstance(related_objects,Component) and isinstance(obj,ServiceTemplateGroupComponent)): 
+                        if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
                             add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
