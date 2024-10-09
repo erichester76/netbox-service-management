@@ -169,13 +169,13 @@ class BaseDetailView(generic.ObjectView):
             'depends_on',
             'dependencies',
             'created',
-            'lastupdated',
+            'last_updated',
             'objectid',
             'primary_ip4',
             'primary_ip6',
             'ipaddresses',
-            'clustergroup',
-            'clustertype',
+            'cluster_group',
+            'cluster_type',
         }
 
         def sanitize_label(text):
