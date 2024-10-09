@@ -192,7 +192,6 @@ class BaseDetailView(generic.ObjectView):
 
                 # Process related objects and handle specific relationships
                 process_relationships(obj, label, current_depth)
-                handle_component_specifics(obj, label, current_depth)
                 
                    # Now mark the object as visited to ensure we don't reprocess it
                 visited.add(label)
@@ -234,7 +233,19 @@ class BaseDetailView(generic.ObjectView):
                 # Handle forward relationships explicitly (e.g., service to service template)
                 if hasattr(obj, 'service_template') and obj.service_template:
                     add_node_if_not_visited(obj.service_template, label, current_depth + 1)
-
+                    
+                if hasattr(obj, 'content_object') and obj.content_object:
+                    related_app_label = obj.content_object._meta.app_label.lower()
+                    related_model_name = sanitize_label(obj.content_object._meta.model_name)
+                    related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
+                    # Use the display name of the content object for better readability
+                    display_name = sanitize_display_name(str(obj.content_object))
+                    shape = f'{related_label}("{display_name}"):::color_{related_model_name}'
+                    # Add the node for the content object and its clickable link if available
+                    add_to_diagram(shape, related_label, obj.content_object)
+                    add_edge(f"component_{obj.pk}", related_label)
+                    add_node(obj.content_object, label, current_depth + 1)
+                    
                 # Handle direct relationships like component links more thoroughly
                 if isinstance(obj, Component):
                     if obj.service:
@@ -265,19 +276,6 @@ class BaseDetailView(generic.ObjectView):
                 
             if related_label not in visited or 'netbox_service_management' not in related_app_label:
                 add_node(related_obj, label, current_depth + 1)
-
-        def handle_component_specifics(obj, label, current_depth):
-            """
-            Handles specific relationships for the Component class, ensuring all links are represented.
-            """
-            # Ensure connections to other related entities like VMs and Devices if applicable
-            if hasattr(obj, 'content_object') and obj.content_object:
-                related_app_label = obj.content_object._meta.app_label.lower()
-                related_model_name = sanitize_label(obj.content_object._meta.model_name)
-                related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
-
-                add_edge(f"component_{obj.pk}", related_label)
-                add_node(obj.content_object, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
