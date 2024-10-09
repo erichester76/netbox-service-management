@@ -129,6 +129,7 @@ class BaseDetailView(generic.ObjectView):
             'ipaddress'
             'device_role',
             'role',
+            'device',
             'taggeditem',
             'platform',
             'taggeditem',
@@ -236,8 +237,8 @@ class BaseDetailView(generic.ObjectView):
                 #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                 #     return
                 
-                #if parent_label and 'cluster' not in parent_label: 
-                visited.add(label)
+                if parent_label and 'cluster' not in parent_label: 
+                    visited.add(label)
 
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
