@@ -169,6 +169,7 @@ class BaseDetailView(generic.ObjectView):
                 """
                 app_label = obj._meta.app_label.lower()
                 label = ""
+                obj_type = ""
                 
                 if 'ipam' in app_label or 'dcim' in app_label: 
                     label = f"{app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
@@ -180,8 +181,6 @@ class BaseDetailView(generic.ObjectView):
                 if label in visited or current_depth > max_depth:
                     return
                 
-                obj_type = obj._meta.model_name.lower()
-                color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
                 display_name = sanitize_display_name(str(obj))
                 shape = f'{label}("{display_name}"):::color_{obj_type}'
 
@@ -211,7 +210,7 @@ class BaseDetailView(generic.ObjectView):
             """
             Adds an edge between the parent and the current label, avoiding duplicates.
             """
-            if parent_label and label and (parent_label, label) not in processed_relationships:
+            if parent_label and label and (parent_label, label) not in processed_relationships and (label, parent_label) not in processed_relationships:
                 nonlocal diagram
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
@@ -229,7 +228,7 @@ class BaseDetailView(generic.ObjectView):
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
-                            add_node_if_not_visited(related_obj, label, current_depth)
+                            if (label, related_label) not in processed_relationships: add_node_if_not_visited(related_obj, label, current_depth)
 
             # Handle forward relationships explicitly (e.g., service to service template)
             if hasattr(obj, 'service_template') and obj.service_template:
@@ -270,7 +269,7 @@ class BaseDetailView(generic.ObjectView):
                 # Link Component to its template component
                 if obj.template_component:
                     add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
- """
+            """
                 # Ensure connections to other related entities like VMs and Devices if applicable
                 if hasattr(obj, 'content_object') and obj.content_object:
                     related_app_label = obj._meta.app_label.lower()
