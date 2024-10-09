@@ -168,11 +168,13 @@ class BaseDetailView(generic.ObjectView):
                 Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
                 """
                 app_label = obj._meta.app_label.lower()
-                label = f"{app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+                label = ""
                 
                 if 'ipam' in app_label or 'dcim' in app_label: 
+                    label = f"{app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
                     obj_type = f"{app_label}_{obj._meta.model_name.lower()}"
                 else:
+                    label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
                 if label in visited or current_depth > max_depth:
