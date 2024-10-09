@@ -227,6 +227,9 @@ class BaseDetailView(generic.ObjectView):
                 if (label and parent_label) and ('servicetemplategroup' in parent_label and 'servicetemplate' in label):
                     diagram += f"#RETURN-STG-LOOP PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
                     return
+                if (label and parent_label) and ('component' in parent_label and 'service' in label):
+                    diagram += f"#RETURN-COMP-LOOP PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
+                    return
                 
                 #stop at stgc in recursion so services dont wrap around
                 if parent_label and ('servicetemplategroupcomponent' in parent_label):
