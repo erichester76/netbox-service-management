@@ -11,6 +11,8 @@ from . import (
     tables
     )
 
+from dcim.models import Device
+
 from .models import (
     Solution, 
     ServiceTemplate, 
@@ -147,8 +149,7 @@ class BaseDetailView(generic.ObjectView):
             'vminterface',
             'site',
             'platform',
-            'ipaddress'
-            'device',
+            'ipaddresses'
             'devicerole',
             'taggeditem',
             'platform',
@@ -309,6 +310,9 @@ class BaseDetailView(generic.ObjectView):
                     # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
+                            # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
+                            if isinstance(related_obj, Device) and related_obj.cluster:
+                               related_obj = related_obj.cluster
                             # add the edge for the service to component now on the forward recursion
                             if (isinstance(related_obj,Component) and isinstance(obj,Service)):
                                 related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
@@ -318,6 +322,10 @@ class BaseDetailView(generic.ObjectView):
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
+                        # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
+                        if isinstance(related_objects, Device) and related_objects.cluster:
+                            related_objects = related_objects.cluster
+                            
                         #stop the component to service link so we can recurse back from
                         if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
                             add_node_if_not_visited(related_objects, label, current_depth + 1)
