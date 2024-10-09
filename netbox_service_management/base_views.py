@@ -134,7 +134,6 @@ class BaseDetailView(generic.ObjectView):
             'taggeditem',
             'contenttype',
             'cable',
-            'cluster',
             'devicetype',
             'interface',
             'manufacturer',
