@@ -351,7 +351,7 @@ class BaseDetailView(generic.ObjectView):
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects: 
-                        diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_obj))}\n"
+                        diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_objects))}\n"
                         add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
