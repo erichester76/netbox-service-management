@@ -200,7 +200,7 @@ class BaseDetailView(generic.ObjectView):
 
                 # Skip excluded modules we dont want to show in diagram
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
-                    diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
+                    #diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
                     return
                
                 # Prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
