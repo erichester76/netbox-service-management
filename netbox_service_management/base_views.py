@@ -151,7 +151,8 @@ class BaseDetailView(generic.ObjectView):
             'tenant', 
             'journal_entries', 
             'subscriptions',
-            'auth_permission',
+            'permission',
+            'content_type'
         }
 
         def sanitize_label(text):
