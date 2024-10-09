@@ -162,7 +162,7 @@ class BaseDetailView(generic.ObjectView):
             """
             Sanitizes the object name for use in the diagram.
             """
-            return re.sub(r'[^a-zA-Z0-9_\.\ \/]', '', name)
+            return re.sub(r'[^a-zA-Z0-9_\.\ \-\/]', '', name)
        
         open_subgraphs = set()
 
