@@ -224,7 +224,7 @@ class BaseDetailView(generic.ObjectView):
                 if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
                     diagram += f"%% RETURN-cluster PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
                     return
-                if (label and parent_label) and ('servicetemplategroup' in parent_label and 'service' in parent_label and 'servicetemplate' in label):
+                if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label and 'servicetemplate' in label):
                     diagram += f"%% RETURN-STG-LOOP PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 if (label and parent_label) and ('component' in parent_label and 'service' in label):
