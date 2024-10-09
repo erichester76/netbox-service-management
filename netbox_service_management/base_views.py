@@ -197,6 +197,11 @@ class BaseDetailView(generic.ObjectView):
                 label = ""
                 obj_type = ""
                 
+                #skip excluded modules we dont want to show in diagram
+                if obj._meta.model_name.lower() in excluded_model_names:
+                    return
+               
+                #prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
                 if 'netbox_service_management' not in app_label:
                     label = f"{app_label}_{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = f"{app_label}_{obj._meta.model_name.lower()}"
