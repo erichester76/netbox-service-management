@@ -295,7 +295,7 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 # Handle reverse and forward relationships, excluding certain fields.
-                if rel.is_relation and rel.name not in excluded_fields:
+                if rel.is_relation and rel.model_name not in excluded_fields:
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     # Process the related objects if it's a queryset (reverse relationships)
