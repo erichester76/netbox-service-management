@@ -262,7 +262,7 @@ class BaseDetailView(generic.ObjectView):
             Handles specific relationships for the Component class, ensuring all links are represented.
             """
             if isinstance(obj, Component):
-                # Link Component to its related Service
+                """ # Link Component to its related Service
                 if obj.service and 'ipam' not in obj._meta.app_label.lower() and 'dcimxs' not in obj._meta.app_label.lower():
                     add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
                     add_node(obj.service, label, current_depth + 1)
@@ -270,10 +270,11 @@ class BaseDetailView(generic.ObjectView):
                 # Link Component to its template component
                 if obj.template_component:
                     add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
-
+ """
                 # Ensure connections to other related entities like VMs and Devices if applicable
                 if hasattr(obj, 'content_object') and obj.content_object:
-                    related_label = f"{sanitize_label(obj.content_object._meta.model_name)}_{obj.content_object.pk}"
+                    related_app_label = obj._meta.app_label.lower()
+                    related_label = f"{related_app_label}_{sanitize_label(obj.content_object._meta.model_name)}_{obj.content_object.pk}"
                     add_edge(f"component_{obj.pk}", related_label)
                     add_node(obj.content_object, label, current_depth + 1)
 
