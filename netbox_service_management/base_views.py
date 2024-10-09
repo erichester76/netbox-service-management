@@ -199,12 +199,12 @@ class BaseDetailView(generic.ObjectView):
                 obj_type = ""
                 nonlocal diagram
 
-                #skip excluded modules we dont want to show in diagram
+                # Skip excluded modules we dont want to show in diagram
                 if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
                     diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
                     return
                
-                #prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
+                # Prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
                 if 'netbox_service_management' not in app_label:
                     label = f"{app_label}_{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = f"{app_label}_{obj._meta.model_name.lower()}"
@@ -212,12 +212,12 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
-                #defined as hard edges, probably need to remove backwards references on these.
+                # Defined as hard edges, probably need to remove backwards references on these.
                 if current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label:
                     diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
-                #if weve been here before dont traverse again
+                # If weve been here before dont traverse again
                 if visited and label in visited:
                     diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
@@ -241,13 +241,13 @@ class BaseDetailView(generic.ObjectView):
                 
                 visited.add(label)
 
-                # Handle subgraphs for service_templates
+                # Create subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
                     # Start a subgraph for the service template
                     add_subgraph_start(label+"_sg", f"T: {sanitize_display_name(str(obj))}")
                     open_subgraphs.add(label+"_sg")
 
-                # Handle subgraphs for services under a service_template
+                # Create subgraphs for services under a service_template
                 if isinstance(obj, Service) and label+"_sg" not in open_subgraphs:
                     service_template_label = f"{obj.service_template._meta.model_name.lower()}_{obj.service_template.pk}_sg"
                     #if service_template_label in open_subgraphs:
