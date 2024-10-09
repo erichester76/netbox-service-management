@@ -210,7 +210,7 @@ class BaseDetailView(generic.ObjectView):
             """
             Adds an edge between the parent and the current label, avoiding duplicates.
             """
-            if parent_label and label and (parent_label, label) not in processed_relationships and (label, parent_label) not in processed_relationships:
+            if parent_label and label and (parent_label, label) not in processed_relationships and (label, abel) not in processed_relationships:
                 nonlocal diagram
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
@@ -221,8 +221,8 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 # Handle GenericForeignKey relationships
-                #if isinstance(rel, GenericForeignKey):
-                #    handle_generic_foreign_key(rel, obj, label, current_depth)
+                if isinstance(rel, GenericForeignKey):
+                    handle_generic_foreign_key(rel, obj, label, current_depth)
                     
                 # Handle reverse relationships like service to service instances
                 if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
@@ -236,19 +236,20 @@ class BaseDetailView(generic.ObjectView):
                             else:
                                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                             
-                            add_node_if_not_visited(related_obj, label, current_depth)
+                            if (label, related_label) not in processed_relationships and (related_label, label) not in processed_relationships: 
+                                add_node_if_not_visited(related_obj, label, current_depth)
 
             # Handle forward relationships explicitly (e.g., service to service template)
             if hasattr(obj, 'service_template') and obj.service_template:
                 add_node(obj.service_template, label, current_depth + 1)
                 
-        # def handle_generic_foreign_key(rel, obj, label, current_depth):
-        #     """
-        #     Handles relationships for GenericForeignKey fields.
-        #     """
-        #     related_obj = getattr(obj, rel.name, None)
-        #     if related_obj:
-        #         add_node_if_not_visited(related_obj, label, current_depth)
+        def handle_generic_foreign_key(rel, obj, label, current_depth):
+            """
+            Handles relationships for GenericForeignKey fields.
+            """
+            related_obj = getattr(obj, rel.name, None)
+            if related_obj:
+                add_node_if_not_visited(related_obj, label, current_depth)
 
         def add_node_if_not_visited(related_obj, label, current_depth):
             """
@@ -293,7 +294,7 @@ class BaseDetailView(generic.ObjectView):
             verbose_name = re.sub(r'[^a-zA-Z0-9_]', '_', obj_type)
             legend += f'key_{obj_type}({verbose_name}):::color_{obj_type}\n'
         legend += "end\n"
-        legend += "style Legend fill:transparent,stroke-width:1px;\n"
+        legend += "style Legend fill:#000,stroke-width:0px;\n"
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,color:#fff,font-size:14px;\n'
