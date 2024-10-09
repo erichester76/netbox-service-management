@@ -152,12 +152,12 @@ class BaseDetailView(generic.ObjectView):
         
         excluded_fields = {
             'id', 
-            'customfielddata', 
+            'custom_fielddata', 
             'tags', 
             'bookmarks', 
-            'journalentries', 
+            'journal_entries', 
             'subscriptions', 
-            'taggeditems', 
+            'tagged_items', 
             # 'service_templates',
             # 'stg_components',
             # 'components',
@@ -171,8 +171,8 @@ class BaseDetailView(generic.ObjectView):
             'created',
             'lastupdated',
             'objectid',
-            'primaryip4',
-            'primaryip6',
+            'primary_ip4',
+            'primary_ip6',
             'ipaddresses',
             'clustergroup',
             'clustertype',
@@ -340,7 +340,7 @@ class BaseDetailView(generic.ObjectView):
                 if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
-                    #nonlocal diagram
+                    nonlocal diagram
                     diagram += f"%% FIELD {rel.name}\n"
                       
                     # Process the related objects if it's a queryset (reverse relationships)
