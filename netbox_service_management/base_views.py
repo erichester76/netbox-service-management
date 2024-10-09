@@ -135,7 +135,7 @@ class BaseDetailView(generic.ObjectView):
          # Define colors for each model type
         color_map = {
             'solution': '#16a2b8',  # Darker Teal 
-            'service': '#083960',   # Teal 
+            'service': '#184990',   # Teal 
             'servicetemplate': '#02252f',  # GreenBlue
             'servicetemplategroup': '#f59f01',  # Orange1
             'servicetemplategroupcomponent': '#f76706',  # Orange2
@@ -186,6 +186,9 @@ class BaseDetailView(generic.ObjectView):
                 # Process related objects and handle specific relationships
                 process_relationships(obj, label, current_depth)
                 handle_component_specifics(obj, label, current_depth)
+                
+                   # Now mark the object as visited to ensure we don't reprocess it
+                visited.add(label)
 
         def add_to_diagram(shape, label, obj):
             """
@@ -200,11 +203,11 @@ class BaseDetailView(generic.ObjectView):
             """
             Adds an edge between the parent and the current label, avoiding duplicates.
             """
-            if parent_label and (parent_label, label) not in processed_relationships:
+            if parent_label and label not in visited and (parent_label, label) not in processed_relationships:
                 nonlocal diagram
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
-
+                
         def process_relationships(obj, label, current_depth):
             """
             Processes direct and reverse relationships for the given object.
@@ -215,8 +218,6 @@ class BaseDetailView(generic.ObjectView):
                     handle_generic_foreign_key(rel, obj, label, current_depth)
                 # Handle reverse relationships like service to service instances
                 elif rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
-                    if current_depth + 1 > max_depth:
-                        continue
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
@@ -225,8 +226,7 @@ class BaseDetailView(generic.ObjectView):
             # Handle forward relationships explicitly (e.g., service to service template)
             if hasattr(obj, 'service_template') and obj.service_template:
                 add_node(obj.service_template, label, current_depth + 1)
-
-
+                
         def handle_generic_foreign_key(rel, obj, label, current_depth):
             """
             Handles relationships for GenericForeignKey fields.
@@ -240,7 +240,7 @@ class BaseDetailView(generic.ObjectView):
             Adds a related object to the diagram if it hasn't been visited.
             """
             related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-            if (related_label, label) not in processed_relationships and (label, related_label) not in processed_relationships:
+            if related_label not in visited:
                 add_node(related_obj, label, current_depth + 1)
 
         def handle_component_specifics(obj, label, current_depth):
