@@ -200,7 +200,7 @@ class BaseDetailView(generic.ObjectView):
 
                 #skip excluded modules we dont want to show in diagram
                 if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
-                    diagram += f"#RETURN-EXCLUDED PARENT:{parent_label} CHILD:{label}\n"
+                    diagram += f"#RETURN-EXCLUDED PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                
                 #prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
@@ -214,20 +214,20 @@ class BaseDetailView(generic.ObjectView):
 
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
-                    diagram += f"#RETURN-visited-or-max PARENT:{parent_label} CHILD:{label}\n"
+                    diagram += f"#RETURN-visited-or-max PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                 
                 #define edges - I tried not to have to do it.. but I give up
                 if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
-                    diagram += f"#RETURN-vm-loop PARENT:{parent_label} CHILD:{label}\n"
+                    diagram += f"#RETURN-vm-loop PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                 if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
-                    diagram += f"#RETURN-cluster PARENT:{parent_label} CHILD:{label}\n"
+                    diagram += f"#RETURN-cluster PARENT:{parent_label} CHILD:{label} epth:{current_depth}\n"
                     return
                 
                 #stop at stgc in recursion so services dont wrap around
                 if parent_label and ('servicetemplategroupcomponent' in parent_label):
-                    diagram += f"#RETURN-STGC PARENT:{parent_label} CHILD:{label}\n"
+                    diagram += f"#RETURN-STGC PARENT:{parent_label} CHILD:{label} depth:{current_depth}\n"
                     return
                 
                 if not parent_label and 'cluster': visited.add(label)
@@ -270,7 +270,7 @@ class BaseDetailView(generic.ObjectView):
 
                 # Now mark the object as visited to ensure we don't reprocess it
                 visited.add(label)
-                diagram += f"#MARKED VISITED: {label}\n"
+                diagram += f"#MARKED VISITED: {label} depth:{current_depth}\n"
 
 
         def add_subgraph_start(label, description):
