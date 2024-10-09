@@ -312,16 +312,16 @@ class BaseDetailView(generic.ObjectView):
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
                             # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
-                            if isinstance(related_obj, Device) and related_obj.cluster:
-                                cluster = getattr(related_obj, 'cluster', None)
-                                if cluster:
-                                    related_obj = cluster                            
-                            # add the edge for the service to component now on the forward recursion
-                            if (isinstance(related_obj,Component) and isinstance(obj,Service)):
-                                related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
-                                add_edge(label,related_label)
-                            else:
-                                add_node_if_not_visited(related_obj, label, current_depth + 1)
+                            # if isinstance(related_obj, Device) and related_obj.cluster:
+                            #     cluster = getattr(related_obj, 'cluster', None)
+                            #     if cluster:
+                            #         related_obj = cluster                            
+                            # # add the edge for the service to component now on the forward recursion
+                            # if (isinstance(related_obj,Component) and isinstance(obj,Service)):
+                            #     related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
+                            #     add_edge(label,related_label)
+                            # else:
+                            add_node_if_not_visited(related_obj, label, current_depth + 1)
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
