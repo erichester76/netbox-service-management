@@ -215,7 +215,7 @@ class BaseDetailView(generic.ObjectView):
                 
 
                 # Defined as hard edges, probably need to remove backwards references on these.
-                if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
+                if parent_label and (current_depth > max_depth or ('cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label)):
                     diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
@@ -242,8 +242,6 @@ class BaseDetailView(generic.ObjectView):
                 # if parent_label and ('servicetemplategroupcomponent' in parent_label):
                 #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                 #     return
-                
-                if parent_label and ('cluster' not in parent_label): visited.add(label)
 
                 # Create subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
