@@ -141,28 +141,18 @@ class BaseDetailView(generic.ObjectView):
             'servicetemplategroupcomponent': '#f76706',  # Orange2
             'component': '#d63a39',  # Red 
         }
-        
-        # Define fields to skip (e.g., tags, problematic reverse relationships)
-        excluded_fields = {
-            'tags', 
-            'datasource_set', 
-            'custom_field_data', 
-            'bookmarks', 
-            'tenant', 
-            'journal_entries', 
-            'subscriptions',
-            'permission',
-            'content_type',
-        }
+
         excluded_objects = {
             'virtualdisk',
             'vminterface',
             'site',
             'platform',
             'ipaddress',
-            'device_role',
+            'devicerole',
             'taggeditem',
-
+            'platform',
+            'taggeditem'
+            'contenttype'
         }
 
         def sanitize_label(text):
@@ -197,7 +187,7 @@ class BaseDetailView(generic.ObjectView):
                     return
 
                 #stop at clusters in recursion so we dont draw the whole platform
-                if parent_label and 'cluster' in parent_label:
+                if parent_label and ('cluster' in parent_label or sanitize_label(parent_label) in excluded_objects):
                     return
                 
                 visited.add(label)
@@ -296,7 +286,7 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 # Handle reverse and forward relationships, excluding certain fields.
-                if rel.is_relation and (obj._meta.model_name not in excluded_objects) and (rel.name not in excluded_fields):
+                if rel.is_relation and (obj._meta.model_name not in excluded_objects):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     # Process the related objects if it's a queryset (reverse relationships)
