@@ -272,12 +272,10 @@ class BaseDetailView(generic.ObjectView):
             """
             # Ensure connections to other related entities like VMs and Devices if applicable
             if hasattr(obj, 'content_object') and obj.content_object:
-                related_app_label = obj._meta.app_label.lower()
-                if 'netbox_service_management' not in related_app_label:
-                    related_label = f"{related_app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
-                else:
-                    related_label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"                    
-                
+                related_app_label = obj.content_object._meta.app_label.lower()
+                related_model_name = sanitize_label(obj.content_object._meta.model_name)
+                related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
+
                 add_edge(f"component_{obj.pk}", related_label)
                 add_node(obj.content_object, label, current_depth + 1)
 
