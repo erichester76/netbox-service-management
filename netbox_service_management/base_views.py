@@ -194,6 +194,10 @@ class BaseDetailView(generic.ObjectView):
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
                     return
+
+                #stop at clusters in recursion so we dont draw the whole platform
+                if 'cluster' in parent_label:
+                    return
                 
                 visited.add(label)
 
