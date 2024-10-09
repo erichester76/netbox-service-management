@@ -147,7 +147,8 @@ class BaseDetailView(generic.ObjectView):
             'vminterface',
             'site',
             'platform',
-            'ipaddress',
+            'ipaddress'
+            'device',
             'devicerole',
             'taggeditem',
             'platform',
