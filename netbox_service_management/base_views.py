@@ -215,10 +215,10 @@ class BaseDetailView(generic.ObjectView):
 
                 # Defined as hard edges, probably need to remove backwards references on these.
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
-                    diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                    #diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
 
-                diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
+                #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
 
                 # #define edges - I tried not to have to do it.. but I give up
                 # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
@@ -333,10 +333,10 @@ class BaseDetailView(generic.ObjectView):
             nonlocal diagram
             
             if related_label not in visited or ('cluster' in related_label and 'virtualmachine' in label):
-                diagram += f'%% ADDNODE {related_label} calling addnode\n'
+                #diagram += f'%% ADDNODE {related_label} calling addnode\n'
                 add_node(related_obj, label, current_depth + 1)
             else:
-                diagram += f'%% ADDNODE {related_label} in visited\n'    
+                #diagram += f'%% ADDNODE {related_label} in visited\n'    
                       
         def process_relationships(obj, label, current_depth):
             """
@@ -352,12 +352,12 @@ class BaseDetailView(generic.ObjectView):
                     # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
-                            diagram += f"%% FIELD {rel.name}: {sanitize_label(related_obj._meta.model_name.lower())} {sanitize_display_name(str(related_obj))}\n"
+                            #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_obj._meta.model_name.lower())} {sanitize_display_name(str(related_obj))}\n"
                             add_node_if_not_visited(related_obj, label, current_depth + 1)
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects: 
-                        diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_objects))}\n"
+                        #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_objects))}\n"
                         add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
