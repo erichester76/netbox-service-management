@@ -291,7 +291,7 @@ class BaseDetailView(generic.ObjectView):
             verbose_name = re.sub(r'[^a-zA-Z0-9_]', '_', obj_type)
             legend += f'key_{obj_type}({verbose_name}):::color_{obj_type}\n'
         legend += "end\n"
-        legend += "style Legend fill:transparent,stroke-width:0px;\n"
+        legend += "style Legend fill:#000,stroke-width:0px;\n"
         # Append classDef styles directly to the diagram string
         for obj_type, color in color_map.items():
             legend += f'classDef color_{obj_type} fill:{color},stroke:#000,stroke-width:0px,color:#fff,font-size:14px;\n'
