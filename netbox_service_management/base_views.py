@@ -171,7 +171,7 @@ class BaseDetailView(generic.ObjectView):
                 label = ""
                 obj_type = ""
                 
-                if 'ipam' in app_label or 'dcim' in app_label: 
+                if 'netbox_service_management' not in app_label:
                     label = f"{app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
                     obj_type = f"{app_label}_{obj._meta.model_name.lower()}"
                 else:
@@ -230,7 +230,7 @@ class BaseDetailView(generic.ObjectView):
                         for related_obj in related_objects.all():
                             related_app_label = related_obj._meta.app_label.lower()
                             related_label = ""
-                            if 'ipam' in related_app_label or 'dcim' in related_app_label: 
+                            if 'netbox_service_management' not in related_app_label:
                                 related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                             else:
                                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
@@ -255,7 +255,7 @@ class BaseDetailView(generic.ObjectView):
             # Include the app label to distinguish between similar model names
             related_app_label = related_obj._meta.app_label.lower()
             related_label = ""
-            if 'ipam' in related_app_label or 'dcim' in related_app_label: 
+            if 'netbox_service_management' not in related_app_label:
                 related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
             else:
                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
@@ -269,7 +269,7 @@ class BaseDetailView(generic.ObjectView):
             # Ensure connections to other related entities like VMs and Devices if applicable
             if hasattr(obj, 'content_object') and obj.content_object:
                 related_app_label = obj._meta.app_label.lower()
-                if 'ipam' in related_app_label or 'dcim' in related_app_label: 
+                if 'netbox_service_management' not in related_app_label:
                     related_label = f"{related_app_label}_{sanitize_label(obj._meta.model_name)}_{obj.pk}"
                 else:
                     related_label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"                    
