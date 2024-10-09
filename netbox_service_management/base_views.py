@@ -116,7 +116,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=10)
+        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=5)
 
         return {
             'object_name': object_name,
@@ -164,28 +164,28 @@ class BaseDetailView(generic.ObjectView):
             return re.sub(r'[^a-zA-Z0-9_\.\ \/]', '', name)
      
         def add_node(obj, parent_label=None, current_depth=0):
-            """
-            Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
-            """
-            label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
-            if label in visited or current_depth > max_depth:
-                return
-            visited.add(label)
+                """
+                Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
+                """
+                label = f"{sanitize_label(obj._meta.model_name)}_{obj.pk}"
+                if label in visited or current_depth > max_depth:
+                    return
+                visited.add(label)
 
-            obj_type = obj._meta.model_name.lower()
-            display_name = sanitize_display_name(str(obj))
-            shape = f'{label}({display_name}):::color_{obj_type}'
+                obj_type = obj._meta.model_name.lower()
+                color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
+                display_name = sanitize_display_name(str(obj))
+                shape = f'{label}("{display_name}"):::color_{obj_type}'
 
-            # Add the node and its clickable link if available
-            add_to_diagram(shape, label, obj)
+                # Add the node and its clickable link if available
+                add_to_diagram(shape, label, obj)
 
-            # Add an edge from the parent node if applicable
-            add_edge(parent_label, label)
+                # Add an edge from the parent node if applicable
+                add_edge(parent_label, label)
 
-            # Process related objects and handle specific relationships
-            process_relationships(obj, label, current_depth)
-            handle_component_specifics(obj, label)
-
+                # Process related objects and handle specific relationships
+                process_relationships(obj, label, current_depth)
+                handle_component_specifics(obj, label)
 
         def add_to_diagram(shape, label, obj):
             """
@@ -207,13 +207,13 @@ class BaseDetailView(generic.ObjectView):
 
         def process_relationships(obj, label, current_depth):
             """
-            Processes reverse relationships and GenericForeignKey for the given object.
+            Processes direct and reverse relationships for the given object.
             """
             for rel in obj._meta.get_fields():
                 # Handle GenericForeignKey relationships
                 if isinstance(rel, GenericForeignKey):
                     handle_generic_foreign_key(rel, obj, label, current_depth)
-                # Handle other reverse relationships
+                # Handle reverse relationships like service to service instances
                 elif rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
                     if current_depth + 1 > max_depth:
                         continue
@@ -221,6 +221,11 @@ class BaseDetailView(generic.ObjectView):
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
                             add_node_if_not_visited(related_obj, label, current_depth)
+
+            # Handle forward relationships explicitly (e.g., service to service template)
+            if hasattr(obj, 'service_template') and obj.service_template:
+                add_node(obj.service_template, label, current_depth + 1)
+
 
         def handle_generic_foreign_key(rel, obj, label, current_depth):
             """
