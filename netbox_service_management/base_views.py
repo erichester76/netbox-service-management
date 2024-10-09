@@ -286,7 +286,7 @@ class BaseDetailView(generic.ObjectView):
                     # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
-                            #stop the component to service link so we can recurse back from
+                            # add the edge for the service to component now on the forward recursion
                             if (isinstance(related_obj,Component) and isinstance(obj,Service)):
                                 related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
                                 add_edge(label,related_label)
@@ -295,6 +295,7 @@ class BaseDetailView(generic.ObjectView):
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
+                        #stop the component to service link so we can recurse back from
                         if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
                             add_node_if_not_visited(related_objects, label, current_depth + 1)
 
