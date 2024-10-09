@@ -193,7 +193,7 @@ class BaseDetailView(generic.ObjectView):
                     open_subgraphs.add(label+"_sg")
 
                 # Handle subgraphs for services under a service_template
-                if isinstance(obj, Service) and label not in open_subgraphs:
+                if isinstance(obj, Service) and label+"_sg" not in open_subgraphs:
                     service_template_label = f"{obj.service_template._meta.app_label.lower()}_sg_{sanitize_label(obj.service_template._meta.model_name)}_{obj.service_template.pk}"
                     if service_template_label in open_subgraphs:
                         # Start a subgraph for the service under the service template's subgraph
