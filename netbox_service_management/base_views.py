@@ -223,7 +223,7 @@ class BaseDetailView(generic.ObjectView):
                     open_subgraphs.remove(label+"_sg")
 
                 # Now mark the object as visited to ensure we don't reprocess it
-                visited.add(label)
+                if 'service_' not in label: visited.add(label)
 
         def add_subgraph_start(label, description):
             """
