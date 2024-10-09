@@ -43,6 +43,7 @@ class BaseDetailView(generic.ObjectView):
             # 'components',
             # 'template_groups',
             # 'services',
+            'device_role',
             'depends_on',
             'dependencies',
             'created',
