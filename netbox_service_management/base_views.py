@@ -261,76 +261,43 @@ class BaseDetailView(generic.ObjectView):
                 
         def process_relationships(obj, label, current_depth):
             """
-            Processes direct and reverse relationships for the given object.
+            Processes relationships for an object, including reverse, forward, and generic foreign key relations.
             """
             for rel in obj._meta.get_fields():
-                # Handle reverse relationships like service to service instances
-                if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
-                    if isinstance(rel, GenericForeignKey):
-                        related_objects = getattr(obj, rel.name, None)
-                    else:
-                        related_objects = getattr(obj, rel.get_accessor_name(), None)
-
+                # Handle reverse and forward relationships, excluding certain fields.
+                if rel.is_relation and rel.name not in excluded_fields:
+                    related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
+                    
+                    # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
-                        for related_obj in related_objects.all():                            
+                        for related_obj in related_objects.all():
                             add_node_if_not_visited(related_obj, label, current_depth + 1)
-
-                # Handle forward relationships explicitly (e.g., service to service template)
-                if hasattr(obj, 'service_template') and obj.service_template:
-                    add_node_if_not_visited(obj.service_template, label, current_depth + 1)
-                    related_app_label = obj.service_template._meta.app_label.lower()
-                    related_model_name = sanitize_label(obj.service_template._meta.model_name)
-                    if 'netbox_service_management' in related_app_label:
-                        related_label = f"{related_model_name}_{obj.service_template.pk}"
-                    else:
-                        related_label = f"{related_app_label}_{related_model_name}_{obj.service_template.pk}"
-                    add_edge(f"{related_model_name}_{obj.pk}", related_label)
                     
-                if hasattr(obj, 'content_object') and obj.content_object:
-                    related_app_label = obj.content_object._meta.app_label.lower()
-                    related_model_name = sanitize_label(obj.content_object._meta.model_name)
-                    related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
-                    # Use the display name of the content object for better readability
-                    display_name = sanitize_display_name(str(obj.content_object))
-                    shape = f'{related_label}("{display_name}"):::color_{related_model_name}'
-                    # Add the node for the content object and its clickable link if available
-                    add_node_if_not_visited(obj.content_object, label, current_depth + 1)
-                    add_edge(f"component_{obj.pk}", related_label)
+                    # Process single related objects for forward relationships (ForeignKey, OneToOne)
+                    elif related_objects:
+                        add_node_if_not_visited(related_objects, label, current_depth + 1)
+
+            # Handle GenericForeignKey relationships like in Component
+            if hasattr(obj, 'content_object') and obj.content_object:
+                related_obj = obj.content_object
+                add_node_if_not_visited(related_obj, label, current_depth + 1)
+                add_edge(f"{sanitize_label(obj._meta.model_name)}_{obj.pk}", f"{related_obj._meta.app_label.lower()}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}")
+
+
+            def add_node_if_not_visited(related_obj, label, current_depth):
+                """
+                Adds a related object to the diagram if it hasn't been visited.
+                """
+                # Include the app label to distinguish between similar model names
+                related_app_label = related_obj._meta.app_label.lower()
+                related_label = ""
+                if 'netbox_service_management' not in related_app_label:
+                    related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                else:
+                    related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                     
-                        
-                # Handle direct relationships like component links more thoroughly
-                if isinstance(obj, Component):
-                    if obj.service:
-                        service_app_label = obj.service._meta.app_label.lower()
-                        if f"service_{obj.service.pk}" not in visited:
-                            if 'netbox_service_management' in service_app_label:
-                                add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
-                                add_node_if_not_visited(obj.service, label, current_depth + 1)
-                            else:
-                                add_edge(f"component_{obj.pk}", f"{service_app_label}_.service_{obj.service.pk}")
-                                add_node_if_not_visited(obj.service, label, current_depth + 1)
-
-                    if obj.template_component:
-                        stc_label = f"servicetemplategroupcomponent_{obj.template_component.pk}"
-                        if stc_label not in visited:
-                            add_edge(stc_label, f"component_{obj.pk}")
-                            add_node_if_not_visited(obj.template_component, label, current_depth + 1)
-
-
-        def add_node_if_not_visited(related_obj, label, current_depth):
-            """
-            Adds a related object to the diagram if it hasn't been visited.
-            """
-            # Include the app label to distinguish between similar model names
-            related_app_label = related_obj._meta.app_label.lower()
-            related_label = ""
-            if 'netbox_service_management' not in related_app_label:
-                related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-            else:
-                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                
-            if related_label not in visited or 'netbox_service_management' not in related_app_label:
-                add_node(related_obj, label, current_depth + 1)
+                if related_label not in visited or 'netbox_service_management' not in related_app_label:
+                    add_node(related_obj, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
