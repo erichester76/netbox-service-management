@@ -223,7 +223,7 @@ class BaseDetailView(generic.ObjectView):
                 if obj._meta.model_name.lower() in excluded_model_names:
                     return
                 
-                visited.add(label)
+                if not parent_label and 'cluster': visited.add(label)
 
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
