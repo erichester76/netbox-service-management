@@ -319,11 +319,11 @@ class BaseDetailView(generic.ObjectView):
                             #     if cluster:
                             #         related_obj = cluster                            
                             # # add the edge for the service to component now on the forward recursion
-                            # if (isinstance(related_obj,Component) and isinstance(obj,Service)):
-                            #     related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
-                            #     add_edge(label,related_label)
-                            # else:
-                            add_node_if_not_visited(related_obj, label, current_depth + 1)
+                            if (isinstance(related_obj,Component) and isinstance(obj,Service)):
+                                 related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
+                                 add_edge(label,related_label)
+                            else:
+                                 add_node_if_not_visited(related_obj, label, current_depth + 1)
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
@@ -333,8 +333,8 @@ class BaseDetailView(generic.ObjectView):
                             if cluster:
                                 related_objects = cluster                                 
                         #stop the component to service link so we can recurse back from
-                        #if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
-                        add_node_if_not_visited(related_objects, label, current_depth + 1)
+                        if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
+                            add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
             if hasattr(obj, 'content_object') and obj.content_object:
