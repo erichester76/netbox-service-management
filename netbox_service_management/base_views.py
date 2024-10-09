@@ -213,10 +213,10 @@ class BaseDetailView(generic.ObjectView):
                     return
                 
                 #stop at clusters in recursion so we dont draw the whole platform
-                #if parent_label and ('dcim_device' in parent_label):
-                #    return
+                if label and ('device' in label):
+                    return
                 
-                if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
+                if obj._meta.model_name.lower() in excluded_model_names:
                     return
                 
                 visited.add(label)
