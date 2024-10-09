@@ -147,8 +147,7 @@ class BaseDetailView(generic.ObjectView):
             'cabletermination',
             'vrf',
             'prefix'
-            'clusterrole'
-            
+            'clusterrole',  
         }
         
         excluded_fields = {
@@ -175,7 +174,7 @@ class BaseDetailView(generic.ObjectView):
             'primaryipv4',
             'primaryipv6',
             'clustergroup',
-            'clustertype'
+            'clustertype',
         }
 
         def sanitize_label(text):
@@ -213,14 +212,14 @@ class BaseDetailView(generic.ObjectView):
                     obj_type = obj._meta.model_name.lower()
 
                 # Defined as hard edges, probably need to remove backwards references on these.
-                if current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label:
+                if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
                     diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
                 # If weve been here before dont traverse again
-                #if visited and label in visited:
-                #    diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #    return
+                if visited and label in visited:
+                    diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                    return
                 
                 # #define edges - I tried not to have to do it.. but I give up
                 # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
