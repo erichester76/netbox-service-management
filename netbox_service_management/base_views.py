@@ -173,6 +173,7 @@ class BaseDetailView(generic.ObjectView):
             'objectid',
             'primaryip4',
             'primaryip6',
+            'ipaddresses',
             'clustergroup',
             'clustertype',
         }
