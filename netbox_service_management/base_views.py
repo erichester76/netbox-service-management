@@ -153,7 +153,6 @@ class BaseDetailView(generic.ObjectView):
             'subscriptions',
             'permission',
             'content_type',
-            'taggeditem',
         }
         excluded_objects = {
             'virtualdisk',
@@ -162,6 +161,8 @@ class BaseDetailView(generic.ObjectView):
             'platform',
             'ipaddress',
             'device_role',
+            'taggeditem',
+
         }
 
         def sanitize_label(text):
