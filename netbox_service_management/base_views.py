@@ -151,8 +151,18 @@ class BaseDetailView(generic.ObjectView):
             'devicerole',
             'taggeditem',
             'platform',
-            'taggeditem'
-            'contenttype'
+            'taggeditem',
+            'contenttype',
+            'cable',
+            'cluster',
+            'devicetype',
+            'interface',
+            'manufacturer',
+            'tag',
+            'tenant',
+            'tenantgroup',
+            'topology',
+            'vlan',
         }
 
         def sanitize_label(text):
