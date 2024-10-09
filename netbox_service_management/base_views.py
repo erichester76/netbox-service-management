@@ -189,7 +189,7 @@ class BaseDetailView(generic.ObjectView):
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
                     # Start a subgraph for the service template
-                    add_subgraph_start(label+"_sg", f"Service Template {sanitize_display_name(str(obj))}")
+                    add_subgraph_start(label+"_sg", f"Service Template: {sanitize_display_name(str(obj))}")
                     open_subgraphs.add(label+"_sg")
 
                 # Handle subgraphs for services under a service_template
@@ -197,7 +197,7 @@ class BaseDetailView(generic.ObjectView):
                     service_template_label = f"{obj.service_template._meta.app_label.lower()}_sg_{sanitize_label(obj.service_template._meta.model_name)}_{obj.service_template.pk}"
                     if service_template_label in open_subgraphs:
                         # Start a subgraph for the service under the service template's subgraph
-                        add_subgraph_start(label+"_sg", f"Service {sanitize_display_name(str(obj))}")
+                        add_subgraph_start(label+"_sg", f"Service: {sanitize_display_name(str(obj))}")
                         open_subgraphs.add(label+"_sg")
 
                 # Sanitize the display name for the diagram
@@ -283,26 +283,24 @@ class BaseDetailView(generic.ObjectView):
                     related_app_label = obj.content_object._meta.app_label.lower()
                     related_model_name = sanitize_label(obj.content_object._meta.model_name)
                     related_label = f"{related_app_label}_{related_model_name}_{obj.content_object.pk}"
-                    if related_label not in visited:
-                        # Use the display name of the content object for better readability
-                        display_name = sanitize_display_name(str(obj.content_object))
-                        shape = f'{related_label}("{display_name}"):::color_{related_model_name}'
-                        # Add the node for the content object and its clickable link if available
-                        add_to_diagram(shape, related_label, obj.content_object)
-                        add_edge(f"component_{obj.pk}", related_label)
-                        add_node(obj.content_object, label, current_depth + 1)
+                    # Use the display name of the content object for better readability
+                    display_name = sanitize_display_name(str(obj.content_object))
+                    shape = f'{related_label}("{display_name}"):::color_{related_model_name}'
+                    # Add the node for the content object and its clickable link if available
+                    add_to_diagram(shape, related_label, obj.content_object)
+                    add_edge(f"component_{obj.pk}", related_label)
+                    add_node(obj.content_object, label, current_depth + 1)
                         
                 # Handle direct relationships like component links more thoroughly
                 if isinstance(obj, Component):
                     if obj.service:
                         service_app_label = obj.service._meta.app_label.lower()
-                        if f"service_{obj.service.pk}" not in visited:
-                            if 'netbox_service_management' in service_app_label:
-                                add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
-                                add_node_if_not_visited(obj.service, label, current_depth + 1)
-                            else:
-                                add_edge(f"component_{obj.pk}", f"{service_app_label}_.service_{obj.service.pk}")
-                                add_node_if_not_visited(obj.service, label, current_depth + 1)
+                        if 'netbox_service_management' in service_app_label:
+                            add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
+                            add_node_if_not_visited(obj.service, label, current_depth + 1)
+                        else:
+                            add_edge(f"component_{obj.pk}", f"{service_app_label}_.service_{obj.service.pk}")
+                            add_node_if_not_visited(obj.service, label, current_depth + 1)
 
                     if obj.template_component:
                         stc_label = f"servicetemplategroupcomponent_{obj.template_component.pk}"
