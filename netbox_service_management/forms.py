@@ -30,7 +30,7 @@ class ServiceTemplateGroupComponentForm(NetBoxModelForm):
         
 class ComponentForm(forms.ModelForm):
     content_type = forms.ModelChoiceField(
-        queryset=ContentType.objects.all()
+        queryset=models.ContentType.objects.all()
         label="Object Type",
         required=True,
     )
