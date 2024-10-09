@@ -198,7 +198,7 @@ class BaseDetailView(generic.ObjectView):
                 obj_type = ""
                 
                 #skip excluded modules we dont want to show in diagram
-                if obj._meta.model_name.lower() in excluded_model_names:
+                if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
                     return
                
                 #prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
@@ -218,9 +218,9 @@ class BaseDetailView(generic.ObjectView):
                     return
                 
                 #define edges - I tried not to have to do it.. but I give up
-                if label and parent_label and ('device' in parent_label or 'cluster' in parent_label) and 'virtualmachine' in label:
+                if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
                     return
-                if label and parent_label and 'cluster' in parent_label and 'device' in label:
+                if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
                     return
                 
                 #stop at stgc in recursion so services dont wrap around
