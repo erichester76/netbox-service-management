@@ -196,9 +196,11 @@ class BaseDetailView(generic.ObjectView):
                 app_label = sanitize_label(obj._meta.app_label.lower())
                 label = ""
                 obj_type = ""
-                
+                nonlocal diagram
+
                 #skip excluded modules we dont want to show in diagram
                 if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
+                    diagram += f"#RETURN-EXCLUDED! PARENT:{parent_label} CHILD:{label}\n"
                     return
                
                 #prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
@@ -209,25 +211,23 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
-                # nonlocal diagram
-                # diagram += f"#PARENT:{parent_label}\n"
-                # diagram += f"#CHILD:{label}\n"
 
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
+                    diagram += f"#RETURN-visited-or-max! PARENT:{parent_label} CHILD:{label}\n"
                     return
                 
                 #define edges - I tried not to have to do it.. but I give up
                 if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
+                    diagram += f"#RETURN-vm-loop! PARENT:{parent_label} CHILD:{label}\n"
                     return
                 if (label and parent_label) and ('cluster' in parent_label and 'device' in label):
+                    diagram += f"#RETURN-cluster! PARENT:{parent_label} CHILD:{label}\n"
                     return
                 
                 #stop at stgc in recursion so services dont wrap around
                 if parent_label and ('servicetemplategroupcomponent' in parent_label):
-                    return
-                
-                if obj._meta.model_name.lower() in excluded_model_names:
+                    diagram += f"#RETURN-STGC! PARENT:{parent_label} CHILD:{label}\n"
                     return
                 
                 if not parent_label and 'cluster': visited.add(label)
