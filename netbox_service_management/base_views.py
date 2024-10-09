@@ -183,6 +183,7 @@ class BaseDetailView(generic.ObjectView):
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
                     return
+                visited.add(label)
 
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
