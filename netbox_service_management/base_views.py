@@ -211,8 +211,11 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and ('servicetemplategroupcomponent' in parent_label):
                     return
                 
-                #stop at clusters in recursion so we dont draw the whole platform
-                if label and ('device' in label):
+                #stop at device in recursion so we dont draw the whole platform
+                if label and parent_label and 'device' in parent_label and 'virtualmachine' in label:
+                    return
+                
+                if label and parent_label and 'cluster' in parent_label and 'device' in label:
                     return
                 
                 if obj._meta.model_name.lower() in excluded_model_names:
