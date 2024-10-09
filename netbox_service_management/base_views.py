@@ -184,7 +184,7 @@ class BaseDetailView(generic.ObjectView):
                 if label in visited or current_depth > max_depth:
                     return
                 
-                visited.add(label)
+                if 'service_' not in label: visited.add(label)
 
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
@@ -271,52 +271,32 @@ class BaseDetailView(generic.ObjectView):
             else:
                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                 
-            if related_label not in visited or 'netbox_service_management' not in related_app_label:
+            if related_label not in visited:
                 add_node(related_obj, label, current_depth + 1)
                       
         def process_relationships(obj, label, current_depth):
             """
-            Processes relationships for an object, including reverse, forward, and generic foreign key relations.
+            Processes relationships for an object and recursively call add_node until we traverse the whole tree
             """
-            # Prioritize key relationships
-            if isinstance(obj, Component):
-                # Link component to its service
-                if obj.service:
-                    add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
-                    add_node_if_not_visited(obj.service, label, current_depth + 1)
-                
-                # Link component to its template component
-                if obj.template_component:
-                    stc_label = f"servicetemplategroupcomponent_{obj.template_component.pk}"
-                    add_edge(stc_label, f"component_{obj.pk}")
-                    add_node_if_not_visited(obj.template_component, label, current_depth + 1)
-                
-                # Handle relationships for generic foreign keys
-                if obj.content_object:
-                    related_label = f"{obj.content_object._meta.app_label.lower()}_{sanitize_label(obj.content_object._meta.model_name)}_{obj.content_object.pk}"
-                    add_edge(f"component_{obj.pk}", related_label)
-                    add_node_if_not_visited(obj.content_object, label, current_depth + 1)
-
-            # Handle forward relationships like Service to ServiceTemplate
-            if hasattr(obj, 'service_template') and obj.service_template:
-                related_label = f"servicetemplate_{obj.service_template.pk}"
-                add_edge(f"service_{obj.pk}", related_label)
-                add_node_if_not_visited(obj.service_template, label, current_depth + 1)
-            
-            # Process other relationships using Django's get_fields()
             for rel in obj._meta.get_fields():
+                # Handle reverse and forward relationships, excluding certain fields.
                 if rel.is_relation and rel.name not in excluded_fields:
-                    related_objects = (
-                        getattr(obj, rel.get_accessor_name(), None) 
-                        if rel.auto_created else getattr(obj, rel.name, None)
-                    )
-                    # Process reverse relationships (querysets)
+                    related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
+                    
+                    # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
                             add_node_if_not_visited(related_obj, label, current_depth + 1)
-                    # Process forward relationships (single objects)
+                    
+                    # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
                         add_node_if_not_visited(related_objects, label, current_depth + 1)
+
+            # Handle GenericForeignKey relationships like in Component
+            if hasattr(obj, 'content_object') and obj.content_object:
+                related_obj = obj.content_object
+                add_node_if_not_visited(related_obj, label, current_depth + 1)
+                add_edge(f"{sanitize_label(obj._meta.model_name)}_{obj.pk}", f"{related_obj._meta.app_label.lower()}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}")
 
 
         # Start the diagram with the main object
