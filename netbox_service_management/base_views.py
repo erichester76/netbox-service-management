@@ -228,19 +228,9 @@ class BaseDetailView(generic.ObjectView):
                         related_objects = getattr(obj, rel.get_accessor_name(), None)
 
                     if related_objects is not None and hasattr(related_objects, 'all'):
-                        for related_obj in related_objects.all():
-                            # Avoid self-referencing loops
-                            if related_obj == obj:
-                                continue
-                            
-                            related_app_label = related_obj._meta.app_label.lower()
-                            related_label = ""
-                            if 'netbox_service_management' not in related_app_label:
-                                related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                            else:
-                                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                            
-                            add_node_if_not_visited(related_obj, label, current_depth)
+                        for related_obj in related_objects.all():                            
+                            related_app_label = related_obj._meta.app_label.lower()                            
+                            add_node_if_not_visited(related_obj, label, current_depth + 1)
 
                 # Handle forward relationships explicitly (e.g., service to service template)
                 if hasattr(obj, 'service_template') and obj.service_template:
