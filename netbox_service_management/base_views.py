@@ -331,7 +331,7 @@ class BaseDetailView(generic.ObjectView):
                 related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
             nonlocal diagram
             
-            if related_label not in visited or ('cluster' in related_label and 'virtualmachine' in label):
+            if related_label not in visited or ('cluster' in related_label and 'virtualmachine' in label) or ('ServiceTemplateGroupComponent' in related_label and 'component' in label):
                 #diagram += f'%% ADDNODE {related_label} calling addnode\n'
                 add_node(related_obj, label, current_depth + 1)
             else:
