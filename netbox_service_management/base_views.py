@@ -149,8 +149,8 @@ class BaseDetailView(generic.ObjectView):
             'vminterface',
             'site',
             'platform',
-            'ipaddress'
-            'devicerole',
+            'ipamipaddress'
+            'dcimdevicerole',
             'role',
             'taggeditem',
             'platform',
@@ -209,7 +209,7 @@ class BaseDetailView(generic.ObjectView):
                     return
                 
                 #stop at clusters in recursion so we dont draw the whole platform
-                if parent_label and ('virtualization_cluster' in parent_label):
+                if parent_label and ('dcim_device' in parent_label):
                     return
                 
                 if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
