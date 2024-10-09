@@ -151,6 +151,7 @@ class BaseDetailView(generic.ObjectView):
             'platform',
             'ipaddress'
             'devicerole',
+            'role',
             'taggeditem',
             'platform',
             'taggeditem',
