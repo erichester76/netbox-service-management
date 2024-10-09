@@ -331,8 +331,8 @@ class BaseDetailView(generic.ObjectView):
                             if cluster:
                                 related_objects = cluster                                 
                         #stop the component to service link so we can recurse back from
-                        if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
-                            add_node_if_not_visited(related_objects, label, current_depth + 1)
+                        #if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
+                        add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
             if hasattr(obj, 'content_object') and obj.content_object:
