@@ -284,7 +284,7 @@ class BaseDetailView(generic.ObjectView):
                         related_label = f"{related_model_name}_{obj.service_template.pk}"
                     else:
                         related_label = f"{related_app_label}_{related_model_name}_{obj.service_template.pk}"
-                    add_edge(f"{sanitize_label(related_obj._meta.model_name)}_{obj.pk}", related_label)
+                    add_edge(f"(related_model_name}_{obj.pk}", related_label)
                     
                 if hasattr(obj, 'content_object') and obj.content_object:
                     related_app_label = obj.content_object._meta.app_label.lower()
