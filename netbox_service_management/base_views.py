@@ -199,23 +199,21 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
-                nonlocal diagram
-                diagram += f"#PARENT:{parent_label}\n"
-                diagram += f"#CHILD:{label}\n"
+                # nonlocal diagram
+                # diagram += f"#PARENT:{parent_label}\n"
+                # diagram += f"#CHILD:{label}\n"
 
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
-                    return
-
-                #stop at clusters in recursion so we dont draw the whole platform
-                if parent_label and ('servicetemplategroupcomponent' in parent_label):
                     return
                 
                 #define edges - I tried not to have to do it.. but I give up
                 if label and parent_label and ('device' in parent_label or 'cluster' in parent_label) and 'virtualmachine' in label:
                     return
-                
                 if label and parent_label and 'cluster' in parent_label and 'device' in label:
+                    return
+                #stop at stgc in recursion so services dont wrap around
+                if parent_label and ('servicetemplategroupcomponent' in parent_label):
                     return
                 
                 if obj._meta.model_name.lower() in excluded_model_names:
