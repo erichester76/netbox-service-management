@@ -212,17 +212,12 @@ class BaseDetailView(generic.ObjectView):
                 else:
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
-                
 
                 # Defined as hard edges, probably need to remove backwards references on these.
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
-                    #diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                    diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
-                
-                # If weve been here before dont traverse again
-                if visited and label in visited:
-                    diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                    return
+
                 diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
 
                 # #define edges - I tried not to have to do it.. but I give up
@@ -279,11 +274,6 @@ class BaseDetailView(generic.ObjectView):
                 if isinstance(obj, ServiceTemplate) and label+"_sg" in open_subgraphs:
                     add_subgraph_end(label+"_sg")
                     open_subgraphs.remove(label+"_sg")
-
-                # Now mark the object as visited to ensure we don't reprocess it
-                if 'cluster' not in label:
-                    visited.add(label)
-                    diagram += f"%% MARKED VISITED: {label} depth:{current_depth}\n"
 
 
         def add_subgraph_start(label, description):
