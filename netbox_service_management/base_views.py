@@ -232,6 +232,7 @@ class BaseDetailView(generic.ObjectView):
                             # Avoid self-referencing loops
                             if related_obj == obj:
                                 continue
+                            
                             related_app_label = related_obj._meta.app_label.lower()
                             related_label = ""
                             if 'netbox_service_management' not in related_app_label:
@@ -239,8 +240,7 @@ class BaseDetailView(generic.ObjectView):
                             else:
                                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                             
-                            if (label, related_label) not in processed_relationships and (related_label, label) not in processed_relationships: 
-                                add_node_if_not_visited(related_obj, label, current_depth)
+                            add_node_if_not_visited(related_obj, label, current_depth)
 
                 # Handle forward relationships explicitly (e.g., service to service template)
                 if hasattr(obj, 'service_template') and obj.service_template:
