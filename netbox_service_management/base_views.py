@@ -211,8 +211,8 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and ('servicetemplategroupcomponent' in parent_label):
                     return
                 
-                #stop at device in recursion so we dont draw the whole platform
-                if label and parent_label and 'device' in parent_label and 'virtualmachine' in label:
+                #define edges - I tried not to have to do it.. but I give up
+                if label and parent_label and ('device' in parent_label or 'cluster' in parent_label) and 'virtualmachine' in label:
                     return
                 
                 if label and parent_label and 'cluster' in parent_label and 'device' in label:
