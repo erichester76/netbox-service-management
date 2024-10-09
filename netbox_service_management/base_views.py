@@ -261,7 +261,7 @@ class BaseDetailView(generic.ObjectView):
             """
             if isinstance(obj, Component):
                 # Link Component to its related Service
-                if obj.service:
+                if obj.service and 'ipam' not in obj._meta.app_label.lower() and 'dcimxs' not in obj._meta.app_label.lower():
                     add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
                     add_node(obj.service, label, current_depth + 1)
 
