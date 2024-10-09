@@ -173,7 +173,6 @@ class BaseDetailView(generic.ObjectView):
             visited.add(label)
 
             obj_type = obj._meta.model_name.lower()
-            color = color_map.get(obj_type, '#FFFFFF')  # Default to white if not found
             display_name = sanitize_display_name(str(obj))
             shape = f'{label}({display_name}):::color_{obj_type}'
 
