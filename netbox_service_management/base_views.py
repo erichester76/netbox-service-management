@@ -22,7 +22,6 @@ from .models import (
     Component
 )
 
-
 class BaseDetailView(generic.ObjectView):
     template_name = 'netbox_service_management/default-detail.html'
     
@@ -118,7 +117,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=12)
+        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=15)
 
         return {
             'object_name': object_name,
