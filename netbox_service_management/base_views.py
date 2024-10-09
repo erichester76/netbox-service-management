@@ -196,7 +196,7 @@ class BaseDetailView(generic.ObjectView):
                     return
 
                 #stop at clusters in recursion so we dont draw the whole platform
-                if 'cluster' in parent_label:
+                if parent_label and 'cluster' in parent_label:
                     return
                 
                 visited.add(label)
