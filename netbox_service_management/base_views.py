@@ -127,7 +127,7 @@ class BaseDetailView(generic.ObjectView):
             'site',
             'platform',
             'ipaddress'
-            'devicerole',
+            'device_role',
             'role',
             'taggeditem',
             'platform',
@@ -202,7 +202,7 @@ class BaseDetailView(generic.ObjectView):
 
                 nonlocal diagram
                 diagram += f"#PARENT:{parent_label}\n"
-                diagram += f"#CHILD:{sanitize_label(obj._meta.model_name.lower())}\n"
+                diagram += f"#CHILD:{label}\n"
 
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
