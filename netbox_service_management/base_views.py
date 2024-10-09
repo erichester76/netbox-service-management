@@ -240,18 +240,17 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and ('cluster' not in parent_label): visited.add(label)
 
                 # Create subgraphs for service_templates
-                if parent_label and (isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs):
+                if parent_label and (isinstance(obj, ServiceTemplate) and label+"_stgrp" not in open_subgraphs):
                     # Start a subgraph for the service template
-                    add_subgraph_start(label+"_sg", f"T: {sanitize_display_name(str(obj))}")
-                    open_subgraphs.add(label+"_sg")
+                    add_subgraph_start(label+"_stgrp", f"T: {sanitize_display_name(str(obj))}")
+                    open_subgraphs.add(label+"_stgrp")
 
                 # Create subgraphs for services under a service_template
-                if parent_label and 'solution' not in parent_label and (isinstance(obj, Service) and label+"_sg" not in open_subgraphs):
-                    service_template_label = f"{obj.service_template._meta.model_name.lower()}_{obj.service_template.pk}_sg"
+                if parent_label and 'solution' not in parent_label and (isinstance(obj, Service) and label+"_servgrp" not in open_subgraphs):
                     #if service_template_label in open_subgraphs:
                     # Start a subgraph for the service under the service template's subgraph
-                    add_subgraph_start(label+"_sg", f"S: {sanitize_display_name(str(obj))}")
-                    open_subgraphs.add(label+"_sg")
+                    add_subgraph_start(label+"_servgrp", f"S: {sanitize_display_name(str(obj))}")
+                    open_subgraphs.add(label+"_servgrg")
 
                 # Sanitize the display name for the diagram
                 display_name = sanitize_display_name(str(obj))
