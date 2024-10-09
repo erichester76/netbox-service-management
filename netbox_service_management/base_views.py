@@ -232,7 +232,7 @@ class BaseDetailView(generic.ObjectView):
             Adds the start of a subgraph with a given label and description.
             """
             nonlocal diagram
-            diagram += f"subgraph {label} [{description}]\nDirection TD\n"
+            diagram += f"subgraph {label} [{description}]\ndirection TD\n"
 
         def add_subgraph_end(label):
             """
