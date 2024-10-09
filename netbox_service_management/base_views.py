@@ -213,7 +213,7 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
                 
-                diagram += f"%% {parent_label} {label} {str(obj)} {current_depth}\n"
+                diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
 
                 # Defined as hard edges, probably need to remove backwards references on these.
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
