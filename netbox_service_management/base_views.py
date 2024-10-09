@@ -199,7 +199,7 @@ class BaseDetailView(generic.ObjectView):
                 nonlocal diagram
 
                 # Skip excluded modules we dont want to show in diagram
-                if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names) or (excluded_model_names in parent_label)):
+                if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
                     diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
                     return
                
