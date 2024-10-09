@@ -334,10 +334,10 @@ class BaseDetailView(generic.ObjectView):
             nonlocal diagram
             
             if related_label not in visited:
-                diagram += f'%% {related_label} calling addnode'
+                diagram += f'%% ADDNODE {related_label} calling addnode\n'
                 add_node(related_obj, label, current_depth + 1)
             else:
-                diagram += f'%% {related_label} in visited'    
+                diagram += f'%% ADDNODE {related_label} in visited\n'    
                       
         def process_relationships(obj, label, current_depth):
             """
