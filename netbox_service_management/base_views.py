@@ -189,7 +189,7 @@ class BaseDetailView(generic.ObjectView):
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
                     # Start a subgraph for the service template
-                    add_subgraph_start(label, f"Service Template: {sanitize_display_name(str(obj))}")
+                    add_subgraph_start(label, f"Service Template {sanitize_display_name(str(obj))}")
                     open_subgraphs.add(label)
 
                 # Handle subgraphs for services under a service_template
@@ -197,7 +197,7 @@ class BaseDetailView(generic.ObjectView):
                     service_template_label = f"{obj.service_template._meta.app_label.lower()}_{sanitize_label(obj.service_template._meta.model_name)}_{obj.service_template.pk}"
                     if service_template_label in open_subgraphs:
                         # Start a subgraph for the service under the service template's subgraph
-                        add_subgraph_start(label, f"Service: {sanitize_display_name(str(obj))}")
+                        add_subgraph_start(label, f"Service {sanitize_display_name(str(obj))}")
                         open_subgraphs.add(label)
 
                 # Sanitize the display name for the diagram
@@ -330,7 +330,7 @@ class BaseDetailView(generic.ObjectView):
         # Add the legend subgraph with a specific color and style
         legend = "graph LR\n"
         legend += "direction LR\n"  # Place items in the legend in a horizontal row
-        legend += "subgraph Legend [Legend]"
+        legend += "subgraph Legend [Legend]\n"
         
         # Style the subgraph for the legend
         for obj_type, color in color_map.items():
