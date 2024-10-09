@@ -215,11 +215,11 @@ class BaseDetailView(generic.ObjectView):
 
                 # Close subgraphs if they were opened
                 if isinstance(obj, Service) and label+"_sg" in open_subgraphs:
-                    add_subgraph_end()
+                    add_subgraph_end(label+"_sg")
                     open_subgraphs.remove(label+"_sg")
 
                 if isinstance(obj, ServiceTemplate) and label+"_sg" in open_subgraphs:
-                    add_subgraph_end()
+                    add_subgraph_end(label+"_sg")
                     open_subgraphs.remove(label+"_sg")
 
                 # Now mark the object as visited to ensure we don't reprocess it
@@ -232,12 +232,14 @@ class BaseDetailView(generic.ObjectView):
             nonlocal diagram
             diagram += f"subgraph {label} [{description}]\n"
 
-        def add_subgraph_end():
+        def add_subgraph_end(label):
             """
             Ends the most recent subgraph.
             """
             nonlocal diagram
             diagram += "end\n"
+            diagram += f"style {label} fill:transparent,stroke-width:0px;\n"
+
 
         def add_to_diagram(shape, label, obj):
             """
