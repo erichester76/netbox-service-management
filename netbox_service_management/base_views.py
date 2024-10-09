@@ -200,6 +200,8 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
+                diagram += f"#{sanitize_label(obj._meta.model_name.lower())}"
+                diagram += f"#{parent_label}"
                 # Check if we've already visited this node with its relationships processed.
                 if label in visited or current_depth > max_depth:
                     return
@@ -210,6 +212,7 @@ class BaseDetailView(generic.ObjectView):
                 
                 #stop at clusters in recursion so we dont draw the whole platform
                 if parent_label and ('dcim_device' in parent_label):
+                    
                     return
                 
                 if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
