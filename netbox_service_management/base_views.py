@@ -284,20 +284,20 @@ class BaseDetailView(generic.ObjectView):
                 add_edge(f"{sanitize_label(obj._meta.model_name)}_{obj.pk}", f"{related_obj._meta.app_label.lower()}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}")
 
 
-            def add_node_if_not_visited(related_obj, label, current_depth):
-                """
-                Adds a related object to the diagram if it hasn't been visited.
-                """
-                # Include the app label to distinguish between similar model names
-                related_app_label = related_obj._meta.app_label.lower()
-                related_label = ""
-                if 'netbox_service_management' not in related_app_label:
-                    related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                else:
-                    related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
-                    
-                if related_label not in visited or 'netbox_service_management' not in related_app_label:
-                    add_node(related_obj, label, current_depth + 1)
+        def add_node_if_not_visited(related_obj, label, current_depth):
+            """
+            Adds a related object to the diagram if it hasn't been visited.
+            """
+            # Include the app label to distinguish between similar model names
+            related_app_label = related_obj._meta.app_label.lower()
+            related_label = ""
+            if 'netbox_service_management' not in related_app_label:
+                related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+            else:
+                related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                
+            if related_label not in visited or 'netbox_service_management' not in related_app_label:
+                add_node(related_obj, label, current_depth + 1)
 
         # Start the diagram with the main object
         add_node(instance)
