@@ -239,9 +239,9 @@ class BaseDetailView(generic.ObjectView):
                             if (label, related_label) not in processed_relationships and (related_label, label) not in processed_relationships: 
                                 add_node_if_not_visited(related_obj, label, current_depth)
 
-            # Handle forward relationships explicitly (e.g., service to service template)
-            if hasattr(obj, 'service_template') and obj.service_template:
-                add_node(obj.service_template, label, current_depth + 1)
+                # Handle forward relationships explicitly (e.g., service to service template)
+                if hasattr(obj, 'service_template') and obj.service_template:
+                    add_node(obj.service_template, label, current_depth + 1)
                 
         def handle_generic_foreign_key(rel, obj, label, current_depth):
             """
