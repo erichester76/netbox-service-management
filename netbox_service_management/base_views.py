@@ -210,7 +210,7 @@ class BaseDetailView(generic.ObjectView):
             """
             Adds an edge between the parent and the current label, avoiding duplicates.
             """
-            if parent_label and label and (parent_label, label) not in processed_relationships:
+            if parent_label and label and (parent_label, label) not in processed_relationships and (parent_label, label) not in processed_relationships:
                 nonlocal diagram
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
@@ -259,6 +259,7 @@ class BaseDetailView(generic.ObjectView):
                 related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
             else:
                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                
             if related_label not in visited:
                 add_node(related_obj, label, current_depth + 1)
 
