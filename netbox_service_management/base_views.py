@@ -146,6 +146,7 @@ class BaseDetailView(generic.ObjectView):
             'cabletermination',
             'vrf',
             'prefix'
+            'cluster_role'
             
         }
         
@@ -163,6 +164,7 @@ class BaseDetailView(generic.ObjectView):
             # 'template_groups',
             # 'services',
             'role',
+            'ipaddress'
             'depends_on',
             'dependencies',
             'created',
