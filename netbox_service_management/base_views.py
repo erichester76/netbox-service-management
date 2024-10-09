@@ -229,6 +229,9 @@ class BaseDetailView(generic.ObjectView):
 
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
+                            # Avoid self-referencing loops
+                            if related_obj == obj:
+                                continue
                             related_app_label = related_obj._meta.app_label.lower()
                             related_label = ""
                             if 'netbox_service_management' not in related_app_label:
