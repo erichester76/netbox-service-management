@@ -213,17 +213,17 @@ class BaseDetailView(generic.ObjectView):
                     obj_type = obj._meta.model_name.lower()
 
                 # Check if we've already visited this node with its relationships processed.
-                if label in visited or current_depth > max_depth:
-                    diagram += f"%% RETURN-visited-or-max PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                if current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label:
+                    diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                    return
+                if label in visited:
+                    diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
                 # #define edges - I tried not to have to do it.. but I give up
                 # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
                 #     diagram += f"%% ETURN-vm-loop PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #     return
-                if (parent_label) and ('cluster' in parent_label):
-                    diagram += f"%% RETURN-cluster PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
-                    return
+                #     retur
                 
                 # if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label) and 'servicetemplate' in label):
                 #     diagram += f"%% RETURN-STG-LOOP PARENT {parent_label} CHILD {label} depth {current_depth}\n"
@@ -237,8 +237,7 @@ class BaseDetailView(generic.ObjectView):
                 #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                 #     return
                 
-                if parent_label and 'cluster' not in parent_label: 
-                    visited.add(label)
+                visited.add(label)
 
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
