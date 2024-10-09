@@ -150,7 +150,8 @@ class BaseDetailView(generic.ObjectView):
             'bookmarks', 
             'tenant', 
             'journal_entries', 
-            'subscriptions'
+            'subscriptions',
+            'auth_permission'
         }
 
         def sanitize_label(text):
