@@ -184,7 +184,7 @@ class BaseDetailView(generic.ObjectView):
                 if label in visited or current_depth > max_depth:
                     return
                 
-                if 'service_' not in label: visited.add(label)
+                visited.add(label)
 
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
@@ -223,7 +223,7 @@ class BaseDetailView(generic.ObjectView):
                     open_subgraphs.remove(label+"_sg")
 
                 # Now mark the object as visited to ensure we don't reprocess it
-                if 'service_' not in label: visited.add(label)
+                visited.add(label)
 
         def add_subgraph_start(label, description):
             """
@@ -290,7 +290,7 @@ class BaseDetailView(generic.ObjectView):
                     
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
-                        if not (isinstance(related_obj,Component) and isinstance(obj,ServiceTemplateGroupComponent)): 
+                        if not (isinstance(related_objects,Component) and isinstance(obj,ServiceTemplateGroupComponent)): 
                             add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
