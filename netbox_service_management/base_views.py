@@ -226,7 +226,7 @@ class BaseDetailView(generic.ObjectView):
                     return
                 
                 #stop at stgc in recursion so services dont wrap around
-                if parent_label and ('servicetemplategroupcomponent' in parent_label):
+                if parent_label and ('servicetemplategroupcomponent' in parent_label and 'component' in label):
                     diagram += f"#RETURN-STGC PARENT:{parent_label} CHILD:{label}\n"
                     return
                 
