@@ -111,7 +111,6 @@ class Component(NetBoxModel):
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
-        limit_choices_to=models.Q(app_label='dcim') | models.Q(app_label='ipam')  # Optional: Limit to specific apps
     )
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')

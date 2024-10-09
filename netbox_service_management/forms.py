@@ -30,9 +30,7 @@ class ServiceTemplateGroupComponentForm(NetBoxModelForm):
         
 class ComponentForm(forms.ModelForm):
     content_type = forms.ModelChoiceField(
-        queryset=ContentType.objects.filter(
-            djmodels.Q(app_label='dcim') | djmodels.Q(app_label='ipam') | djmodels.Q(app_label='virtualization')
-        ),
+        queryset=ContentType.objects.all()
         label="Object Type",
         required=True,
     )
