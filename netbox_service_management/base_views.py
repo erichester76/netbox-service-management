@@ -118,7 +118,7 @@ class BaseDetailView(generic.ObjectView):
                     })
                     
         # Generate Mermaid diagram for the object and its related objects
-        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=12)
+        mermaid_diagram, mermaid_legend = self.generate_mermaid_diagram(instance, max_depth=20)
 
         return {
             'object_name': object_name,
