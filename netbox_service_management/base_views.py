@@ -144,12 +144,12 @@ class BaseDetailView(generic.ObjectView):
             'component': '#d63a39',  # Red 
         }
 
-        excluded_objects = {
+        excluded_model_names = {
             'virtualdisk',
             'vminterface',
             'site',
             'platform',
-            'ipaddresses'
+            'ipaddress'
             'devicerole',
             'taggeditem',
             'platform',
@@ -205,7 +205,7 @@ class BaseDetailView(generic.ObjectView):
                 #if parent_label and ('cluster' in parent_label):
                 #    return
                 
-                if sanitize_label(obj._meta.model_name) in excluded_objects:
+                if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
                     return
                 
                 visited.add(label)
@@ -304,7 +304,7 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 # Handle reverse and forward relationships, excluding certain fields.
-                if rel.is_relation and (sanitize_label(obj._meta.model_name) not in excluded_objects):
+                if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     # Process the related objects if it's a queryset (reverse relationships)
@@ -312,7 +312,9 @@ class BaseDetailView(generic.ObjectView):
                         for related_obj in related_objects.all():
                             # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
                             if isinstance(related_obj, Device) and related_obj.cluster:
-                               related_obj = related_obj.cluster
+                                cluster = getattr(related_obj, 'cluster', None)
+                                if cluster:
+                                    related_obj = cluster                            
                             # add the edge for the service to component now on the forward recursion
                             if (isinstance(related_obj,Component) and isinstance(obj,Service)):
                                 related_label = f"{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
@@ -324,8 +326,9 @@ class BaseDetailView(generic.ObjectView):
                     elif related_objects:
                         # Special case: if the related object is a Device with an assigned Cluster, use the Cluster instead
                         if isinstance(related_objects, Device) and related_objects.cluster:
-                            related_objects = related_objects.cluster
-                            
+                            cluster = getattr(related_objects, 'cluster', None)
+                            if cluster:
+                                related_objects = cluster                                 
                         #stop the component to service link so we can recurse back from
                         if not (isinstance(related_objects,Service) and isinstance(obj,Component)): 
                             add_node_if_not_visited(related_objects, label, current_depth + 1)
