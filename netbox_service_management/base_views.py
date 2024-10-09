@@ -146,18 +146,18 @@ class BaseDetailView(generic.ObjectView):
             'cabletermination',
             'vrf',
             'prefix'
-            'cluster_role'
+            'clusterrole'
             
         }
         
         excluded_fields = {
             'id', 
-            'custom_field_data', 
+            'customfielddata', 
             'tags', 
             'bookmarks', 
-            'journal_entries', 
+            'journalentries', 
             'subscriptions', 
-            'tagged_items', 
+            'taggeditems', 
             # 'service_templates',
             # 'stg_components',
             # 'components',
@@ -168,10 +168,12 @@ class BaseDetailView(generic.ObjectView):
             'depends_on',
             'dependencies',
             'created',
-            'last_updated',
-            'object_id',
-            'primary_ipv4',
-            'primary_ipv6'
+            'lastupdated',
+            'objectid',
+            'primaryipv4',
+            'primaryipv6',
+            'clustergroup',
+            'clustertype'
         }
 
         def sanitize_label(text):
