@@ -128,7 +128,7 @@ class BaseDetailView(generic.ObjectView):
             'mermaid_legend': mermaid_legend,
         }
 
-    def generate_mermaid_diagram(self, instance, max_depth=1):
+    def generate_mermaid_diagram(self, instance, max_depth=10):
         # Initialize the diagram string
         diagram = "graph TD\n"
         visited = set()
@@ -186,7 +186,7 @@ class BaseDetailView(generic.ObjectView):
                 """
                 Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
                 """
-                app_label = obj._meta.app_label.lower()
+                app_label = sanitize_label(obj._meta.app_label.lower())
                 label = ""
                 obj_type = ""
                 
@@ -288,7 +288,7 @@ class BaseDetailView(generic.ObjectView):
             Adds a related object to the diagram if it hasn't been visited.
             """
             # Include the app label to distinguish between similar model names
-            related_app_label = related_obj._meta.app_label.lower()
+            related_app_label = sanitize_label(related_obj._meta.app_label.lower())
             related_label = ""
             if 'netbox_service_management' not in related_app_label:
                 related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}"
@@ -337,7 +337,7 @@ class BaseDetailView(generic.ObjectView):
             if hasattr(obj, 'content_object') and obj.content_object:
                 related_obj = obj.content_object
                 add_node_if_not_visited(related_obj, label, current_depth + 1)
-                add_edge(f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}", f"{related_obj._meta.app_label.lower()}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}")
+                add_edge(f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}", f"{sanitize_label(related_obj._meta.app_label.lower())}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}")
 
 
         # Start the diagram with the main object
