@@ -128,7 +128,7 @@ class BaseDetailView(generic.ObjectView):
 
     def generate_mermaid_diagram(self, instance, max_depth=1):
         # Initialize the diagram string
-        diagram = "graph LR\n"
+        diagram = "graph TD\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
         
@@ -231,7 +231,7 @@ class BaseDetailView(generic.ObjectView):
             Adds the start of a subgraph with a given label and description.
             """
             nonlocal diagram
-            diagram += f"subgraph {label} [{description}]\n"
+            diagram += f"subgraph {label} [{description}]\nDirection TD\n"
 
         def add_subgraph_end(label):
             """
