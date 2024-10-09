@@ -256,7 +256,12 @@ class BaseDetailView(generic.ObjectView):
                 # Sanitize the display name for the diagram
                 display_name = sanitize_display_name(str(obj))
                 shape = f'{label}("{display_name}"):::color_{obj_type}'
-
+               
+                #close the service subgroup before we add the item, we dont want it in any specific service
+                if 'cluster' in label:
+                    for item in list(open_subgraphs):
+                        if '_servgrp' in item:
+                             open_subgraphs.remove(item)
                 # Add the node and its clickable link if available
                 add_to_diagram(shape, label, obj)
 
@@ -267,13 +272,16 @@ class BaseDetailView(generic.ObjectView):
                 process_relationships(obj, label, current_depth)
 
                 # Close subgraphs if they were opened
-                if isinstance(obj, Service) and label+"_sg" in open_subgraphs:
-                    add_subgraph_end(label+"_sg")
-                    open_subgraphs.remove(label+"_sg")
+                if isinstance(obj, Service) and label+"_servgrp" in open_subgraphs:
+                    add_subgraph_end(label+"_servgrp")
+                    open_subgraphs.remove(label+"_servrp")
 
-                if isinstance(obj, ServiceTemplate) and label+"_sg" in open_subgraphs:
-                    add_subgraph_end(label+"_sg")
-                    open_subgraphs.remove(label+"_sg")
+                if isinstance(obj, ServiceTemplate) and label+"_stgrp" in open_subgraphs:
+                    add_subgraph_end(label+"_stgrp")
+                    open_subgraphs.remove(label+"_stgrp")
+                    
+                
+
 
 
         def add_subgraph_start(label, description):
