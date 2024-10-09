@@ -222,6 +222,7 @@ class BaseDetailView(generic.ObjectView):
                     return
                 if label and parent_label and 'cluster' in parent_label and 'device' in label:
                     return
+                
                 #stop at stgc in recursion so services dont wrap around
                 if parent_label and ('servicetemplategroupcomponent' in parent_label):
                     return
@@ -232,7 +233,7 @@ class BaseDetailView(generic.ObjectView):
                 if not parent_label and 'cluster': visited.add(label)
 
                 # Handle subgraphs for service_templates
-                if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
+                if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
                     # Start a subgraph for the service template
                     add_subgraph_start(label+"_sg", f"T: {sanitize_display_name(str(obj))}")
                     open_subgraphs.add(label+"_sg")
