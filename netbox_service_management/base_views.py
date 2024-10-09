@@ -188,7 +188,7 @@ class BaseDetailView(generic.ObjectView):
                 add_to_diagram(shape, label, obj)
 
                 # Add an edge from the parent node if applicable
-                if parent_label not in label: add_edge(parent_label, label)
+                if parent_label != label: add_edge(parent_label, label)
 
                 # Process related objects and handle specific relationships
                 process_relationships(obj, label, current_depth)
@@ -256,13 +256,6 @@ class BaseDetailView(generic.ObjectView):
                         add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
                         add_node_if_not_visited(obj.template_component, label, current_depth + 1)
 
-        def handle_generic_foreign_key(rel, obj, label, current_depth):
-            """
-            Handles relationships for GenericForeignKey fields.
-            """
-            related_obj = getattr(obj, rel.name, None)
-            if related_obj:
-                add_node_if_not_visited(related_obj, label, current_depth)
 
         def add_node_if_not_visited(related_obj, label, current_depth):
             """
@@ -276,7 +269,7 @@ class BaseDetailView(generic.ObjectView):
             else:
                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                 
-            if related_label not in visited:
+            if related_label not in visited or 'netbox_service_management' not in related_app_label:
                 add_node(related_obj, label, current_depth + 1)
 
         def handle_component_specifics(obj, label, current_depth):
