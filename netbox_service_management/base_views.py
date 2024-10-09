@@ -279,7 +279,11 @@ class BaseDetailView(generic.ObjectView):
                 # Ensure connections to other related entities like VMs and Devices if applicable
                 if hasattr(obj, 'content_object') and obj.content_object:
                     related_app_label = obj._meta.app_label.lower()
-                    related_label = f"{related_app_label}_{sanitize_label(obj.content_object._meta.model_name)}_{obj.content_object.pk}"
+                    if 'ipam' in related_app_label or 'dcim' in related_app_label: 
+                        related_label = f"{related_app_label}_{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
+                    else:
+                        related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"                    
+                    
                     add_edge(f"component_{obj.pk}", related_label)
                     add_node(obj.content_object, label, current_depth + 1)
 
