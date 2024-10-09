@@ -210,7 +210,7 @@ class BaseDetailView(generic.ObjectView):
             """
             Adds an edge between the parent and the current label, avoiding duplicates.
             """
-            if parent_label and label and (parent_label, label) not in processed_relationships and (label, abel) not in processed_relationships:
+            if parent_label and label and (parent_label, label) not in processed_relationships and (label, parent_label) not in processed_relationships:
                 nonlocal diagram
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
