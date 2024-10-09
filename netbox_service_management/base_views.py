@@ -189,16 +189,16 @@ class BaseDetailView(generic.ObjectView):
                 # Handle subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label not in open_subgraphs:
                     # Start a subgraph for the service template
-                    add_subgraph_start(label, f"Service Template {sanitize_display_name(str(obj))}")
-                    open_subgraphs.add(label)
+                    add_subgraph_start(label+"_sg", f"Service Template {sanitize_display_name(str(obj))}")
+                    open_subgraphs.add(label+"_sg")
 
                 # Handle subgraphs for services under a service_template
                 if isinstance(obj, Service) and label not in open_subgraphs:
-                    service_template_label = f"{obj.service_template._meta.app_label.lower()}_{sanitize_label(obj.service_template._meta.model_name)}_{obj.service_template.pk}"
+                    service_template_label = f"{obj.service_template._meta.app_label.lower()}_sg_{sanitize_label(obj.service_template._meta.model_name)}_{obj.service_template.pk}"
                     if service_template_label in open_subgraphs:
                         # Start a subgraph for the service under the service template's subgraph
-                        add_subgraph_start(label, f"Service {sanitize_display_name(str(obj))}")
-                        open_subgraphs.add(label)
+                        add_subgraph_start(label+"_sg", f"Service {sanitize_display_name(str(obj))}")
+                        open_subgraphs.add(label+"_sg")
 
                 # Sanitize the display name for the diagram
                 display_name = sanitize_display_name(str(obj))
@@ -214,13 +214,13 @@ class BaseDetailView(generic.ObjectView):
                 process_relationships(obj, label, current_depth)
 
                 # Close subgraphs if they were opened
-                if isinstance(obj, Service) and label in open_subgraphs:
+                if isinstance(obj, Service) and label+"_sg" in open_subgraphs:
                     add_subgraph_end()
-                    open_subgraphs.remove(label)
+                    open_subgraphs.remove(label+"_sg")
 
-                if isinstance(obj, ServiceTemplate) and label in open_subgraphs:
+                if isinstance(obj, ServiceTemplate) and label+"_sg" in open_subgraphs:
                     add_subgraph_end()
-                    open_subgraphs.remove(label)
+                    open_subgraphs.remove(label+"_sg")
 
                 # Now mark the object as visited to ensure we don't reprocess it
                 visited.add(label)
