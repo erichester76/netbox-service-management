@@ -199,7 +199,7 @@ class BaseDetailView(generic.ObjectView):
                 nonlocal diagram
 
                 # Skip excluded modules we dont want to show in diagram
-                if sanitize_label(obj._meta.model_name.lower()) in excluded_model_names:
+                if (sanitize_label(obj._meta.model_name.lower()) in excluded_model_names) or (excluded_model_names in parent_label):
                     diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
                     return
                
@@ -238,7 +238,7 @@ class BaseDetailView(generic.ObjectView):
                 #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                 #     return
                 
-                visited.add(label)
+                if parent_label and ('cluster' not in parent_label) and '': visited.add(label)
 
                 # Create subgraphs for service_templates
                 if isinstance(obj, ServiceTemplate) and label+"_sg" not in open_subgraphs:
