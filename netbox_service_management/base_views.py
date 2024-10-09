@@ -226,7 +226,7 @@ class BaseDetailView(generic.ObjectView):
                     return
                 
                 #stop at stgc in recursion so services dont wrap around
-                if parent_label and ('servicetemplategroupcomponent' in parent_label and 'component' in label):
+                if parent_label and ('servicetemplategroupcomponent' in parent_label):
                     diagram += f"#RETURN-STGC PARENT:{parent_label} CHILD:{label}\n"
                     return
                 
@@ -270,6 +270,8 @@ class BaseDetailView(generic.ObjectView):
 
                 # Now mark the object as visited to ensure we don't reprocess it
                 visited.add(label)
+                diagram += f"#MARKED VISITED: {label}\n"
+
 
         def add_subgraph_start(label, description):
             """
