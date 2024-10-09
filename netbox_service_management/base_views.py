@@ -197,8 +197,8 @@ class BaseDetailView(generic.ObjectView):
                     return
 
                 #stop at clusters in recursion so we dont draw the whole platform
-                if parent_label and ('cluster' in parent_label):
-                    return
+                #if parent_label and ('cluster' in parent_label):
+                #    return
                 
                 if sanitize_label(obj._meta.model_name) in excluded_objects:
                     return
