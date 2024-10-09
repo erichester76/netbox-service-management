@@ -216,7 +216,7 @@ class BaseDetailView(generic.ObjectView):
 
                 # Defined as hard edges, probably need to remove backwards references on these.
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
-                    #diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                    diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
                 # If weve been here before dont traverse again
