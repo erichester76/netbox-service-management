@@ -221,11 +221,11 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 # Handle GenericForeignKey relationships
-                if isinstance(rel, GenericForeignKey):
-                    handle_generic_foreign_key(rel, obj, label, current_depth)
+                #if isinstance(rel, GenericForeignKey):
+                #    handle_generic_foreign_key(rel, obj, label, current_depth)
                     
                 # Handle reverse relationships like service to service instances
-                elif rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
+                if rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
@@ -242,13 +242,13 @@ class BaseDetailView(generic.ObjectView):
             if hasattr(obj, 'service_template') and obj.service_template:
                 add_node(obj.service_template, label, current_depth + 1)
                 
-        def handle_generic_foreign_key(rel, obj, label, current_depth):
-            """
-            Handles relationships for GenericForeignKey fields.
-            """
-            related_obj = getattr(obj, rel.name, None)
-            if related_obj:
-                add_node_if_not_visited(related_obj, label, current_depth)
+        # def handle_generic_foreign_key(rel, obj, label, current_depth):
+        #     """
+        #     Handles relationships for GenericForeignKey fields.
+        #     """
+        #     related_obj = getattr(obj, rel.name, None)
+        #     if related_obj:
+        #         add_node_if_not_visited(related_obj, label, current_depth)
 
         def add_node_if_not_visited(related_obj, label, current_depth):
             """
