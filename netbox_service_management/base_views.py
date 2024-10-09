@@ -194,7 +194,7 @@ class BaseDetailView(generic.ObjectView):
 
                 # Handle subgraphs for services under a service_template
                 if isinstance(obj, Service) and label+"_sg" not in open_subgraphs:
-                    service_template_label = f"{obj.service_template._meta.model_name.lower()}_sg"
+                    service_template_label = f"{obj.service_template._meta.model_name.lower()}_{obj.service_template.pk}_sg"
                     if service_template_label in open_subgraphs:
                         # Start a subgraph for the service under the service template's subgraph
                         add_subgraph_start(label+"_sg", f"Service: {sanitize_display_name(str(obj))}")
@@ -290,7 +290,8 @@ class BaseDetailView(generic.ObjectView):
                     
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects:
-                        add_node_if_not_visited(related_objects, label, current_depth + 1)
+                        if not (isinstance(related_obj,Component) and isinstance(obj,ServiceTemplateGroupComponent)): 
+                            add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
             if hasattr(obj, 'content_object') and obj.content_object:
