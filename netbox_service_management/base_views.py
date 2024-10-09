@@ -218,9 +218,9 @@ class BaseDetailView(generic.ObjectView):
                     return
                 
                 # If weve been here before dont traverse again
-                if visited and label in visited:
-                    diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                    return
+                #if visited and label in visited:
+                #    diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                #    return
                 
                 # #define edges - I tried not to have to do it.. but I give up
                 # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
