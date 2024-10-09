@@ -210,7 +210,7 @@ class BaseDetailView(generic.ObjectView):
             """
             Adds an edge between the parent and the current label, avoiding duplicates.
             """
-            if parent_label and label and (parent_label, label) not in processed_relationships and (parent_label, label) not in processed_relationships:
+            if parent_label and label and (parent_label, label) not in processed_relationships and (label, parent_label) not in processed_relationships:
                 nonlocal diagram
                 diagram += f"{parent_label} --> {label}\n"
                 processed_relationships.add((parent_label, label))
@@ -223,6 +223,7 @@ class BaseDetailView(generic.ObjectView):
                 # Handle GenericForeignKey relationships
                 if isinstance(rel, GenericForeignKey):
                     handle_generic_foreign_key(rel, obj, label, current_depth)
+                    
                 # Handle reverse relationships like service to service instances
                 elif rel.is_relation and rel.auto_created and not rel.concrete and rel.name not in excluded_fields:
                     related_objects = getattr(obj, rel.get_accessor_name(), None)
@@ -235,8 +236,7 @@ class BaseDetailView(generic.ObjectView):
                             else:
                                 related_label = f"{sanitize_label(related_obj._meta.model_name)}_{related_obj.pk}"
                             
-                            if (label, related_label) not in processed_relationships and (related_label, label) not in processed_relationships: 
-                                add_node_if_not_visited(related_obj, label, current_depth)
+                            add_node_if_not_visited(related_obj, label, current_depth)
 
             # Handle forward relationships explicitly (e.g., service to service template)
             if hasattr(obj, 'service_template') and obj.service_template:
