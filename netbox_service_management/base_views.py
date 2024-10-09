@@ -241,8 +241,18 @@ class BaseDetailView(generic.ObjectView):
 
                 # Handle forward relationships explicitly (e.g., service to service template)
                 if hasattr(obj, 'service_template') and obj.service_template:
-                    add_node(obj.service_template, label, current_depth + 1)
-                
+                    add_node_if_not_visited(obj.service_template, label, current_depth + 1)
+
+                # Handle direct relationships like component links more thoroughly
+                if isinstance(obj, Component):
+                    if obj.service:
+                        add_edge(f"component_{obj.pk}", f"service_{obj.service.pk}")
+                        add_node_if_not_visited(obj.service, label, current_depth + 1)
+
+                    if obj.template_component:
+                        add_edge(f"servicetemplategroupcomponent_{obj.template_component.pk}", f"component_{obj.pk}")
+                        add_node_if_not_visited(obj.template_component, label, current_depth + 1)
+
         def handle_generic_foreign_key(rel, obj, label, current_depth):
             """
             Handles relationships for GenericForeignKey fields.
