@@ -342,7 +342,6 @@ class BaseDetailView(generic.ObjectView):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     nonlocal diagram
-                    diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower()) } {related_objects._meta.name}\n"
                       
                     # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
