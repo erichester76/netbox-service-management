@@ -212,11 +212,13 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
-                # Check if we've already visited this node with its relationships processed.
+                #defined as hard edges, probably need to remove backwards references on these.
                 if current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label:
                     diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
-                if label in visited:
+                
+                #if weve been here before dont traverse again
+                if visited and label in visited:
                     diagram += f"%% RETURN - VISITED ALREADY PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
