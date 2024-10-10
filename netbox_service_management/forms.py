@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models as djmodels  # Rename django.db.models to djmodels
 from ipam.models import Prefix
-from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm
+from netbox.forms import NetBoxModelForm, NetBoxModelFilterSetForm, NetBoxImportForm
 from utilities.forms.fields import CommentField, DynamicModelChoiceField
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -70,32 +70,32 @@ class ServiceForm(NetBoxModelForm):
         model = models.Service
         fields = ("name", "service_template", "deployment", "capability_category", "tenant", "tags")
  
-class SolutionImportForm(NetBoxModelForm):
+class SolutionImportForm(NetBoxImportForm):
     class Meta:
         model = models.Solution
         fields = ['name', 'tenant', 'tags']
        
-class ServiceImportForm(NetBoxModelForm):
+class ServiceImportForm(NetBoxImportForm):
     class Meta:
         model = models.Service
         fields = ['name', 'service_template', 'deployment', 'tags']
 
-class ServiceTemplateImportForm(NetBoxModelForm):
+class ServiceTemplateImportForm(NetBoxImportForm):
     class Meta:
         model = models.ServiceTemplate
         fields = ['name', 'solution', 'tags']
 
-class ServiceTemplateGroupImportForm(NetBoxModelForm):
+class ServiceTemplateGroupImportForm(NetBoxImportForm):
     class Meta:
         model = models.ServiceTemplateGroup
         fields = ['name', 'service_template', 'depends_on']
 
-class ServiceTemplateGroupComponentImportForm(NetBoxModelForm):
+class ServiceTemplateGroupComponentImportForm(NetBoxImportForm):
     class Meta:
         model = models.ServiceTemplateGroupComponent
         fields = ['name', 'service_template_group']
 
-class ComponentImportForm(NetBoxModelForm):
+class ComponentImportForm(NetBoxImportForm):
     class Meta:
         model = models.Component
         fields = ['name', 'service', 'template_component', 'content_type', 'object_id', 'tenant']
