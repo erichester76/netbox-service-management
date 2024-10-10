@@ -279,7 +279,7 @@ class BaseDetailView(generic.ObjectView):
             """
             nonlocal diagram
             diagram += f"end {label}\n"
-            diagram += f"style {label} fill:transparent,fill-opacity:0,stroke-width:0px;\n\n"
+            diagram += f"style {label} fill:transparent,fill-opacity:0,stroke-width:1px;\n\n"
 
 
         def add_to_diagram(shape, label, obj):

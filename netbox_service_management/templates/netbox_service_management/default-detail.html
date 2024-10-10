@@ -91,23 +91,14 @@
 </div>   
 </div>
 <script>
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+    
     document.getElementById('layout').addEventListener('change', renderDiagram);
     let hiddenSubgraphs = new Set();
     
     // Assume `diagramData` is the variable containing the Mermaid definition sent from the server
     let originalDiagram = `{{ mermaid_diagram }}`;
-    
-    // Function to extract subgraph names using regex
-    function extractSubgraphNames(data) {
-        const subgraphNames = [];
-        const regex = /subgraph\s+([^\s]+)/g;  // Matches "subgraph [subgraph_name]"
-        let match;
-        
-        while ((match = regex.exec(data)) !== null) {
-            subgraphNames.push(match[1]);
-        }
-        return subgraphNames;
-    }
     
     function renderDiagram() {
         const layout = document.getElementById('layout').value;
@@ -126,27 +117,42 @@
         });
     }
     
-    function createSubgraphToggles() {
-        const subgraphNames = extractSubgraphNames(originalDiagram);
-        const togglesContainer = document.getElementById('subgraph-toggles');
-        togglesContainer.innerHTML = '';
+    function extractSubgraphNames(data) {
+    const subgraphNames = [];
+    const regex = /subgraph\s+([^\s]+)\s+\[(.*?)\]/g;  // Matches "subgraph subgraph_id [Display Name]"
+    let match;
     
-        subgraphNames.forEach(subgraph => {
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.checked = true;
-            checkbox.id = `toggle-${subgraph}`;
-            checkbox.addEventListener('change', () => toggleSubgraph(subgraph));
-    
-            const label = document.createElement('label');
-            label.textContent = `Show ${subgraph}`;
-            label.htmlFor = `toggle-${subgraph}`;
-    
-            togglesContainer.appendChild(checkbox);
-            togglesContainer.appendChild(label);
-            togglesContainer.appendChild(document.createElement('br'));
+    while ((match = regex.exec(data)) !== null) {
+        subgraphNames.push({
+            id: match[1],         // e.g., "hiddenName"
+            displayName: match[2] // e.g., "Display Name"
         });
     }
+    return subgraphNames;
+}
+
+// Usage in createSubgraphToggles()
+function createSubgraphToggles() {
+    const subgraphNames = extractSubgraphNames(originalDiagram);
+    const togglesContainer = document.getElementById('subgraph-toggles');
+    togglesContainer.innerHTML = '';
+
+    subgraphNames.forEach(({ id, displayName }) => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = true;
+        checkbox.id = `toggle-${id}`;
+        checkbox.addEventListener('change', () => toggleSubgraph(id));
+
+        const label = document.createElement('label');
+        label.textContent = `Show ${displayName}`;
+        label.htmlFor = `toggle-${id}`;
+
+        togglesContainer.appendChild(checkbox);
+        togglesContainer.appendChild(label);
+        togglesContainer.appendChild(document.createElement('br'));
+    });
+}
     
     function toggleSubgraph(subgraph) {
         const checkbox = document.getElementById(`toggle-${subgraph}`);
