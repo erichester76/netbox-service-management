@@ -219,23 +219,10 @@ class BaseDetailView(generic.ObjectView):
                     return
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
-
-                # #define edges - I tried not to have to do it.. but I give up
-                # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
-                #     diagram += f"%% ETURN-vm-loop PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #     retur
                 
-                # if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label) and 'servicetemplate' in label):
-                #     diagram += f"%% RETURN-STG-LOOP PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #     return
-                # if (label and parent_label) and 'component' in parent_label and ('service' in label and not 'ipam_service' in label):
-                #     diagram += f"%% RETURN-COMP-LOOP PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
-                #     return
-                
-                # #stop at stgc in recursion so services dont wrap around
-                # if parent_label and ('servicetemplategroupcomponent' in parent_label):
-                #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #     return
+                # stop backtracking past starting object
+                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
+                    return
                 
                 if parent_label and ('cluster' not in parent_label): visited.add(label)
 
@@ -285,7 +272,8 @@ class BaseDetailView(generic.ObjectView):
             Adds the start of a subgraph with a given label and description.
             """
             nonlocal diagram
-            diagram += f"\nsubgraph {label} ['']\ndirection LR\n"
+            diagram += f"\nsubgraph {label} ['']\n"
+            diagram += f"direction LR\n"
 
         def add_subgraph_end(label):
             """
@@ -363,7 +351,8 @@ class BaseDetailView(generic.ObjectView):
 
 
         # Start the diagram with the main object
-        add_node(instance)
+        start_object = instance 
+        add_node(start_object)
 
         # Add the legend subgraph with a specific color and style
         legend = "graph LR\n"
