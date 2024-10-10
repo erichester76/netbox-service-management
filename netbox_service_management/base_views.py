@@ -22,6 +22,9 @@ from .models import (
     Component
 )
 
+class BaseChangeLogView(generic.ObjectChangeLogView):
+    template_name = 'netbox_service_management/default-changelog.html'
+
 class BaseListView(generic.ObjectListView):
     template_name = 'netbox_service_management/default-list.html'
 

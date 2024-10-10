@@ -1,5 +1,5 @@
 from netbox.views import generic
-from .base_views import BaseDetailView, BaseListView  # Import the base class
+from .base_views import BaseDetailView, BaseListView, BaseChangeLogView  # Import the base class
 
 from . import (
     filtersets, 
@@ -124,3 +124,21 @@ class ServiceTemplateGroupComponentImportView(generic.BulkImportView):
 class ComponentImportView(generic.BulkImportView):
     queryset = Component.objects.all()
     model_form = forms.ComponentImportForm
+    
+class SolutionChangeLogView(BaseChangeLogView):
+    queryset = Service.objects.all()
+    
+class ServiceChangeLogView(BaseChangeLogView):
+    queryset = Service.objects.all()
+
+class ServiceTemplateChangeLogView(BaseChangeLogView):
+    queryset = ServiceTemplate.objects.all()
+
+class ServiceTemplateGroupChangeLogView(BaseChangeLogView):
+    queryset = ServiceTemplateGroup.objects.all()
+
+class ServiceTemplateGroupComponentChangeLogView(BaseChangeLogView):
+    queryset = ServiceTemplateGroupComponent.objects.all()
+
+class ComponentImportView(BaseChangeLogView):
+    queryset = Component.objects.all()
