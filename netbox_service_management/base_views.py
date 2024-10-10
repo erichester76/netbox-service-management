@@ -204,7 +204,9 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
                     #diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
                     return
-               
+                
+
+                
                 # Prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
                 if 'netbox_service_management' not in app_label:
                     label = f"{app_label}_{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
@@ -213,6 +215,10 @@ class BaseDetailView(generic.ObjectView):
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
 
+                # stop backtracking past starting object
+                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
+                    return
+
                 # Defined as hard edges, probably need to remove backwards references on these.
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
                     #diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
@@ -220,23 +226,6 @@ class BaseDetailView(generic.ObjectView):
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
 
-                # #define edges - I tried not to have to do it.. but I give up
-                # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
-                #     diagram += f"%% ETURN-vm-loop PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #     retur
-                
-                # if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label) and 'servicetemplate' in label):
-                #     diagram += f"%% RETURN-STG-LOOP PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #     return
-                # if (label and parent_label) and 'component' in parent_label and ('service' in label and not 'ipam_service' in label):
-                #     diagram += f"%% RETURN-COMP-LOOP PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
-                #     return
-                
-                # #stop at stgc in recursion so services dont wrap around
-                # if parent_label and ('servicetemplategroupcomponent' in parent_label):
-                #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
-                #     return
-                
                 if parent_label and ('cluster' not in parent_label): visited.add(label)
 
                 # Create subgraphs for service_templates
@@ -285,7 +274,8 @@ class BaseDetailView(generic.ObjectView):
             Adds the start of a subgraph with a given label and description.
             """
             nonlocal diagram
-            diagram += f"\nsubgraph {label} ['']\ndirection LR\n"
+            diagram += f"\nsubgraph {label} [ ]\n"
+            daigram += f"direction LR\n"
 
         def add_subgraph_end(label):
             """
@@ -363,6 +353,7 @@ class BaseDetailView(generic.ObjectView):
 
 
         # Start the diagram with the main object
+        start_object = instance 
         add_node(instance)
 
         # Add the legend subgraph with a specific color and style
