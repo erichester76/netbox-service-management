@@ -241,7 +241,7 @@ class BaseDetailView(generic.ObjectView):
                     #diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
                 
-                if parent_label and ('virtualmachine' in parent_label and 'ipam_service' in label):
+                if parent_label and ('virtualmachine' in parent_label and 'cluster' not in label):
                     return
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
