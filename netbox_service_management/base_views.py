@@ -331,16 +331,16 @@ class BaseDetailView(generic.ObjectView):
                     
                     nonlocal diagram
                       
-                    # Process the related objects if it's a queryset (reverse relationships)
-                    if related_objects is not None and hasattr(related_objects, 'all'):
-                        for related_obj in related_objects.all():
-                            #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_obj._meta.model_name.lower())} {sanitize_display_name(str(related_obj))}\n"
-                            add_node_if_not_visited(related_obj, label, current_depth + 1)
+                    # # Process the related objects if it's a queryset (reverse relationships)
+                    # if related_objects is not None and hasattr(related_objects, 'all'):
+                    #     for related_obj in related_objects.all():
+                    #         #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_obj._meta.model_name.lower())} {sanitize_display_name(str(related_obj))}\n"
+                    #         add_node_if_not_visited(related_obj, label, current_depth + 1)
 
-                    # Process single related objects for forward relationships (ForeignKey, OneToOne)
-                    elif related_objects: 
-                        #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_objects))}\n"
-                        add_node_if_not_visited(related_objects, label, current_depth + 1)
+                    # # Process single related objects for forward relationships (ForeignKey, OneToOne)
+                    # elif related_objects: 
+                    #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_objects))}\n"
+                    add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
             if hasattr(obj, 'content_object') and obj.content_object:
