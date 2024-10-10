@@ -295,7 +295,7 @@ class BaseDetailView(generic.ObjectView):
             Ends the most recent subgraph.
             """
             nonlocal diagram
-            diagram += "end\n"
+            diagram += f"end {label}\n"
             diagram += f"style {label} fill:transparent,stroke-width:1px;\n"
 
 
