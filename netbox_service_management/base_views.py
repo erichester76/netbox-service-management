@@ -260,12 +260,12 @@ class BaseDetailView(generic.ObjectView):
                 display_name = sanitize_display_name(str(obj))
                 shape = f'{label}("{display_name}"):::color_{obj_type}'
                
-                #close the service subgroup before we add the item if its a cluster, we dont want it in any specific service
-                if 'cluster' in label:
-                    for subgraph in list(open_subgraphs):
-                        if '_servgrp' in subgraph:
-                            add_subgraph_end(subgraph)
-                            open_subgraphs.remove(subgraph)
+                # #close the service subgroup before we add the item if its a cluster, we dont want it in any specific service
+                # if 'cluster' in label:
+                #     for subgraph in list(open_subgraphs):
+                #         if '_servgrp' in subgraph:
+                #             add_subgraph_end(subgraph)
+                #             open_subgraphs.remove(subgraph)
                              
                 # Add the node and its clickable link if available
                 add_to_diagram(shape, label, obj)
