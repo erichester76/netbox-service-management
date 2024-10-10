@@ -22,6 +22,9 @@ from .models import (
     Component
 )
 
+class BaseListView(generic.ObjectListView):
+    template_name = 'netbox_service_management/default-list.html'
+
 class BaseDetailView(generic.ObjectView):
     template_name = 'netbox_service_management/default-detail.html'
     

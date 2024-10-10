@@ -1,0 +1,6 @@
+{% extends 'netbox/base.html' %}
+{% block buttons %}
+  <a href="{% url 'plugins:netbox_service_management:service_import' %}" class="btn btn-primary">
+    <i class="mdi mdi-upload"></i> Import Services
+  </a>
+{% endblock %}

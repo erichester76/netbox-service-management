@@ -1,5 +1,5 @@
 from netbox.views import generic
-from .base_views import BaseDetailView  # Import the base class
+from .base_views import BaseDetailView, BaseListView  # Import the base class
 
 from . import (
     filtersets, 
@@ -20,7 +20,7 @@ class SolutionDetailView(BaseDetailView):
     queryset = Solution.objects.prefetch_related('tags')
     table = tables.SolutionTable
     
-class SolutionListView(generic.ObjectListView):
+class SolutionListView(BaseListView):
     queryset = Solution.objects.prefetch_related('tags')
     table = tables.SolutionTable
 
@@ -34,7 +34,7 @@ class SolutionDeleteView(generic.ObjectDeleteView):
 class ServiceTemplateDetailView(BaseDetailView):
     queryset = ServiceTemplate.objects.prefetch_related('tags')
 
-class ServiceTemplateListView(generic.ObjectListView):
+class ServiceTemplateListView(BaseListView):
     queryset = ServiceTemplate.objects.prefetch_related('tags')
     table = tables.ServiceTemplateTable
 
@@ -48,7 +48,7 @@ class ServiceTemplateDeleteView(generic.ObjectDeleteView):
 class ServiceTemplateGroupDetailView(BaseDetailView):
     queryset = ServiceTemplateGroup.objects.prefetch_related('tags')
 
-class ServiceTemplateGroupListView(generic.ObjectListView):
+class ServiceTemplateGroupListView(BaseListView):
     queryset = ServiceTemplateGroup.objects.prefetch_related('tags')
     table = tables.ServiceTemplateGroupTable
 
@@ -62,7 +62,7 @@ class ServiceTemplateGroupDeleteView(generic.ObjectDeleteView):
 class ServiceTemplateGroupComponentDetailView(BaseDetailView):
     queryset = ServiceTemplateGroupComponent.objects.prefetch_related('tags')
 
-class ServiceTemplateGroupComponentListView(generic.ObjectListView):
+class ServiceTemplateGroupComponentListView(BaseListView):
     queryset = ServiceTemplateGroupComponent.objects.prefetch_related('tags')
     table = tables.ServiceTemplateGroupComponentTable
 
@@ -76,7 +76,7 @@ class ServiceTemplateGroupComponentDeleteView(generic.ObjectDeleteView):
 class ServiceDetailView(BaseDetailView):
     queryset = Service.objects.prefetch_related('tags')
 
-class ServiceListView(generic.ObjectListView):
+class ServiceListView(BaseListView):
     queryset = Service.objects.prefetch_related('tags')
     table = tables.ServiceTable
 
@@ -90,7 +90,7 @@ class ServiceDeleteView(generic.ObjectDeleteView):
 class ComponentDetailView(BaseDetailView):
     queryset = Component.objects.prefetch_related('tags')
 
-class ComponentListView(generic.ObjectListView):
+class ComponentListView(BaseListView):
     queryset = Component.objects.prefetch_related('tags')
     table = tables.ComponentTable
 
@@ -101,3 +101,22 @@ class ComponentEditView(generic.ObjectEditView):
 class ComponentDeleteView(generic.ObjectDeleteView):
     queryset = Component.objects.prefetch_related('tags')
 
+class ServiceImportView(generic.ObjectImportView):
+    queryset = Service.objects.all()
+    model_form = forms.ServiceImportForm
+
+class ServiceTemplateImportView(generic.ObjectImportView):
+    queryset = ServiceTemplate.objects.all()
+    model_form = forms.ServiceTemplateImportForm
+
+class ServiceTemplateGroupImportView(generic.ObjectImportView):
+    queryset = ServiceTemplateGroup.objects.all()
+    model_form = forms.ServiceTemplateGroupImportForm
+
+class ServiceTemplateGroupComponentImportView(generic.ObjectImportView):
+    queryset = ServiceTemplateGroupComponent.objects.all()
+    model_form = forms.ServiceTemplateGroupComponentImportForm
+
+class ComponentImportView(generic.ObjectImportView):
+    queryset = Component.objects.all()
+    model_form = forms.ComponentImportForm

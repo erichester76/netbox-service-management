@@ -76,4 +76,13 @@ urlpatterns = (
         name="service_changelog",
         kwargs={"model": models.Service},
     ),
+    
+    #Bulk Imports
+    path('services/import/', views.ServiceImportView.as_view(), name='service_import'),
+    path('service-templates/import/', views.ServiceTemplateImportView.as_view(), name='servicetemplate_import'),
+    path('service-template-groups/import/', views.ServiceTemplateGroupImportView.as_view(), name='servicetemplategroup_import'),
+    path('service-template-group-components/import/', views.ServiceTemplateGroupComponentImportView.as_view(), name='servicetemplategroupcomponent_import'),
+    path('components/import/', views.ComponentImportView.as_view(), name='component_import'),
+
 )
+
