@@ -240,6 +240,9 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
                     #diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
+                
+                if parent_label and ('virtualmachine' in parent_label and 'ipam_service' in label):
+                    return
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
                 
@@ -346,7 +349,7 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 label_obj_type = label.split('_')[0]  # Extract the type from the label (e.g., 'service' from 'service_1')
-                should_skip = rel.name in do_not_backtrack
+                should_skip = rel.name in do_not_backtrack or 
 
                 # Handle reverse and forward relationships, excluding certain fields.
                 if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields) and (not should_skip):
@@ -380,7 +383,6 @@ class BaseDetailView(generic.ObjectView):
             'servicetemplate': {'solution'},
             'servicetemplategroup': {'servicetemplate'},
             'servicetemplategroupcomponent': {'servicetemplategroup'},  
-            'virtualmachine': {'ipam'},
         }
         do_not_backtrack = DO_NOT_BACKTRACK.get(instance._meta.model_name.lower(), set())   
         
