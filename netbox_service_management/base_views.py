@@ -272,7 +272,6 @@ class BaseDetailView(generic.ObjectView):
             """
             nonlocal diagram
             diagram += f"\nsubgraph {label} [{description}]\n"
-            diagram += f"direction LR\n"
 
         def add_subgraph_end(label):
             """
