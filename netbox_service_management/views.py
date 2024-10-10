@@ -140,5 +140,5 @@ class ServiceTemplateGroupChangeLogView(BaseChangeLogView):
 class ServiceTemplateGroupComponentChangeLogView(BaseChangeLogView):
     queryset = ServiceTemplateGroupComponent.objects.all()
 
-class ComponentImportView(BaseChangeLogView):
+class ComponentChangeLogView(BaseChangeLogView):
     queryset = Component.objects.all()
