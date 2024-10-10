@@ -381,9 +381,9 @@ class BaseDetailView(generic.ObjectView):
             'component': {'service'},
             'servicetemplate': {'solution'},
             'servicetemplategroup': {'servicetemplate'},
-            'servicetemplategroupcomponent': {'servicetemplate_group'},  
+            'servicetemplategroupcomponent': {'servicetemplategroup'},  
         }
-        do_not_backtrack = DO_NOT_BACKTRACK.get(sanitize_label(instance._meta.model_name.lower()), set())   
+        do_not_backtrack = sanitize_label(DO_NOT_BACKTRACK.get(sanitize_label(instance._meta.model_name.lower()), set()))   
         
         # Start the diagram with the referenced obj
         add_node(instance)
