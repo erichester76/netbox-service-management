@@ -248,7 +248,7 @@ class BaseDetailView(generic.ObjectView):
                 # Create subgraphs for services under a service_template
                 if (parent_label and 'solution' not in parent_label) and (isinstance(obj, Service) and label+"_servgrp" not in open_subgraphs):
                     add_subgraph_start(label+"_servgrp", f"S: {sanitize_display_name(str(obj))}")
-                    open_subgraphs.add(label+"_servgrg")
+                    open_subgraphs.add(label+"_servgrp")
 
                 # Sanitize the display name for the diagram
                 display_name = sanitize_display_name(str(obj))
@@ -278,9 +278,6 @@ class BaseDetailView(generic.ObjectView):
                 if isinstance(obj, ServiceTemplate) and label+"_stgrp" in open_subgraphs:
                     add_subgraph_end(label+"_stgrp")
                     open_subgraphs.remove(label+"_stgrp")
-                    
-                
-
 
 
         def add_subgraph_start(label, description):
@@ -288,7 +285,7 @@ class BaseDetailView(generic.ObjectView):
             Adds the start of a subgraph with a given label and description.
             """
             nonlocal diagram
-            diagram += f"subgraph {label} [{description}]\n"
+            diagram += f"\nsubgraph {label} ['']\ndirection LR\n"
 
         def add_subgraph_end(label):
             """
@@ -296,7 +293,7 @@ class BaseDetailView(generic.ObjectView):
             """
             nonlocal diagram
             diagram += f"end {label}\n"
-            diagram += f"style {label} fill:transparent,stroke-width:1px;\n"
+            diagram += f"style {label} fill:transparent,stroke-width:0px;\n\n"
 
 
         def add_to_diagram(shape, label, obj):
