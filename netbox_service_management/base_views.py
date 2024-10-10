@@ -243,11 +243,6 @@ class BaseDetailView(generic.ObjectView):
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
                 
-                # stop backtracking past starting object
-                if parent_label and label == f"{sanitize_label(start_object._meta.model_name.lower())}_{start_object.pk}":
-                    diagram += f"%% BACKTRACK DETECTED {parent_label} {label} - START OBJ: {sanitize_label(start_object._meta.model_name.lower())}_{start_object.pk} DEPTH: {current_depth}\n"
-                    return
-                
                 if parent_label and ('cluster' not in parent_label): visited.add(label)
 
                 # Create subgraphs for service_templates
