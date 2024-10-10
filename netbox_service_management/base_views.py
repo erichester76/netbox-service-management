@@ -379,13 +379,13 @@ class BaseDetailView(generic.ObjectView):
 
         # Dynamically set 'do_not_backtrack' using the object's type
         DO_NOT_BACKTRACK = {
-            ('service', 'service_template'),
-            ('component', 'service'),
-            ('servicetemplate', 'solution'),
-            ('servicetemplategroup','servicetemplate')
-            ('servicetemplategroupcomponent','servicetemplategroup'),            
+            'service': {'service_template'},
+            'component': {'service'},
+            'servicetemplate': {'solution'},
+            'servicetemplategroup': {'servicetemplate'},
+            'servicetemplategroupcomponent': {'servicetemplategroup'},            
         }
-        do_not_backtrack = DO_NOT_BACKTRACK.get(str(instance._meta.model_name.lower()), set())   
+        do_not_backtrack = DO_NOT_BACKTRACK.get(instance._meta.model_name.lower(), set())   
         
         # Start the diagram with the referenced obj
         add_node(instance)
