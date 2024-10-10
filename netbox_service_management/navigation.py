@@ -47,7 +47,6 @@ items = (
                 link="plugins:netbox_service_management:servicetemplategroup_import",
                 title="Import",
                 icon_class="mdi mdi-upload",
-                color=ButtonColorChoices.BLUE,
             ),
         ]
     ),
@@ -80,7 +79,6 @@ items = (
                 link="plugins:netbox_service_management:service_import",
                 title="Import",
                 icon_class="mdi mdi-upload",
-                color=ButtonColorChoices.BLUE,
             ),
         ]
     ),
@@ -97,7 +95,6 @@ items = (
                 link="plugins:netbox_service_management:component_import",
                 title="Import",
                 icon_class="mdi mdi-upload",
-                color=ButtonColorChoices.BLUE,
             ),
         ]
     ),
