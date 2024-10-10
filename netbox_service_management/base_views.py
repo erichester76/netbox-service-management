@@ -200,8 +200,8 @@ class BaseDetailView(generic.ObjectView):
                 nonlocal diagram
                 
                 # stop backtracking past starting object
-                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
-                    return
+                #if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
+                #    return
                 
                 # Skip excluded modules we dont want to show in diagram
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
@@ -328,9 +328,7 @@ class BaseDetailView(generic.ObjectView):
                 # Handle reverse and forward relationships, excluding certain fields.
                 if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
-                    
-                    nonlocal diagram
-                      
+                    #nonlocal diagram 
                     # # Process the related objects if it's a queryset (reverse relationships)
                     # if related_objects is not None and hasattr(related_objects, 'all'):
                     #     for related_obj in related_objects.all():
