@@ -349,7 +349,7 @@ class BaseDetailView(generic.ObjectView):
             """
             for rel in obj._meta.get_fields():
                 label_obj_type = label.split('_')[0]  # Extract the type from the label (e.g., 'service' from 'service_1')
-                should_skip = rel.name in do_not_backtrack or 
+                should_skip = rel.name in do_not_backtrack
 
                 # Handle reverse and forward relationships, excluding certain fields.
                 if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields) and (not should_skip):
