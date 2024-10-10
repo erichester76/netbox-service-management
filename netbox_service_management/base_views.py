@@ -259,7 +259,7 @@ class BaseDetailView(generic.ObjectView):
                 # Close subgraphs if they were opened
                 if isinstance(obj, Service) and label+"_servgrp" in open_subgraphs:
                     add_subgraph_end(label+"_servgrp")
-                    open_subgraphs.remove(label+"_servrp")
+                    open_subgraphs.remove(label+"_servgrp")
 
                 if isinstance(obj, ServiceTemplate) and label+"_stgrp" in open_subgraphs:
                     add_subgraph_end(label+"_stgrp")
