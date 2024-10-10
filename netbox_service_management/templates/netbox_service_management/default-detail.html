@@ -18,79 +18,6 @@
     mermaid.initialize({ startOnLoad: true });
 </script>
 
-<script>
-document.getElementById('layout').addEventListener('change', renderDiagram);
-let hiddenSubgraphs = new Set();
-
-// Assume `diagramData` is the variable containing the Mermaid definition sent from the server
-let originalDiagram = `{{ mermaid_diagram }}`;
-
-// Function to extract subgraph names using regex
-function extractSubgraphNames(data) {
-    const subgraphNames = [];
-    const regex = /subgraph\s+([^\s]+)/g;  // Matches "subgraph [subgraph_name]"
-    let match;
-    
-    while ((match = regex.exec(data)) !== null) {
-        subgraphNames.push(match[1]);
-    }
-    return subgraphNames;
-}
-
-function renderDiagram() {
-    const layout = document.getElementById('layout').value;
-    // Replace the layout in the original diagram definition
-    let updatedDiagram = originalDiagram.replace(/graph (TD|LR)/, `graph ${layout}`);
-
-    // Dynamically hide subgraphs
-    hiddenSubgraphs.forEach(subgraph => {
-        const regex = new RegExp(`subgraph\\s+${subgraph}[^}]+end`, 'g');
-        updatedDiagram = updatedDiagram.replace(regex, '');
-    });
-
-    // Render the diagram using Mermaid
-    mermaid.render('mermaid-diagram', updatedDiagram, (svgCode) => {
-        document.getElementById('mermaid-diagram').innerHTML = svgCode;
-    });
-}
-
-function createSubgraphToggles() {
-    const subgraphNames = extractSubgraphNames(originalDiagram);
-    const togglesContainer = document.getElementById('subgraph-toggles');
-    togglesContainer.innerHTML = '';
-
-    subgraphNames.forEach(subgraph => {
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = true;
-        checkbox.id = `toggle-${subgraph}`;
-        checkbox.addEventListener('change', () => toggleSubgraph(subgraph));
-
-        const label = document.createElement('label');
-        label.textContent = `Show ${subgraph}`;
-        label.htmlFor = `toggle-${subgraph}`;
-
-        togglesContainer.appendChild(checkbox);
-        togglesContainer.appendChild(label);
-        togglesContainer.appendChild(document.createElement('br'));
-    });
-}
-
-function toggleSubgraph(subgraph) {
-    const checkbox = document.getElementById(`toggle-${subgraph}`);
-    if (checkbox.checked) {
-        hiddenSubgraphs.delete(subgraph);
-    } else {
-        hiddenSubgraphs.add(subgraph);
-    }
-    renderDiagram();
-}
-
-// Initialize the controls and render the initial diagram
-createSubgraphToggles();
-renderDiagram();
-</script>
-
 <div class="row mb-3">
 <div class="col col-md-5">
 <div class="card">
@@ -163,4 +90,75 @@ renderDiagram();
  </div>
 </div>   
 </div>
+<script>
+    document.getElementById('layout').addEventListener('change', renderDiagram);
+    let hiddenSubgraphs = new Set();
+    
+    // Assume `diagramData` is the variable containing the Mermaid definition sent from the server
+    let originalDiagram = `{{ mermaid_diagram }}`;
+    
+    // Function to extract subgraph names using regex
+    function extractSubgraphNames(data) {
+        const subgraphNames = [];
+        const regex = /subgraph\s+([^\s]+)/g;  // Matches "subgraph [subgraph_name]"
+        let match;
+        
+        while ((match = regex.exec(data)) !== null) {
+            subgraphNames.push(match[1]);
+        }
+        return subgraphNames;
+    }
+    
+    function renderDiagram() {
+        const layout = document.getElementById('layout').value;
+        // Replace the layout in the original diagram definition
+        let updatedDiagram = originalDiagram.replace(/graph (TD|LR)/, `graph ${layout}`);
+    
+        // Dynamically hide subgraphs
+        hiddenSubgraphs.forEach(subgraph => {
+            const regex = new RegExp(`subgraph\\s+${subgraph}[^}]+end`, 'g');
+            updatedDiagram = updatedDiagram.replace(regex, '');
+        });
+    
+        // Render the diagram using Mermaid
+        mermaid.render('mermaid-diagram', updatedDiagram, (svgCode) => {
+            document.getElementById('mermaid-diagram').innerHTML = svgCode;
+        });
+    }
+    
+    function createSubgraphToggles() {
+        const subgraphNames = extractSubgraphNames(originalDiagram);
+        const togglesContainer = document.getElementById('subgraph-toggles');
+        togglesContainer.innerHTML = '';
+    
+        subgraphNames.forEach(subgraph => {
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = true;
+            checkbox.id = `toggle-${subgraph}`;
+            checkbox.addEventListener('change', () => toggleSubgraph(subgraph));
+    
+            const label = document.createElement('label');
+            label.textContent = `Show ${subgraph}`;
+            label.htmlFor = `toggle-${subgraph}`;
+    
+            togglesContainer.appendChild(checkbox);
+            togglesContainer.appendChild(label);
+            togglesContainer.appendChild(document.createElement('br'));
+        });
+    }
+    
+    function toggleSubgraph(subgraph) {
+        const checkbox = document.getElementById(`toggle-${subgraph}`);
+        if (checkbox.checked) {
+            hiddenSubgraphs.delete(subgraph);
+        } else {
+            hiddenSubgraphs.add(subgraph);
+        }
+        renderDiagram();
+    }
+// Initialize the controls and render the initial diagram
+createSubgraphToggles();
+renderDiagram();
+</script>
 {% endblock %}
