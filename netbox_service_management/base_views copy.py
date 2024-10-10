@@ -30,7 +30,7 @@ class BaseDetailView(generic.ObjectView):
         field_data = []
         object_name = instance._meta.verbose_name
         # Define fields to exclude
-        excluded_fields = {
+        excluded_extras = {
             'id', 
             'custom_field_data', 
             'tags', 
@@ -55,7 +55,7 @@ class BaseDetailView(generic.ObjectView):
         field_data = []
         for field in instance._meta.get_fields():       
             # Skip excluded fields
-            if field.name in excluded_fields:
+            if field.name in excluded_extras:
                 continue
      
             value = None
