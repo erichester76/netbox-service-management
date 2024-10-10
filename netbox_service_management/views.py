@@ -4,7 +4,8 @@ from .base_views import BaseDetailView, BaseListView, BaseChangeLogView  # Impor
 from . import (
     filtersets, 
     forms, 
-    tables
+    tables,
+    models,
     )
 
 from .models import (
@@ -127,18 +128,25 @@ class ComponentImportView(generic.BulkImportView):
     
 class SolutionChangeLogView(BaseChangeLogView):
     queryset = Service.objects.all()
-    
+    model = models.Solution 
+
 class ServiceChangeLogView(BaseChangeLogView):
     queryset = Service.objects.all()
+    model = models.Service 
 
 class ServiceTemplateChangeLogView(BaseChangeLogView):
     queryset = ServiceTemplate.objects.all()
+    model = models.ServiceTemplate 
 
 class ServiceTemplateGroupChangeLogView(BaseChangeLogView):
     queryset = ServiceTemplateGroup.objects.all()
+    model = models.ServiceTemplateGroup
 
 class ServiceTemplateGroupComponentChangeLogView(BaseChangeLogView):
     queryset = ServiceTemplateGroupComponent.objects.all()
+    model = models.ServiceTemplateGroupComponent
 
 class ComponentChangeLogView(BaseChangeLogView):
     queryset = Component.objects.all()
+    model = models.Component 
+

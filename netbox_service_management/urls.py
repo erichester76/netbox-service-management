@@ -31,7 +31,8 @@ urlpatterns = (
     path("service_template_group_components/<int:pk>/", views.ServiceTemplateGroupComponentDetailView.as_view(), name="servicetemplategroupcomponent"),
     path("service_template_groups/<int:pk>/edit/", views.ServiceTemplateGroupComponentEditView.as_view(), name="servicetemplategroupcomponent_edit"),
     path("service_template_groups/<int:pk>/delete/", views.ServiceTemplateGroupComponentDeleteView.as_view(), name="servicetemplategroupcomponent_delete"),
-    path("service_template_groups/<int:pk>/changelog/", views.ServiceTemplateGroupComponentChangeLogView.as_view(), name="servicetemplategroupcomponent_changelog"),
+    path("service_template_groups/<int:pk>/changelog/", views.ServiceTemplateGroupComponentChangeLogView.as_view(), name="servicetemplategroupcomponent_changelog", kwargs={"model": models.Solution},
+),
     
     path("components/", views.ComponentListView.as_view(), name="component_list"),
     path("components/add/", views.ComponentEditView.as_view(), name="component_add"),

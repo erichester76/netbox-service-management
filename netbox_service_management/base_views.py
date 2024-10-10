@@ -3,7 +3,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from netbox.views import generic
 from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
 from django.urls import reverse
-
+from . import models
 
 from . import (
     filtersets, 
