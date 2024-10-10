@@ -107,7 +107,7 @@ class BaseDetailView(generic.ObjectView):
 
     def generate_mermaid_diagram(self, instance, max_depth=10):
         # Initialize the diagram string
-        diagram = "graph TD\n"
+        diagram = "graph LR\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
         
@@ -200,8 +200,8 @@ class BaseDetailView(generic.ObjectView):
                 nonlocal diagram
                 
                 # stop backtracking past starting object
-                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
-                    return
+                #if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
+                #    return
                 
                 # Skip excluded modules we dont want to show in diagram
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
@@ -259,7 +259,7 @@ class BaseDetailView(generic.ObjectView):
                 # Close subgraphs if they were opened
                 if isinstance(obj, Service) and label+"_servgrp" in open_subgraphs:
                     add_subgraph_end(label+"_servgrp")
-                    open_subgraphs.remove(label+"_servrp")
+                    open_subgraphs.remove(label+"_servgrp")
 
                 if isinstance(obj, ServiceTemplate) and label+"_stgrp" in open_subgraphs:
                     add_subgraph_end(label+"_stgrp")
@@ -271,8 +271,7 @@ class BaseDetailView(generic.ObjectView):
             Adds the start of a subgraph with a given label and description.
             """
             nonlocal diagram
-            diagram += f"\nsubgraph {label} [ ]\n"
-            diagram += f"direction LR\n"
+            diagram += f'\nsubgraph {label} [ ]\n'
 
         def add_subgraph_end(label):
             """
@@ -280,7 +279,7 @@ class BaseDetailView(generic.ObjectView):
             """
             nonlocal diagram
             diagram += f"end {label}\n"
-            diagram += f"style {label} fill:transparent,stroke-width:0px;\n\n"
+            diagram += f"style {label} fill:transparent,stroke-width:1px;\n\n"
 
 
         def add_to_diagram(shape, label, obj):
@@ -328,9 +327,9 @@ class BaseDetailView(generic.ObjectView):
                 # Handle reverse and forward relationships, excluding certain fields.
                 if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
-                    
-                    nonlocal diagram
-                      
+                    #related_objects = getattr(obj, rel.name, None) if not rel.auto_created else None
+
+                    # nonlocal diagram 
                     # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
                         for related_obj in related_objects.all():
@@ -339,7 +338,7 @@ class BaseDetailView(generic.ObjectView):
 
                     # Process single related objects for forward relationships (ForeignKey, OneToOne)
                     elif related_objects: 
-                        #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_objects))}\n"
+                    #diagram += f"%% FIELD {rel.name}: {sanitize_label(related_objects._meta.model_name.lower())} {sanitize_display_name(str(related_objects))}\n"
                         add_node_if_not_visited(related_objects, label, current_depth + 1)
 
             # Handle GenericForeignKey relationships like in Component
