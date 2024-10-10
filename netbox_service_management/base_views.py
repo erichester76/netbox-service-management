@@ -348,7 +348,7 @@ class BaseDetailView(generic.ObjectView):
             Processes relationships for an object and recursively call add_node until we traverse the whole tree
             """
             for rel in obj._meta.get_fields():
-                nodash=re.sub(r'_',r'',rel.name)
+                nodash=re.sub(r'_',r'',rel.name).lower()
                 should_skip = nodash in do_not_backtrack
 
                 # Handle reverse and forward relationships, excluding certain fields.
@@ -383,7 +383,7 @@ class BaseDetailView(generic.ObjectView):
             'servicetemplategroup': {'servicetemplate'},
             'servicetemplategroupcomponent': {'servicetemplategroup'},  
         }
-        do_not_backtrack = sanitize_label(DO_NOT_BACKTRACK.get(sanitize_label(instance._meta.model_name.lower()), set()))   
+        do_not_backtrack = DO_NOT_BACKTRACK.get(sanitize_label(instance._meta.model_name.lower()), set())  
         
         # Start the diagram with the referenced obj
         add_node(instance)
