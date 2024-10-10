@@ -376,7 +376,7 @@ class BaseDetailView(generic.ObjectView):
         DO_NOT_BACKTRACK = {
             'service': {'service_template'},
             'component': {'service'},
-            'component': {'servicetemplategroupcomponent'},
+           # 'component': {'servicetemplategroupcomponent'},
             'servicetemplate': {'solution'},
             'servicetemplategroup': {'servicetemplate'},
             'servicetemplategroupcomponent': {'servicetemplategroup'},            
