@@ -246,7 +246,7 @@ class BaseDetailView(generic.ObjectView):
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
                 
-                if parent_label and ('cluster' not in parent_label) and (not 'virtual_machine' in label): visited.add(label)
+                if parent_label and ('cluster' not in parent_label) and (not 'virtualmachine' in label): visited.add(label)
 
                 # Create subgraphs for service_templates
                 if parent_label and (isinstance(obj, ServiceTemplate) and label+"_stgrp" not in open_subgraphs):
