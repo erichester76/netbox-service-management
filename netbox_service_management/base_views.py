@@ -327,7 +327,9 @@ class BaseDetailView(generic.ObjectView):
             for rel in obj._meta.get_fields():
                 # Handle reverse and forward relationships, excluding certain fields.
                 if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields):
-                    related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
+                    #related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
+                    related_objects = getattr(obj, rel.name, None) if not rel.auto_created else None
+
                     # nonlocal diagram 
                     # Process the related objects if it's a queryset (reverse relationships)
                     if related_objects is not None and hasattr(related_objects, 'all'):
