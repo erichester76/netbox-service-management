@@ -61,14 +61,14 @@
     <div class="card mt-3">
         <!-- <h5 class="card-header">Relationship Diagram</h5> -->       
         <div class="card-body">
-            <div id="control-bar">
+           <!--  <div id="control-bar">
                 <label for="layout">Layout:</label>
                 <select id="layout">
                     <option value="TD">Top-Down</option>
                     <option value="LR">Left-Right</option>
                 </select>
                 <div id="subgraph-toggles"></div>
-            </div>
+            </div> -->
             <div class="mermaid" style="width: 100%; overflow-y: auto;">
                 <div class="mermaid-diagram">
                 {{ mermaid_diagram }}
@@ -90,7 +90,7 @@
  </div>
 </div>   
 </div>
-<script>
+<!-- <script>
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
     
@@ -166,5 +166,5 @@ function createSubgraphToggles() {
 // Initialize the controls and render the initial diagram
 createSubgraphToggles();
 renderDiagram();
-</script>
+</script> -->
 {% endblock %}
