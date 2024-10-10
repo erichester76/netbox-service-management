@@ -246,9 +246,7 @@ class BaseDetailView(generic.ObjectView):
                     open_subgraphs.add(label+"_stgrp")
 
                 # Create subgraphs for services under a service_template
-                if parent_label and 'solution' not in parent_label and (isinstance(obj, Service) and label+"_servgrp" not in open_subgraphs):
-                    #if service_template_label in open_subgraphs:
-                    # Start a subgraph for the service under the service template's subgraph
+                if (parent_label and 'solution' not in parent_label) and (isinstance(obj, Service) and label+"_servgrp" not in open_subgraphs):
                     add_subgraph_start(label+"_servgrp", f"S: {sanitize_display_name(str(obj))}")
                     open_subgraphs.add(label+"_servgrg")
 
@@ -258,9 +256,10 @@ class BaseDetailView(generic.ObjectView):
                
                 #close the service subgroup before we add the item if its a cluster, we dont want it in any specific service
                 if 'cluster' in label:
-                    for item in list(open_subgraphs):
-                        if '_servgrp' in item:
-                             open_subgraphs.remove(item)
+                    for subgraph in list(open_subgraphs):
+                        if '_servgrp' in subgraph:
+                            add_subgraph_end(subgraph)
+                            open_subgraphs.remove(subgraph)
                              
                 # Add the node and its clickable link if available
                 add_to_diagram(shape, label, obj)
