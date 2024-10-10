@@ -199,15 +199,12 @@ class BaseDetailView(generic.ObjectView):
                 obj_type = ""
                 nonlocal diagram
                 
-                # stop backtracking past starting object
-                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
-                    return
-                
+
                 # Skip excluded modules we dont want to show in diagram
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
                     #diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
                     return
-
+               
                 # Prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
                 if 'netbox_service_management' not in app_label:
                     label = f"{app_label}_{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
@@ -223,6 +220,23 @@ class BaseDetailView(generic.ObjectView):
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
 
+                # #define edges - I tried not to have to do it.. but I give up
+                # if (label and parent_label) and ('device' in parent_label or 'cluster' in parent_label) and ('virtualmachine' in label):
+                #     diagram += f"%% ETURN-vm-loop PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                #     retur
+                
+                # if (label and parent_label) and ('servicetemplategroup' in parent_label or 'service' in parent_label) and 'servicetemplate' in label):
+                #     diagram += f"%% RETURN-STG-LOOP PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                #     return
+                # if (label and parent_label) and 'component' in parent_label and ('service' in label and not 'ipam_service' in label):
+                #     diagram += f"%% RETURN-COMP-LOOP PARENT {parent_label} CHILD:{label} depth {current_depth}\n"
+                #     return
+                
+                # #stop at stgc in recursion so services dont wrap around
+                # if parent_label and ('servicetemplategroupcomponent' in parent_label):
+                #     diagram += f"%% RETURN-STGC PARENT {parent_label} CHILD {label} depth {current_depth}\n"
+                #     return
+                
                 if parent_label and ('cluster' not in parent_label): visited.add(label)
 
                 # Create subgraphs for service_templates
@@ -232,9 +246,11 @@ class BaseDetailView(generic.ObjectView):
                     open_subgraphs.add(label+"_stgrp")
 
                 # Create subgraphs for services under a service_template
-                if (parent_label and 'solution' not in parent_label) and (isinstance(obj, Service) and label+"_servgrp" not in open_subgraphs):
+                if parent_label and 'solution' not in parent_label and (isinstance(obj, Service) and label+"_servgrp" not in open_subgraphs):
+                    #if service_template_label in open_subgraphs:
+                    # Start a subgraph for the service under the service template's subgraph
                     add_subgraph_start(label+"_servgrp", f"S: {sanitize_display_name(str(obj))}")
-                    open_subgraphs.add(label+"_servgrp")
+                    open_subgraphs.add(label+"_servgrg")
 
                 # Sanitize the display name for the diagram
                 display_name = sanitize_display_name(str(obj))
@@ -242,10 +258,9 @@ class BaseDetailView(generic.ObjectView):
                
                 #close the service subgroup before we add the item if its a cluster, we dont want it in any specific service
                 if 'cluster' in label:
-                    for subgraph in list(open_subgraphs):
-                        if '_servgrp' in subgraph:
-                            add_subgraph_end(subgraph)
-                            open_subgraphs.remove(subgraph)
+                    for item in list(open_subgraphs):
+                        if '_servgrp' in item:
+                             open_subgraphs.remove(item)
                              
                 # Add the node and its clickable link if available
                 add_to_diagram(shape, label, obj)
@@ -264,6 +279,9 @@ class BaseDetailView(generic.ObjectView):
                 if isinstance(obj, ServiceTemplate) and label+"_stgrp" in open_subgraphs:
                     add_subgraph_end(label+"_stgrp")
                     open_subgraphs.remove(label+"_stgrp")
+                    
+                
+
 
 
         def add_subgraph_start(label, description):
@@ -271,16 +289,15 @@ class BaseDetailView(generic.ObjectView):
             Adds the start of a subgraph with a given label and description.
             """
             nonlocal diagram
-            diagram += f"\nsubgraph {label} [ ]\n"
-            diagram += f"direction LR\n"
+            diagram += f"subgraph {label} [{description}]\n"
 
         def add_subgraph_end(label):
             """
             Ends the most recent subgraph.
             """
             nonlocal diagram
-            diagram += f"end {label}\n"
-            diagram += f"style {label} fill:transparent,stroke-width:0px;\n\n"
+            diagram += "end\n"
+            diagram += f"style {label} fill:transparent,stroke-width:1px;\n"
 
 
         def add_to_diagram(shape, label, obj):
@@ -350,7 +367,6 @@ class BaseDetailView(generic.ObjectView):
 
 
         # Start the diagram with the main object
-        start_object = instance 
         add_node(instance)
 
         # Add the legend subgraph with a specific color and style
