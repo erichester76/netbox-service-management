@@ -78,6 +78,7 @@ urlpatterns = (
     ),
     
     #Bulk Imports
+    path('solutions/import/', views.SolutionImportView.as_view(), name='solution_import'),
     path('services/import/', views.ServiceImportView.as_view(), name='service_import'),
     path('service-templates/import/', views.ServiceTemplateImportView.as_view(), name='servicetemplate_import'),
     path('service-template-groups/import/', views.ServiceTemplateGroupImportView.as_view(), name='servicetemplategroup_import'),

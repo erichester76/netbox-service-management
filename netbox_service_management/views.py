@@ -101,6 +101,10 @@ class ComponentEditView(generic.ObjectEditView):
 class ComponentDeleteView(generic.ObjectDeleteView):
     queryset = Component.objects.prefetch_related('tags')
 
+class SolutionImportView(generic.BulkImportView):
+    queryset = Service.objects.all()
+    model_form = forms.SolutionImportForm
+    
 class ServiceImportView(generic.BulkImportView):
     queryset = Service.objects.all()
     model_form = forms.ServiceImportForm

@@ -69,8 +69,12 @@ class ServiceForm(NetBoxModelForm):
     class Meta:
         model = models.Service
         fields = ("name", "service_template", "deployment", "capability_category", "tenant", "tags")
-        
-        
+ 
+class SolutionImportForm(NetBoxModelForm):
+    class Meta:
+        model = models.Solution
+        fields = ['name', 'tenant', 'tags']
+       
 class ServiceImportForm(NetBoxModelForm):
     class Meta:
         model = models.Service
