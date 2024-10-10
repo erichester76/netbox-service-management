@@ -30,11 +30,34 @@ class BaseDetailView(generic.ObjectView):
         field_data = []
         object_name = instance._meta.verbose_name
         # Define fields to exclude
+      # Define fields to exclude
+        excluded_extras = {
+            'id', 
+            'custom_field_data', 
+            'tags', 
+            'bookmarks', 
+            'journal_entries', 
+            'subscriptions', 
+            'tagged_items', 
+            # 'service_templates',
+            # 'stg_components',
+            # 'components',
+            # 'template_groups',
+            # 'services',
+            'depends_on',
+            'dependencies',
+            'created',
+            'last_updated',
+            'object_id',
+        }
 
 
         # Extract fields and their values for the object, including relationships
         field_data = []
-        for field in instance._meta.get_fields():            
+        for field in instance._meta.get_fields():      
+            # Skip excluded fields
+            if field.name in excluded_extras:
+                continue      
             value = None
             url = None
             try:
@@ -107,7 +130,7 @@ class BaseDetailView(generic.ObjectView):
 
     def generate_mermaid_diagram(self, instance, max_depth=10):
         # Initialize the diagram string
-        diagram = "graph TD\n"
+        diagram = "graph LR\n"
         visited = set()
         processed_relationships = set()  # Track relationships to prevent circular references
         
@@ -190,6 +213,7 @@ class BaseDetailView(generic.ObjectView):
        
         open_subgraphs = set()
 
+
         def add_node(obj, parent_label=None, current_depth=0):
                 """
                 Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
@@ -197,8 +221,7 @@ class BaseDetailView(generic.ObjectView):
                 app_label = sanitize_label(obj._meta.app_label.lower())
                 label = ""
                 obj_type = ""
-                nonlocal diagram
-                
+                nonlocal diagram        
 
                 # Skip excluded modules we dont want to show in diagram
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
@@ -217,14 +240,13 @@ class BaseDetailView(generic.ObjectView):
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
                     #diagram += f"%% RETURN - EDGE PARENT {parent_label} CHILD {label} depth {current_depth}\n"
                     return
+                
+                if parent_label and ('virtualmachine' in parent_label and 'cluster' not in label):
+                    return
 
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
                 
-                # stop backtracking past starting object
-                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
-                    return
-                
-                if parent_label and ('cluster' not in parent_label): visited.add(label)
+                if parent_label and ('cluster' not in parent_label) and (not 'virtualmachine' in label): visited.add(label)
 
                 # Create subgraphs for service_templates
                 if parent_label and (isinstance(obj, ServiceTemplate) and label+"_stgrp" not in open_subgraphs):
@@ -241,16 +263,16 @@ class BaseDetailView(generic.ObjectView):
                 display_name = sanitize_display_name(str(obj))
                 shape = f'{label}("{display_name}"):::color_{obj_type}'
                
-                #close the service subgroup before we add the item if its a cluster, we dont want it in any specific service
-                if 'cluster' in label:
-                    for subgraph in list(open_subgraphs):
-                        if '_servgrp' in subgraph:
-                            add_subgraph_end(subgraph)
-                            open_subgraphs.remove(subgraph)
+                # #close the service subgroup before we add the item if its a cluster, we dont want it in any specific service
+                # if 'cluster' in label:
+                #     for subgraph in list(open_subgraphs):
+                #         if '_servgrp' in subgraph:
+                #             add_subgraph_end(subgraph)
+                #             open_subgraphs.remove(subgraph)
                              
                 # Add the node and its clickable link if available
                 add_to_diagram(shape, label, obj)
-
+                            
                 # Add an edge from the parent node if applicable
                 add_edge(parent_label, label)
 
@@ -260,7 +282,7 @@ class BaseDetailView(generic.ObjectView):
                 # Close subgraphs if they were opened
                 if isinstance(obj, Service) and label+"_servgrp" in open_subgraphs:
                     add_subgraph_end(label+"_servgrp")
-                    open_subgraphs.remove(label+"_servrp")
+                    open_subgraphs.remove(label+"_servgrp")
 
                 if isinstance(obj, ServiceTemplate) and label+"_stgrp" in open_subgraphs:
                     add_subgraph_end(label+"_stgrp")
@@ -326,8 +348,11 @@ class BaseDetailView(generic.ObjectView):
             Processes relationships for an object and recursively call add_node until we traverse the whole tree
             """
             for rel in obj._meta.get_fields():
+                nodash=re.sub(r'_',r'',rel.name).lower()
+                should_skip = nodash in do_not_backtrack
+
                 # Handle reverse and forward relationships, excluding certain fields.
-                if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields):
+                if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields) and (not should_skip):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     nonlocal diagram
@@ -350,9 +375,18 @@ class BaseDetailView(generic.ObjectView):
                 add_edge(f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}", f"{sanitize_label(related_obj._meta.app_label.lower())}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}")
 
 
-        # Start the diagram with the main object
-        start_object = instance 
-        add_node(start_object)
+        # Dynamically set 'do_not_backtrack' using the object's type
+        DO_NOT_BACKTRACK = {
+            'service': {'servicetemplate'},
+            'component': {'service'},
+            'servicetemplate': {'solution'},
+            'servicetemplategroup': {'servicetemplate'},
+            'servicetemplategroupcomponent': {'servicetemplategroup'},  
+        }
+        do_not_backtrack = DO_NOT_BACKTRACK.get(sanitize_label(instance._meta.model_name.lower()), set())  
+        
+        # Start the diagram with the referenced obj
+        add_node(instance)
 
         # Add the legend subgraph with a specific color and style
         legend = "graph LR\n"
