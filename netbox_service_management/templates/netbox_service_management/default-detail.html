@@ -17,6 +17,7 @@
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: true });
 </script>
+
 <script>
 document.getElementById('layout').addEventListener('change', renderDiagram);
 let hiddenSubgraphs = new Set();
@@ -88,8 +89,8 @@ function toggleSubgraph(subgraph) {
 // Initialize the controls and render the initial diagram
 createSubgraphToggles();
 renderDiagram();
-
 </script>
+
 <div class="row mb-3">
 <div class="col col-md-5">
 <div class="card">
