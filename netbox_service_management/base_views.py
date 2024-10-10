@@ -213,6 +213,7 @@ class BaseDetailView(generic.ObjectView):
        
         open_subgraphs = set()
 
+
         def add_node(obj, parent_label=None, current_depth=0):
                 """
                 Recursively adds nodes to the diagram, handling relationships and avoiding circular references.
@@ -220,8 +221,7 @@ class BaseDetailView(generic.ObjectView):
                 app_label = sanitize_label(obj._meta.app_label.lower())
                 label = ""
                 obj_type = ""
-                nonlocal diagram
-                
+                nonlocal diagram        
 
                 # Skip excluded modules we dont want to show in diagram
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
@@ -274,7 +274,7 @@ class BaseDetailView(generic.ObjectView):
                              
                 # Add the node and its clickable link if available
                 add_to_diagram(shape, label, obj)
-
+                            
                 # Add an edge from the parent node if applicable
                 add_edge(parent_label, label)
 
@@ -350,8 +350,11 @@ class BaseDetailView(generic.ObjectView):
             Processes relationships for an object and recursively call add_node until we traverse the whole tree
             """
             for rel in obj._meta.get_fields():
+                label_obj_type = label.split('_')[0]  # Extract the type from the label (e.g., 'service' from 'service_1')
+                should_skip = rel.name in do_not_backtrack
+
                 # Handle reverse and forward relationships, excluding certain fields.
-                if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields):
+                if rel.is_relation and (sanitize_label(obj._meta.model_name.lower()) not in excluded_model_names) and (rel.name not in excluded_fields) and (not should_skip):
                     related_objects = getattr(obj, rel.get_accessor_name(), None) if rel.auto_created else getattr(obj, rel.name, None)
                     
                     nonlocal diagram
@@ -374,9 +377,18 @@ class BaseDetailView(generic.ObjectView):
                 add_edge(f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}", f"{sanitize_label(related_obj._meta.app_label.lower())}_{sanitize_label(related_obj._meta.model_name.lower())}_{related_obj.pk}")
 
 
-        # Start the diagram with the main object
-        start_object = instance 
-        add_node(start_object)
+        # Dynamically set 'do_not_backtrack' using the object's type
+        DO_NOT_BACKTRACK = {
+            ('service', 'service_template'),
+            ('component', 'service'),
+            ('servicetemplate', 'solution'),
+            ('servicetemplategroup','servicetemplate')
+            ('servicetemplategroupcomponent','servicetemplategroup'),            
+        }
+        do_not_backtrack = DO_NOT_BACKTRACK.get(str(instance._meta.model_name.lower()), set())   
+        
+        # Start the diagram with the referenced obj
+        add_node(instance)
 
         # Add the legend subgraph with a specific color and style
         legend = "graph LR\n"
