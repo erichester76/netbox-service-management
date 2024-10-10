@@ -199,14 +199,15 @@ class BaseDetailView(generic.ObjectView):
                 obj_type = ""
                 nonlocal diagram
                 
-
+                # stop backtracking past starting object
+                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
+                    return
+                
                 # Skip excluded modules we dont want to show in diagram
                 if parent_label and ((sanitize_label(obj._meta.model_name.lower()) in excluded_model_names)):
                     #diagram += f"%% RETURN-EXCLUDED {parent_label} depth {current_depth}\n"
                     return
-                
 
-                
                 # Prepend label with proper netbox app label (dcim,ipam,virtualization if its not our object)
                 if 'netbox_service_management' not in app_label:
                     label = f"{app_label}_{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
@@ -214,10 +215,6 @@ class BaseDetailView(generic.ObjectView):
                 else:
                     label = f"{sanitize_label(obj._meta.model_name.lower())}_{obj.pk}"
                     obj_type = obj._meta.model_name.lower()
-
-                # stop backtracking past starting object
-                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
-                    return
 
                 # Defined as hard edges, probably need to remove backwards references on these.
                 if parent_label and (current_depth > max_depth or 'cluster' in parent_label or 'servicetemplategroupcomponent' in parent_label):
