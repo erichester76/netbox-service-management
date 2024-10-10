@@ -221,7 +221,9 @@ class BaseDetailView(generic.ObjectView):
                 #diagram += f"%% IN ADDNODE {parent_label} {label} {str(obj)} {current_depth}\n"
                 
                 # stop backtracking past starting object
-                if label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
+                if parent_label and (f"{sanitize_label(obj._meta.model_name.lower())}") == (f"{sanitize_label(start_object._meta.model_name.lower())}"):
+                    diagram += f"%% BACKTRACK DETECTED {label} - START OBJ: {sanitize_label(start_object._meta.model_name.lower())} DEPTH: {current_depth}\n"
+
                     return
                 
                 if parent_label and ('cluster' not in parent_label): visited.add(label)
