@@ -44,7 +44,7 @@ urlpatterns = (
     path("services/<int:pk>/", views.ServiceDetailView.as_view(), name="service"),
     path("services/<int:pk>/edit/", views.ServiceEditView.as_view(), name="service_edit"),
     path("services/<int:pk>/delete/", views.ServiceDeleteView.as_view(), name="service_delete"),
-    path("services/<int:pk>/changelog/", ObjectChangeLogView.as_view(), name="service_changelog", kwargs={"model": models.Service}),
+    path("services/<int:pk>/changelog/", ObjectChangeLogView.as_view(), name="service_changelog", kwargs={"model": models.Service, "base_template": 'netbox/base.html'}),
     
     #Bulk Imports
     path('solutions/import/', views.SolutionImportView.as_view(), name='solution_import'),
