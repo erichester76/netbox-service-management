@@ -1,0 +1,75 @@
+{% extends 'generic/object_detail.html' %}
+{% load render_table from django_tables2 %}
+{% block content %}
+
+{% if tabs %}
+    <ul class="nav nav-tabs">
+        {% for tab in tabs %}
+            <li class="{% if tab.active %}active{% endif %}">
+                <a href="{{ tab.url }}">{{ tab.label }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="tab-content">
+    <div class="tab-pane {% if tabs.details.active %}active{% endif %}" id="tab-details">
+        <div class="card">
+            <h5 class="card-header">{{ object_name }} Details</h5>
+            <div class="card-body">
+                <table class="table table-hover attr-table">
+                    {% for field in field_data %}
+                        <tr>
+                            <th scope="row">{{ field.name|capfirst }}</th>
+                            <td>
+                                {% if field.url %}
+                                    <a href="{{ field.url }}">{{ field.value }}</a>
+                                {% else %}
+                                    {{ field.value }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane {% if tabs.diagram.active %}active{% endif %}" id="tab-diagram">
+        <div class="card mt-3">
+            <h5 class="card-header">Relationship Diagram</h5>
+            <div class="card-body">
+                <div class="mermaid">
+                    {{ mermaid_diagram }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% for related_table in related_tables %}
+        <div class="tab-pane {% if tabs[related_table.name].active %}active{% endif %}" id="tab-{{ related_table.name|slugify }}">
+            <div class="card mt-3">
+                <h5 class="card-header d-flex justify-content-between align-items-center">
+                    <span>{{ related_table.name|title }}</span>
+                    {% if related_table.add_url %}
+                        <a href="{{ related_table.add_url }}" class="btn btn-sm btn-primary">
+                            <i class="mdi mdi-plus"></i> Add
+                        </a>
+                    {% endif %}
+                </h5>
+                <div class="card-body">
+                    {% if related_table.table %}
+                        {% render_table related_table.table %}
+                    {% else %}
+                        <ul>
+                            {% for obj in related_table.objects %}
+                                <li><a href="{{ obj.get_absolute_url }}">{{ obj }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

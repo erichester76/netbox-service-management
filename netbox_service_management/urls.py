@@ -49,7 +49,7 @@ urlpatterns = (
     path(
         "service_template_groups/<int:pk>/changelog/",
         ObjectChangeLogView.as_view(),
-        name="servicetemplategroup_changelog",
+        name="servicetemplategroupcomponent_changelog",
         kwargs={"model": models.ServiceTemplateGroupComponent},
     ),
     

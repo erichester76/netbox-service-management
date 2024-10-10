@@ -1,0 +1,55 @@
+{% extends 'generic/object_edit.html' %}
+{% load static %}
+
+{% block content %}
+    {{ block.super }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const contentTypeField = document.querySelector('select[name="content_type"]');
+            const objectIdField = document.querySelector('select[name="object_id"]');
+
+            // Hide object ID field initially until a content type is selected
+            objectIdField.closest('.form-group').style.display = 'none';
+
+            contentTypeField.addEventListener('change', function () {
+                const contentType = this.value;
+
+                if (contentType) {
+                    const url = `/api/plugins/netbox_service_management/objects/${contentType}/`;  // Adjust this URL to your API endpoint
+
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Clear previous options
+                            objectIdField.innerHTML = '';
+
+                            // Add a placeholder option
+                            const placeholder = document.createElement('option');
+                            placeholder.value = '';
+                            placeholder.textContent = 'Select an object...';
+                            objectIdField.appendChild(placeholder);
+
+                            // Populate the object_id dropdown with the fetched objects
+                            data.forEach(obj => {
+                                const option = document.createElement('option');
+                                option.value = obj.pk;
+                                option.textContent = obj.name;
+                                objectIdField.appendChild(option);
+                            });
+
+                            // Show the object ID field once options are loaded
+                            objectIdField.closest('.form-group').style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error fetching objects:', error);
+                            // Optionally hide the field in case of an error
+                            objectIdField.closest('.form-group').style.display = 'none';
+                        });
+                } else {
+                    // Hide object ID field if no content type is selected
+                    objectIdField.closest('.form-group').style.display = 'none';
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -22,8 +22,8 @@ class ServiceTemplate(NetBoxModel):
     name = models.CharField(max_length=100)
     solution = models.ForeignKey(Solution, on_delete=models.CASCADE, related_name='service_templates')
     tags = models.ManyToManyField(
-    to='extras.Tag',
-    related_name='netbox_service_management_service_templates'
+        to='extras.Tag',
+        related_name='netbox_service_management_service_templates'
     )
     
     class Meta:
@@ -32,6 +32,10 @@ class ServiceTemplate(NetBoxModel):
     def __str__(self):
         return self.name
 
+    def get_services_list(self):
+        """Return a comma-separated string of services associated with this template."""
+        return ", ".join(service.name for service in self.services.all())
+
     def get_absolute_url(self):
         return reverse("plugins:netbox_service_management:servicetemplate", args=[self.pk])
     
@@ -39,7 +43,7 @@ class ServiceTemplateGroup(NetBoxModel):
     name = models.CharField(max_length=100)
     service_template = models.ForeignKey(ServiceTemplate, on_delete=models.CASCADE, related_name='template_groups')
     depends_on = models.ForeignKey('self', on_delete=models.CASCADE, related_name='dependencies', null=True,  blank=True)
-   
+
     class Meta:
         ordering = ("name",)
 
@@ -52,7 +56,7 @@ class ServiceTemplateGroup(NetBoxModel):
 class ServiceTemplateGroupComponent(NetBoxModel):
     name = models.CharField(max_length=100)
     service_template_group = models.ForeignKey(ServiceTemplateGroup, on_delete=models.CASCADE, related_name='stg_components')
-    
+
     class Meta:
         ordering = ("name",)
 
@@ -107,8 +111,7 @@ class Component(NetBoxModel):
     content_type = models.ForeignKey(
         ContentType,
         on_delete=models.CASCADE,
-        limit_choices_to=models.Q(app_label='dcim') | models.Q(app_label='ipam')  # Optional: Limit to specific apps
-    )
+        limit_choices_to=models.Q(app_label='dcim') | models.Q(app_label='ipam') | models.Q(app_label='virtualization'))  
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 

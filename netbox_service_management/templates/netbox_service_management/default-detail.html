@@ -2,6 +2,21 @@
 {% load render_table from django_tables2 %}
 
 {% block content %}
+<style>
+    .mermaid {
+        width: 100% !important;
+        text-align: center;
+    }
+    .mermaid svg {
+        width: 100% !important;
+        display: inline-block;
+    }
+</style>
+
+<script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+</script>
 <div class="row mb-3">
 <div class="col col-md-5">
 <div class="card">
@@ -13,7 +28,7 @@
                     <th scope="row">{{ field.name|title }}</th>
                     <td>
                         {% if field.url %}
-                            <a href="{{ field.url }}">{{ field.value|title }}</a>
+                            <a href="{{ field.url }}">{{ field.value }}</a>
                         {% else %}
                             {{ field.value }}
                         {% endif %}
@@ -24,7 +39,7 @@
     </div>
 </div>
 </div>
-<div class="col col-md-6">
+<div class="col col-md-12">
 {% for related_table in related_tables %}
     <div class="card">
         <h5 class="card-header d-flex justify-content-between align-items-center">
@@ -40,9 +55,28 @@
         </div>
     </div>
 {% endfor %}
-
-{% include 'inc/panels/tags.html' %}
-{% include 'inc/panels/comments.html' %}
 </div>
+<div class="row mb-3">
+    <div class="card mt-3">
+        <!-- <h5 class="card-header">Relationship Diagram</h5> -->
+        <div class="card-body">
+            <div class="mermaid" style="width: 100%; overflow-y: auto;">
+                {{ mermaid_diagram }}
+            </div>
+            <div class="mermaid" style="width: 100%;">
+                {{ mermaid_legend }}
+            </div>
+        </div>
+    </div>
+    <div class="card mt-3">
+        <div class="card-header">
+            Mermaid Diagram Definition
+        </div>
+        <div class="card-body">
+            <pre>{{ mermaid_diagram }}</pre>
+        </div>
+    </div>
+ </div>
+</div>   
 </div>
 {% endblock %}
