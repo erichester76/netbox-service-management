@@ -25,9 +25,9 @@ from .models import (
 class BaseChangeLogView(generic.ObjectChangeLogView):
     template_name = 'netbox_service_management/default-detail.html'
 
-class BaseListView(generic.ObjectListView,generic.BulkEditView,generic.BulkDeleteView):
+class BaseListView(generic.ObjectListView):
     bulk_edit_form = None  # This will need to be overridden in child views
-    table_actions = ('edit', 'delete')  # Enables the "Edit" and "Delete" actions
+    table_actions = ('bulk_edit', 'bulk_delete')
     template_name = 'netbox_service_management/default-list.html'
 
 class BaseDetailView(generic.ObjectView):
