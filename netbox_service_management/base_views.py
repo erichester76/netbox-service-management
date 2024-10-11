@@ -27,6 +27,12 @@ class BaseChangeLogView(generic.ObjectChangeLogView):
 
 class BaseListView(generic.ObjectListView):
     template_name = 'netbox_service_management/default-list.html'
+    actions = {
+        "import": {"change"},
+        "export": {"view"},
+        "bulk_edit": {"change"},
+        "bulk_delete": {"delete"},
+    }
 
 class BaseDetailView(generic.ObjectView):
     template_name = 'netbox_service_management/default-detail.html'

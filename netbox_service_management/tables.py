@@ -39,11 +39,7 @@ class ServiceTemplateGroupTable(NetBoxTable):
 class ServiceTemplateGroupComponentTable(NetBoxTable):
     name = tables.Column(linkify=True)
     service_template_group = tables.Column(linkify=True)
-    actions = {
-        "export": {"view"},
-        "bulk_edit": {"change"},
-        "bulk_delete": {"delete"},
-    }
+    
     class Meta(NetBoxTable.Meta):
         model = models.ServiceTemplateGroupComponent
         fields = ("pk", "id", "name", "service_template_group", "actions")
