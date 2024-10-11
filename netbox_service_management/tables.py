@@ -39,6 +39,8 @@ class ServiceTemplateGroupTable(NetBoxTable):
 class ServiceTemplateGroupComponentTable(NetBoxTable):
     name = tables.Column(linkify=True)
     service_template_group = tables.Column(linkify=True)
+    pk = tables.Column(visible=False)
+    table_actions = ('bulk_edit', 'bulk_delete')
 
     class Meta(NetBoxTable.Meta):
         model = models.ServiceTemplateGroupComponent
