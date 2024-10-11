@@ -3,7 +3,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from netbox.views import generic
 from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
 from django.urls import reverse
-
+from . import models
 
 from . import (
     filtersets, 
@@ -21,6 +21,18 @@ from .models import (
     Service, 
     Component
 )
+
+class BaseChangeLogView(generic.ObjectChangeLogView):
+    template_name = 'netbox_service_management/default-detail.html'
+
+class BaseListView(generic.ObjectListView):
+    template_name = 'netbox_service_management/default-list.html'
+    actions = {
+        "import": {"change"},
+        "export": {"view"},
+        "bulk_edit": {"change"},
+        "bulk_delete": {"delete"},
+    }
 
 class BaseDetailView(generic.ObjectView):
     template_name = 'netbox_service_management/default-detail.html'

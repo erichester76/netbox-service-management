@@ -1,10 +1,11 @@
 from netbox.views import generic
-from .base_views import BaseDetailView  # Import the base class
+from .base_views import BaseDetailView, BaseListView, BaseChangeLogView  # Import the base class
 
 from . import (
     filtersets, 
     forms, 
-    tables
+    tables,
+    models,
     )
 
 from .models import (
@@ -20,7 +21,7 @@ class SolutionDetailView(BaseDetailView):
     queryset = Solution.objects.prefetch_related('tags')
     table = tables.SolutionTable
     
-class SolutionListView(generic.ObjectListView):
+class SolutionListView(BaseListView):
     queryset = Solution.objects.prefetch_related('tags')
     table = tables.SolutionTable
 
@@ -34,7 +35,7 @@ class SolutionDeleteView(generic.ObjectDeleteView):
 class ServiceTemplateDetailView(BaseDetailView):
     queryset = ServiceTemplate.objects.prefetch_related('tags')
 
-class ServiceTemplateListView(generic.ObjectListView):
+class ServiceTemplateListView(BaseListView):
     queryset = ServiceTemplate.objects.prefetch_related('tags')
     table = tables.ServiceTemplateTable
 
@@ -48,7 +49,7 @@ class ServiceTemplateDeleteView(generic.ObjectDeleteView):
 class ServiceTemplateGroupDetailView(BaseDetailView):
     queryset = ServiceTemplateGroup.objects.prefetch_related('tags')
 
-class ServiceTemplateGroupListView(generic.ObjectListView):
+class ServiceTemplateGroupListView(BaseListView):
     queryset = ServiceTemplateGroup.objects.prefetch_related('tags')
     table = tables.ServiceTemplateGroupTable
 
@@ -62,7 +63,7 @@ class ServiceTemplateGroupDeleteView(generic.ObjectDeleteView):
 class ServiceTemplateGroupComponentDetailView(BaseDetailView):
     queryset = ServiceTemplateGroupComponent.objects.prefetch_related('tags')
 
-class ServiceTemplateGroupComponentListView(generic.ObjectListView):
+class ServiceTemplateGroupComponentListView(BaseListView):
     queryset = ServiceTemplateGroupComponent.objects.prefetch_related('tags')
     table = tables.ServiceTemplateGroupComponentTable
 
@@ -76,7 +77,7 @@ class ServiceTemplateGroupComponentDeleteView(generic.ObjectDeleteView):
 class ServiceDetailView(BaseDetailView):
     queryset = Service.objects.prefetch_related('tags')
 
-class ServiceListView(generic.ObjectListView):
+class ServiceListView(BaseListView):
     queryset = Service.objects.prefetch_related('tags')
     table = tables.ServiceTable
 
@@ -90,7 +91,7 @@ class ServiceDeleteView(generic.ObjectDeleteView):
 class ComponentDetailView(BaseDetailView):
     queryset = Component.objects.prefetch_related('tags')
 
-class ComponentListView(generic.ObjectListView):
+class ComponentListView(BaseListView):
     queryset = Component.objects.prefetch_related('tags')
     table = tables.ComponentTable
 
@@ -100,4 +101,52 @@ class ComponentEditView(generic.ObjectEditView):
 
 class ComponentDeleteView(generic.ObjectDeleteView):
     queryset = Component.objects.prefetch_related('tags')
+
+class SolutionImportView(generic.BulkImportView):
+    queryset = Service.objects.all()
+    model_form = forms.SolutionImportForm
+    
+class ServiceImportView(generic.BulkImportView):
+    queryset = Service.objects.all()
+    model_form = forms.ServiceImportForm
+
+class ServiceTemplateImportView(generic.BulkImportView):
+    queryset = ServiceTemplate.objects.all()
+    model_form = forms.ServiceTemplateImportForm
+
+class ServiceTemplateGroupImportView(generic.BulkImportView):
+    queryset = ServiceTemplateGroup.objects.all()
+    model_form = forms.ServiceTemplateGroupImportForm
+
+class ServiceTemplateGroupComponentImportView(generic.BulkImportView):
+    queryset = ServiceTemplateGroupComponent.objects.all()
+    model_form = forms.ServiceTemplateGroupComponentImportForm
+
+class ComponentImportView(generic.BulkImportView):
+    queryset = Component.objects.all()
+    model_form = forms.ComponentImportForm
+    
+class SolutionChangeLogView(BaseChangeLogView):
+    queryset = Service.objects.all()
+    model = models.Solution 
+
+class ServiceChangeLogView(BaseChangeLogView):
+    queryset = Service.objects.all()
+    model = models.Service 
+
+class ServiceTemplateChangeLogView(BaseChangeLogView):
+    queryset = ServiceTemplate.objects.all()
+    model = models.ServiceTemplate 
+
+class ServiceTemplateGroupChangeLogView(BaseChangeLogView):
+    queryset = ServiceTemplateGroup.objects.all()
+    model = models.ServiceTemplateGroup
+
+class ServiceTemplateGroupComponentChangeLogView(BaseChangeLogView):
+    queryset = ServiceTemplateGroupComponent.objects.all()
+    model = models.ServiceTemplateGroupComponent
+
+class ComponentChangeLogView(BaseChangeLogView):
+    queryset = Component.objects.all()
+    model = models.Component 
 
