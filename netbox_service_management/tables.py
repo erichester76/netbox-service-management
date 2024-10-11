@@ -44,8 +44,8 @@ class ServiceTemplateGroupComponentTable(NetBoxTable):
 
     class Meta(NetBoxTable.Meta):
         model = models.ServiceTemplateGroupComponent
-        fields = ("pk", "id", "name", "service_template_group", "actions")
-        default_columns = ("name","service_template_group")
+        fields = ("id", "name", "service_template_group", "actions")
+        default_columns = ("name", "service_template_group")
         
 class ServiceTable(NetBoxTable):
     name = tables.Column(linkify=True)
