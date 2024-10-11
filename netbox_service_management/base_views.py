@@ -26,7 +26,6 @@ class BaseChangeLogView(generic.ObjectChangeLogView):
     template_name = 'netbox_service_management/default-detail.html'
 
 class BaseListView(generic.ObjectListView):
-    table_actions = ('bulk_edit', 'bulk_delete')
     template_name = 'netbox_service_management/default-list.html'
 
 class BaseDetailView(generic.ObjectView):
